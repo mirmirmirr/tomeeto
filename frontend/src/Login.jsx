@@ -11,7 +11,7 @@ export default function Login() {
 
   return (
     <div className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}>
-      <img src={isDarkMode ? darkLogo : lightLogo} alt="Logo" className="absolute top-4 left-4 w-24 h-auto object-contain" />
+      <img src={isDarkMode ? darkLogo : lightLogo} alt="Logo" className="absolute top-4 left-8 w-[9vw] h-auto object-contain" />
       <button onClick={toggleTheme} className="absolute top-4 right-4 p-2 bg-gray-300 rounded-[40vw] shadow-md hover:bg-gray-400 transition duration-300">
         {isDarkMode ? 'Dark Mode' : 'Light Mode'}
       </button>
@@ -67,8 +67,16 @@ export default function Login() {
             Login
           </button>
           <p className={`w-[35vw] subtext-responsive text-opacity-70 text-center ${isDarkMode ? 'text-white' : 'text-black'} hover:underline hover:text-opacity-100` }>Signup</p>
-          <div className="w-[35vw] border-t-2 border-gray-300 my-4"></div>
-          <button className="w-[35vw] mt-[10px] subtext-responsive py-3 text-white bg-transparent border-2 border-white rounded-md transition duration-300 hover:bg-red-500 hover:text-white hover:border-transparent">
+          <div className={`w-[35vw] border-t-2 my-4 ${
+                isDarkMode
+                  ? 'border-gray-300'
+                  : 'border-gray-500'
+              }`}></div>
+          <button className={`w-[35vw] mt-[10px] subtext-responsive py-3 rounded-md transition duration-300 hover:bg-red-500 hover:text-white hover:border-transparent ${
+                isDarkMode
+                  ? 'text-white bg-transparent border-2 border-white'
+                  : 'text-back bg-transparent border-2 border-[#3E505B]'
+              }`}>
             Continue with Google
           </button>
         </div>
