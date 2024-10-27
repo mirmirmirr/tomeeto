@@ -18,3 +18,18 @@ class SpecificDates(Event):
 async def root():
     return {"message": "Hello World"}
 
+@app.get("/calendar_data")
+async def root():
+    return {"message": "you sent calendar data"}
+
+@app.get("/cookies")
+async def root():
+    return {"message": "you sent cookie data"}
+
+@app.get("/time")
+async def root():
+    return {"message": "you sent time data"}
+
+@app.get("/availability_painting")
+async def root():
+    return {"message": "you sent painting data"}
