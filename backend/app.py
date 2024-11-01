@@ -1,6 +1,5 @@
-
-
 from fastapi import FastAPI
+import base64
 
 app = FastAPI()
 
@@ -28,6 +27,18 @@ app = FastAPI()
 
 
 
+# Function to Hash a Password:
+def encode_string(input_string: str) -> str:
+    # Encode the string in Base64
+    encoded_bytes = base64.b64encode(input_string.encode())
+    return encoded_bytes.decode()
+
+def decode_string(encoded_string: str) -> str:
+    # Decode the Base64 encoded string
+    decoded_bytes = base64.b64decode(encoded_string.encode())
+    return decoded_bytes.decode()
+
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -43,3 +54,5 @@ async def login():
 @app.get("/cookies")
 async def root():
     return {"message": "you sent cookie data"}
+
+
