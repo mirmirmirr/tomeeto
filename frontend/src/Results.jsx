@@ -5,49 +5,55 @@ import lightLogo from '../src/assets/tomeeto-light.png';
 export default function Result() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [hoveredCell, setHoveredCell] = useState({ row: null, column: null });
+  const [currentPage, setCurrentPage] = useState(0); 
+  const daysPerPage = 7; // Number of days per page
 
   const eventTitle = "tomeeto planning"
-  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const allDays = ['SUN 6', 'MON 7', 'TUE 8', 'WED 9', 'THU 10', 'FRI 11', 'SAT 12', 'SUN 13', 'MON 14', 'TUE 15', 'WED 16'];
+  const totalDays = allDays.length; // Total number of days
   const hours = Array.from({ length: 15 }, (_, i) => 7 + i);
+
+  const displayedDays = allDays.slice(currentPage * daysPerPage, (currentPage + 1) * daysPerPage);
+
   const scheduleData = [
     {
       name: 'Alice',
       availability: [
-        [0, 1, 1, 0, 0, 0, 0], // 7 AM
-        [1, 1, 1, 1, 0, 0, 0], // 8 AM
-        [0, 0, 1, 0, 0, 0, 0], // 9 AM
-        [0, 1, 1, 1, 1, 0, 0], // 10 AM
-        [0, 0, 0, 0, 1, 0, 0], // 11 AM
-        [0, 0, 0, 1, 1, 0, 0], // 12 PM
-        [0, 0, 0, 0, 0, 0, 0], // 1 PM
-        [1, 1, 1, 1, 1, 1, 1], // 2 PM
-        [0, 0, 0, 0, 0, 0, 0], // 3 PM
-        [1, 0, 1, 0, 0, 0, 0], // 4 PM
-        [0, 0, 0, 0, 0, 0, 0], // 5 PM
-        [1, 1, 1, 1, 1, 1, 1], // 2 PM
-        [0, 0, 0, 0, 0, 0, 0], // 3 PM
-        [1, 0, 1, 0, 0, 0, 0], // 4 PM
-        [0, 0, 0, 0, 0, 0, 0], // 5 PM
+        [0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 7 AM
+        [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 8 AM
+        [0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 9 AM
+        [0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0], // 10 AM
+        [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0], // 11 AM
+        [0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0], // 12 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 1 PM
+        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+        [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+        [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
       ],
     },
     {
       name: 'Bob',
       availability: [
-        [1, 1, 0, 0, 0, 0, 0], // 7 AM
-        [1, 1, 1, 1, 1, 1, 1], // 8 AM
-        [0, 1, 1, 1, 0, 0, 0], // 9 AM
-        [1, 0, 0, 0, 0, 0, 0], // 10 AM
-        [1, 1, 1, 1, 0, 0, 0], // 11 AM
-        [0, 0, 1, 1, 0, 0, 0], // 12 PM
-        [0, 0, 0, 0, 0, 0, 0], // 1 PM
-        [1, 1, 1, 1, 1, 1, 1], // 2 PM
-        [0, 0, 0, 0, 0, 0, 0], // 3 PM
-        [0, 0, 0, 0, 0, 0, 0], // 4 PM
-        [0, 0, 0, 0, 0, 0, 0], // 5 PM
-        [1, 1, 1, 1, 1, 1, 1], // 2 PM
-        [0, 0, 0, 0, 0, 0, 0], // 3 PM
-        [1, 0, 1, 0, 0, 0, 0], // 4 PM
-        [0, 0, 0, 0, 0, 0, 0], // 5 PM
+        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 8 AM
+        [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 7 AM
+        [0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 9 AM
+        [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 10 AM
+        [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 11 AM
+        [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 12 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 1 PM
+        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+        [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
       ],
     },
   ];  
@@ -57,11 +63,23 @@ export default function Result() {
   };
 
   const availabilityCounts = hours.map((_, row) =>
-    days.map((_, column) => {
+    displayedDays.map((_, column) => {
       const count = scheduleData.filter(attendee => attendee.availability[row][column]==1).length;
       return count / scheduleData.length;
     })
   );
+
+  const goToPrevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if ((currentPage + 1) * daysPerPage < totalDays) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   return (
     <div
@@ -89,11 +107,33 @@ export default function Result() {
         <div className={`w-[90vw] border-t-2 ml-4 opacity-25 ${ isDarkMode ? 'border-gray-300' : 'border-gray-500'}`}></div>
 
         <div id='results' className='w-[80vw] h-[70vh] ml-[5%] mr-auto mt-[3vh] flex flex-row overflow-hidden'>
-          <table className='w-[80%] h-[70%] table-fixed'>
+          
+        <div className="flex justify-between mt-4">
+            {currentPage > 0 && (
+              <button
+                onClick={goToPrevPage}
+                className="px-4 py-2 font-bold opacity-25 hover:opacity-100"
+                style={{ fontSize: '2rem' }}
+              >
+                &#65308; {/* Previous page entity */}
+              </button>
+            )}
+            {(currentPage + 1) * daysPerPage < totalDays && (
+              <button
+                onClick={goToNextPage}
+                className="h-full flex items-center justify-center px-4 py-2 opacity-0"
+                style={{ fontSize: '2rem' }}
+              >
+                &#65310;
+              </button>
+            )}
+          </div>
+
+          <table className='w-[80%] table-fixed'>
             <thead>
                 <tr>
-                <th className="p-2 w-[10%]"></th>
-                  {days.map((day, index) => (
+                <th className="p-2" style={{ width: `min(10vw, 55px)` }}></th>
+                  {displayedDays.map((day, index) => (
                     <th key={index} className="p-2 font-[400]">{day}</th>
                   ))}
                 </tr>
@@ -102,7 +142,7 @@ export default function Result() {
               {hours.map((hour, row) => (
                 <tr key={row} className="h-full" style={{ height: `calc(100% / ${hours.length})` }}>
                   <td className="p-2 text-right text-[10pt]">{hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}</td>
-                  {days.map((_,column) => {
+                  {displayedDays.map((_,column) => {
                     const availability = availabilityCounts[row][column];
                     const opacity = availability > 0 ? availability : 0;
 
@@ -124,6 +164,27 @@ export default function Result() {
               ))}
             </tbody>
           </table>
+
+          <div className="flex justify-between mt-4">
+            {currentPage > 0 && (
+              <button
+                onClick={goToPrevPage}
+                className="px-4 py-2 opacity-0"
+                style={{ fontSize: '2rem' }}
+              >
+                &#65308; {/* Previous page entity */}
+              </button>
+            )}
+            {(currentPage + 1) * daysPerPage < totalDays && (
+              <button
+                onClick={goToNextPage}
+                className="h-full flex items-center justify-center px-4 py-2 font-bold opacity-25 hover:opacity-100"
+                style={{ fontSize: '2rem' }}
+              >
+                &#65310; {/* Next page entity */}
+              </button>
+            )}
+          </div>
 
           <div className='w-[25%] flex flex-col ml-auto mr-auto items-center'>
             <div className='text-[23px] font-[500] p-5' >Attendees ({scheduleData.length})</div>
