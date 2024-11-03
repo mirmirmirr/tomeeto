@@ -1,7 +1,8 @@
+from typing import Tuple
 from dotenv import load_dotenv
 import os
+import bcrypt
 
-import base64
 import random
 import string
 
@@ -19,29 +20,55 @@ USERNAME: str = os.getenv("USERNAME")
 PASSWORD: str = os.getenv("PASSWORD")
 DATABASE: str = os.getenv("DATABASE")
 
-DB_CONN = MySQL.connect(
+DB_CONN: MySQLConnection = MySQL.connect(
     host=HOST, port=PORT, user=USERNAME, password=PASSWORD, database=DATABASE
 )
 DB_CURSOR: MySQLCursorDict = DB_CONN.cursor(dictionary=True)
 
 
 # Function to execute a query on the database
-def execute_query(query: str) -> dict:
-    DB_CURSOR.execute(query)
-    results = DB_CURSOR.fetchall()
-    return results
+def db_hello_world() -> dict:
+    DB_CURSOR.execute("Select 'Hello, World!' AS message")
+    return DB_CURSOR.fetchone()
 
 
-# Function to hash a password and decode it for security purposes:
-def encode_string(input_string: str) -> str:
-    encoded_bytes = base64.b64encode(input_string.encode())
-    return encoded_bytes.decode()
+# Checks if a user already has an account
+def check_user(email: str) -> bool:
+    DB_CURSOR.execute("SELECT * FROM user_account WHERE email = %s", (email,))
+    return DB_CURSOR.fetchone() is not None
 
 
-def decode_string(encoded_string: str) -> str:
-    # Decode the Base64 encoded string
-    decoded_bytes = base64.b64decode(encoded_string.encode())
-    return decoded_bytes.decode()
+# Adds a user to the database
+def add_user(email: str, pass_hash: str, salt: str) -> bool:
+    try:
+        DB_CURSOR.execute(
+            """
+                INSERT INTO
+                    user_account (email, salt, password_hash, is_guest)
+                VALUES
+                    (%s, %s, %s, FALSE)
+            """,
+            (email, salt, pass_hash),
+        )
+        DB_CONN.commit()
+    except MySQL.Error as e:
+        print(e)
+        return False
+    return True
+
+
+# Hashes a password with a random salt
+def hash_new_password(password: str) -> Tuple[str, str]:
+    salt: bytes = bcrypt.gensalt()
+    pw_hash: str = bcrypt.hashpw(password.encode(), salt).decode()
+    return pw_hash, salt.decode()
+
+
+# Hashes a password with the specified user's salt
+def hash_user_password(email: str, password: str) -> str:
+    DB_CURSOR.execute("SELECT salt FROM user_account WHERE email = %s", (email,))
+    salt: bytes = DB_CURSOR.fetchone()["salt"].encode()
+    return bcrypt.hashpw(password.encode(), salt).decode()
 
 
 # Function to generate a random link for the user once an event is made

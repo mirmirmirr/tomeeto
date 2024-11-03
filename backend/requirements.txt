@@ -1,2 +1,4 @@
 black
 fastapi
+bcrypt
+mysql-connector-python
