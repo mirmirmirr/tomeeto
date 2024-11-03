@@ -1,6 +1,35 @@
+from dotenv import load_dotenv
+import os
+
 import base64
 import random
 import string
+
+# MySQL Connector stuff
+import mysql.connector as MySQL
+from mysql.connector import MySQLConnection
+from mysql.connector.cursor import MySQLCursorDict
+
+# Load the .env file
+load_dotenv()
+
+HOST: str = os.getenv("HOST")
+PORT: int = os.getenv("PORT")
+USERNAME: str = os.getenv("USERNAME")
+PASSWORD: str = os.getenv("PASSWORD")
+DATABASE: str = os.getenv("DATABASE")
+
+DB_CONN = MySQL.connect(
+    host=HOST, port=PORT, user=USERNAME, password=PASSWORD, database=DATABASE
+)
+DB_CURSOR: MySQLCursorDict = DB_CONN.cursor(dictionary=True)
+
+
+# Function to execute a query on the database
+def execute_query(query: str) -> dict:
+    DB_CURSOR.execute(query)
+    results = DB_CURSOR.fetchall()
+    return results
 
 
 # Function to hash a password and decode it for security purposes:

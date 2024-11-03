@@ -1,11 +1,13 @@
 from fastapi import FastAPI
+from utils import execute_query
 
 app = FastAPI()
 
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    result = execute_query("SELECT 'Hello, World!' AS message")
+    return result[0]
 
 
 @app.get("/create_event")
