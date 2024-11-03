@@ -2,19 +2,17 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
 
 @app.get("/create_event")
 async def create_event():
     rows = 0
     cols = 0
-    calendar_data = {
-        row: rows,
-        col: cols,
-        free_times: []
-    }
+    calendar_data = {row: rows, col: cols, free_times: []}
 
     for row in range(rows):
         for col in range(cols):
@@ -23,9 +21,11 @@ async def create_event():
 
     return {"message": "you sent calendar data"}
 
+
 @app.get("/login")
 async def login():
     return {"message": "you sent login data"}
+
 
 @app.get("/cookies")
 async def root():
