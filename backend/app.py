@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from utils import db_hello_world, check_user, hash_new_password, add_user
+from utils import db_hello_world, check_user_exists, hash_new_password, add_user
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -36,8 +36,9 @@ class SignUp(BaseModel):
 
 @app.post("/signup")
 async def sign_up(info: SignUp):
-    if check_user(info.email):
-        return {"message": "A user with this email already exists"}
+    result: str = check_user_exists(info.email)
+    if len(result) > 0:
+        return {"message": result}
     pass_hash, salt = hash_new_password(info.password)
     add_user(info.email, pass_hash, salt)
     return {"message": "User created"}

@@ -33,9 +33,15 @@ def db_hello_world() -> dict:
 
 
 # Checks if a user already has an account
-def check_user(email: str) -> bool:
-    DB_CURSOR.execute("SELECT * FROM user_account WHERE email = %s", (email,))
-    return DB_CURSOR.fetchone() is not None
+def check_user_exists(email: str) -> str:
+    try:
+        DB_CURSOR.execute("SELECT * FROM user_account WHERE email = %s", (email,))
+    except MySQL.Error as e:
+        print(e)
+        return "Database error"
+    if DB_CURSOR.fetchone() is not None:
+        return "A user with that email already exists"
+    return ""
 
 
 # Adds a user to the database
