@@ -1,21 +1,31 @@
 from datetime import datetime
 from abc import ABC, abstractmethod
+from enum import Enum
+from user import User
+
+
+class Duration(Enum):
+    QUARTER = 15
+    HALF = 30
+    HOUR = 60
 
 
 class Event(ABC):
     def __init__(
         self,
-        creator_id: int,
+        creator: User,
         title: str,
         description: str,
         start_time: datetime,
         end_time: datetime,
+        duration: Duration,
     ) -> None:
-        self.creator_id: int = creator_id
+        self.creator: User = creator
         self.title: str = title
         self.description: str = description
         self.start_time: datetime = start_time
         self.end_time: datetime = end_time
+        self.duration: Duration = duration
 
     @abstractmethod
     def sql_create(self) -> str:
@@ -29,15 +39,16 @@ class Event(ABC):
 class DateEvent(Event):
     def __init__(
         self,
-        creator_id: int,
+        creator: User,
         title: str,
         description: str,
         start_time: datetime,
         end_time: datetime,
+        duration: Duration,
         start_date: datetime,
         end_date: datetime,
     ) -> None:
-        super().__init__(creator_id, title, description, start_time, end_time)
+        super().__init__(creator, title, description, start_time, end_time, duration)
         self.start_date: datetime = start_date
         self.end_date: datetime = end_date
 
@@ -45,14 +56,15 @@ class DateEvent(Event):
 class GenericWeekEvent(Event):
     def __init__(
         self,
-        creator_id: int,
+        creator: User,
         title: str,
         description: str,
         start_time: datetime,
         end_time: datetime,
+        duration: Duration,
         start_weekday: int,
         end_weekday: int,
     ) -> None:
-        super().__init__(creator_id, title, description, start_time, end_time)
+        super().__init__(creator, title, description, start_time, end_time, duration)
         self.start_weekday: int = start_weekday
         self.end_weekday: int = end_weekday
