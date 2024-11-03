@@ -1,7 +1,9 @@
+from typing import List
 from datetime import datetime
 from abc import ABC, abstractmethod
 from enum import Enum
 from user import User
+from availability import Availability
 
 
 class Duration(Enum):
@@ -19,6 +21,7 @@ class Event(ABC):
         start_time: datetime,
         end_time: datetime,
         duration: Duration,
+        availabilities: List[Availability],
     ) -> None:
         self.creator: User = creator
         self.title: str = title
@@ -26,6 +29,7 @@ class Event(ABC):
         self.start_time: datetime = start_time
         self.end_time: datetime = end_time
         self.duration: Duration = duration
+        self.availabilities: List[Availability] = availabilities
 
     @abstractmethod
     def sql_create(self) -> str:
@@ -45,10 +49,13 @@ class DateEvent(Event):
         start_time: datetime,
         end_time: datetime,
         duration: Duration,
+        availabilities: List[Availability],
         start_date: datetime,
         end_date: datetime,
     ) -> None:
-        super().__init__(creator, title, description, start_time, end_time, duration)
+        super().__init__(
+            creator, title, description, start_time, end_time, duration, availabilities
+        )
         self.start_date: datetime = start_date
         self.end_date: datetime = end_date
 
@@ -62,9 +69,12 @@ class GenericWeekEvent(Event):
         start_time: datetime,
         end_time: datetime,
         duration: Duration,
+        availabilities: List[Availability],
         start_weekday: int,
         end_weekday: int,
     ) -> None:
-        super().__init__(creator, title, description, start_time, end_time, duration)
+        super().__init__(
+            creator, title, description, start_time, end_time, duration, availabilities
+        )
         self.start_weekday: int = start_weekday
         self.end_weekday: int = end_weekday
