@@ -44,6 +44,13 @@ def check_user_exists(email: str) -> str:
     return ""
 
 
+# Hashes a password with a random salt
+def hash_new_password(password: str) -> Tuple[str, str]:
+    salt: bytes = bcrypt.gensalt()
+    pw_hash: str = bcrypt.hashpw(password.encode(), salt).decode()
+    return pw_hash, salt.decode()
+
+
 # Adds a user to the database
 def add_user(email: str, pass_hash: str, salt: str) -> bool:
     try:
@@ -63,18 +70,13 @@ def add_user(email: str, pass_hash: str, salt: str) -> bool:
     return True
 
 
-# Hashes a password with a random salt
-def hash_new_password(password: str) -> Tuple[str, str]:
-    salt: bytes = bcrypt.gensalt()
-    pw_hash: str = bcrypt.hashpw(password.encode(), salt).decode()
-    return pw_hash, salt.decode()
-
-
-# Hashes a password with the specified user's salt
-def hash_user_password(email: str, password: str) -> str:
-    DB_CURSOR.execute("SELECT salt FROM user_account WHERE email = %s", (email,))
-    salt: bytes = DB_CURSOR.fetchone()["salt"].encode()
-    return bcrypt.hashpw(password.encode(), salt).decode()
+# Checks if a user's login info is correct
+def check_login(email: str, password: str) -> bool:
+    DB_CURSOR.execute(
+        "SELECT password_hash FROM user_account WHERE email = %s", (email,)
+    )
+    pw_hash: str = DB_CURSOR.fetchone()["password_hash"]
+    return bcrypt.checkpw(password.encode(), pw_hash.encode())
 
 
 # Function to generate a random link for the user once an event is made

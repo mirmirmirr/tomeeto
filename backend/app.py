@@ -1,5 +1,11 @@
 from fastapi import FastAPI
-from utils import db_hello_world, check_user_exists, hash_new_password, add_user
+from utils import (
+    db_hello_world,
+    check_user_exists,
+    hash_new_password,
+    add_user,
+    check_login,
+)
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -24,11 +30,6 @@ async def create_event():
     return {"message": "you sent calendar data"}
 
 
-@app.post("/login")
-async def login():
-    return {"message": "you sent login data"}
-
-
 class SignUp(BaseModel):
     email: str
     password: str
@@ -42,6 +43,18 @@ async def sign_up(info: SignUp):
     pass_hash, salt = hash_new_password(info.password)
     add_user(info.email, pass_hash, salt)
     return {"message": "User created"}
+
+
+class Login(BaseModel):
+    email: str
+    password: str
+
+
+@app.post("/login")
+async def login(info: Login):
+    if check_login(info.email, info.password):
+        return {"message": "Login successful"}
+    return {"message": "Login failed"}
 
 
 @app.get("/cookies")
