@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS user_account;
 CREATE TABLE IF NOT EXISTS user_account (
     user_account_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255),
+    salt VARCHAR(255),
     password_hash VARCHAR(255),
     is_internal BOOL NOT NULL DEFAULT FALSE,
     is_guest BOOL NOT NULL,
