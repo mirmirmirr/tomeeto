@@ -45,23 +45,23 @@ def check_user_exists(email: str) -> str:
 
 
 # Hashes a password with a random salt
-def hash_new_password(password: str) -> Tuple[str, str]:
+def hash_new_password(password: str) -> str:
     salt: bytes = bcrypt.gensalt()
     pw_hash: str = bcrypt.hashpw(password.encode(), salt).decode()
-    return pw_hash, salt.decode()
+    return pw_hash
 
 
 # Adds a user to the database
-def add_user(email: str, pass_hash: str, salt: str) -> bool:
+def add_user(email: str, pass_hash: str) -> bool:
     try:
         DB_CURSOR.execute(
             """
                 INSERT INTO
-                    user_account (email, salt, password_hash, is_guest)
+                    user_account (email, password_hash, is_guest)
                 VALUES
-                    (%s, %s, %s, FALSE)
+                    (%s, %s, FALSE)
             """,
-            (email, salt, pass_hash),
+            (email, pass_hash),
         )
         DB_CONN.commit()
     except MySQL.Error as e:
@@ -75,7 +75,10 @@ def check_login(email: str, password: str) -> bool:
     DB_CURSOR.execute(
         "SELECT password_hash FROM user_account WHERE email = %s", (email,)
     )
-    pw_hash: str = DB_CURSOR.fetchone()["password_hash"]
+    query_result = DB_CURSOR.fetchone()
+    if query_result is None:
+        return False
+    pw_hash: str = query_result["password_hash"]
     return bcrypt.checkpw(password.encode(), pw_hash.encode())
 
 

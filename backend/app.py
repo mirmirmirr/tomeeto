@@ -30,33 +30,23 @@ async def create_event():
     return {"message": "you sent calendar data"}
 
 
-class SignUp(BaseModel):
+class AuthInfo(BaseModel):
     email: str
     password: str
 
 
 @app.post("/signup")
-async def sign_up(info: SignUp):
+async def sign_up(info: AuthInfo):
     result: str = check_user_exists(info.email)
     if len(result) > 0:
         return {"message": result}
-    pass_hash, salt = hash_new_password(info.password)
-    add_user(info.email, pass_hash, salt)
+    pass_hash = hash_new_password(info.password)
+    add_user(info.email, pass_hash)
     return {"message": "User created"}
 
 
-class Login(BaseModel):
-    email: str
-    password: str
-
-
 @app.post("/login")
-async def login(info: Login):
+async def login(info: AuthInfo):
     if check_login(info.email, info.password):
         return {"message": "Login successful"}
     return {"message": "Login failed"}
-
-
-@app.get("/cookies")
-async def root():
-    return {"message": "you sent cookie data"}
