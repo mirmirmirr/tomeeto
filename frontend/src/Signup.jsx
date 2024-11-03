@@ -28,7 +28,11 @@ export default function Signup() {
       <div className="flex flex-row justify-center items-center mt-[10vh]">
         <div className="flex flex-col items-center justify-center">
           <div className="leading-snug -mt-[10vh]">
-            <span className={`text-[18vw] font-bold ${isDarkMode ? 'text-white' : 'text-[#3E505B]'}`}>Signup</span>
+            <span
+              className={`text-[18vw] font-bold ${isDarkMode ? 'text-white' : 'text-[#3E505B]'}`}
+            >
+              Signup
+            </span>
           </div>
           <div className="leading-snug -mt-[26vh]">
             <span className="text-[18vw] font-bold text-red-500">Signup</span>
@@ -39,8 +43,7 @@ export default function Signup() {
         </div>
 
         <div className="w-1/2 flex flex-col items-center space-y-4 p-6">
-
-          <div id='email' className="w-full">
+          <div id="email" className="w-full">
             <label
               className={`block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
             >
@@ -53,7 +56,7 @@ export default function Signup() {
             />
           </div>
 
-          <div id='username' className="w-[35vw]">
+          <div id="username" className="w-[35vw]">
             <label
               className={`block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
             >
@@ -69,8 +72,8 @@ export default function Signup() {
               }`}
             />
           </div>
-          
-          <div id='password' className="w-[35vw]">
+
+          <div id="password" className="w-[35vw]">
             <label
               className={`mt-[30px] block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
             >
@@ -87,7 +90,7 @@ export default function Signup() {
             />
           </div>
 
-          <div id='confirmPassword' className="w-[35vw]">
+          <div id="confirmPassword" className="w-[35vw]">
             <label
               className={`block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
             >
