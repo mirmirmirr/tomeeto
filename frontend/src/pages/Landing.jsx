@@ -1,30 +1,18 @@
 import { useState } from 'react';
-import darkLogo from '../src/assets/tomeeto-dark.png';
-import lightLogo from '../src/assets/tomeeto-light.png';
+import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../resources/ThemeContext';
+import Header from '../resources/Header';
 
 export default function Landing() {
+  const navigate = useNavigate();
   const [code, setCode] = useState('');
-  const [isDarkMode, setIsDarkMode] = useState(true);
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const { isDarkMode, toggleTheme } = useTheme();
 
   return (
     <div
       className={`relative flex flex-col items-center justify-center min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
     >
-      <img
-        src={isDarkMode ? darkLogo : lightLogo}
-        alt="Logo"
-        className="absolute top-4 left-4 w-24 h-auto object-contain"
-      />
-      <button
-        onClick={toggleTheme}
-        className="absolute top-4 right-4 p-2 bg-gray-300 rounded-full shadow-md hover:bg-gray-400 transition duration-300"
-      >
-        {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-      </button>
+      <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div className="flex flex-col items-center space-y-6 p-6 w-full max-w-lg">
         <button
           className={`w-full px-8 py-6 text-lg font-semibold rounded-lg shadow-md transition duration-300 ${isDarkMode ? 'bg-white text-[#3E505B]' : 'bg-[#3E505B] text-white'}`}
@@ -43,11 +31,15 @@ export default function Landing() {
         </div>
         <div className="flex space-x-4 w-full">
           <button
+            onClick={() => navigate('/login')}
             className={`flex-1 px-6 py-3 bg-transparent border-2 rounded-md shadow-md transition duration-300 ${isDarkMode ? 'text-white border-white' : 'text-black border-black'}`}
           >
             LOGIN
           </button>
-          <button className="flex-1 px-6 py-3 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300">
+          <button
+            onClick={() => navigate('/signup')}
+            className="flex-1 px-6 py-3 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300"
+          >
             SIGNUP
           </button>
         </div>

@@ -1,23 +1,23 @@
 import { useState } from 'react';
-import darkLogo from '../src/assets/tomeeto-dark.png';
-import lightLogo from '../src/assets/tomeeto-light.png';
-import darkEye from '../src/assets/eye_dark.png';
-import lightEye from '../src/assets/eye_light.png';
-import darkHidden from '../src/assets/hidden_dark.png';
-import lightHidden from '../src/assets/hidden_light.png';
+import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../resources/ThemeContext';
+
+import Header from '../resources/Header';
+import darkEye from '../../src/assets/eye_dark.png';
+import lightEye from '../../src/assets/eye_light.png';
+import darkHidden from '../../src/assets/hidden_dark.png';
+import lightHidden from '../../src/assets/hidden_light.png';
 
 export default function Signup() {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const navigate = useNavigate();
+
+  const { isDarkMode, toggleTheme } = useTheme();
   const [passwordValues, setPasswordValues] = useState({
     password: '',
     confirmPassword: '',
     showPassword: false,
     showConfirmPassword: false,
   });
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
 
   const handleTogglePasswordVisibility = (field) => {
     setPasswordValues((prevValues) => ({
@@ -37,17 +37,7 @@ export default function Signup() {
     <div
       className={`relative flex flex-col items-center justify-center min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
     >
-      <img
-        src={isDarkMode ? darkLogo : lightLogo}
-        alt="Logo"
-        className="absolute top-4 left-4 w-24 h-auto object-contain"
-      />
-      <button
-        onClick={toggleTheme}
-        className="absolute top-4 right-4 p-2 bg-gray-300 rounded-full shadow-md hover:bg-gray-400 transition duration-300"
-      >
-        {isDarkMode ? 'Dark Mode' : 'Light Mode'}
-      </button>
+      <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
       <div className="flex flex-row justify-center items-center mt-[10vh]">
         <div className="flex flex-col items-center justify-center">
@@ -77,23 +67,6 @@ export default function Signup() {
               type="email"
               placeholder="Type email here"
               className={`w-full py-2 bg-transparent border-b-2 focus:outline-none ${isDarkMode ? 'text-white border-white placeholder-white placeholder-opacity-50' : 'text-black border-black placeholder-black placeholder-opacity-50'}`}
-            />
-          </div>
-
-          <div id="username" className="w-[35vw]">
-            <label
-              className={`block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              placeholder="enter username here (optional)"
-              className={`w-[35vw] py-2 bg-transparent border-b-2 focus:outline-none ${
-                isDarkMode
-                  ? 'text-white border-white placeholder-white placeholder-opacity-50'
-                  : 'text-black border-black placeholder-black placeholder-opacity-50'
-              }`}
             />
           </div>
 
@@ -171,7 +144,8 @@ export default function Signup() {
             Create account
           </button>
           <p
-            className={`w-[35vw] subtext-responsive text-opacity-70 text-center ${isDarkMode ? 'text-white' : 'text-black'} hover:underline hover:text-opacity-100`}
+            onClick={() => navigate('/login')}
+            className={`w-[35vw] subtext-responsive text-opacity-70 text-center ${isDarkMode ? 'text-white' : 'text-black'} hover:underline hover:text-opacity-100 cursor-pointer`}
           >
             But I already have an account!
           </p>
