@@ -105,7 +105,7 @@ export default function Result() {
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div
-        className={`flex flex-col mt-[7vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
+        className={`flex flex-col mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
         <div
           id="eventName"
@@ -163,7 +163,7 @@ export default function Result() {
                   className="h-full"
                   style={{ height: `calc(100% / ${hours.length})` }}
                 >
-                  <td className="p-2 text-right text-[10pt]">
+                  <td className="text-right text-[10pt]">
                     {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
                   </td>
                   {displayedDays.map((_, column) => {

@@ -125,7 +125,7 @@ export default function Availability() {
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
       <div
-        className={`flex flex-col mt-[7vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
+        className={`flex flex-col mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
         <div
           id="eventName"
@@ -136,11 +136,11 @@ export default function Availability() {
         </div>
 
         <div
-          className={`w-[90vw] border-t-2 ml-4 opacity-25 ${isDarkMode ? 'border-gray-300' : 'border-gray-500'}`}
+          className={`w-[93vw] border-t-2 m-auto opacity-25 ${isDarkMode ? 'border-gray-300' : 'border-gray-500'}`}
         ></div>
 
-        <div className="flex justify-between items-center mt-4">
-          <div className="pl-4" style={{ fontSize: `min(2vw, 30px)` }}>
+        <div className="flex w-[90vw] justify-between items-center mt-4">
+          <div className="pl-4" style={{ fontSize: `min(2vw, 20px)` }}>
             Hi,{' '}
             <input
               type="text"
@@ -154,7 +154,7 @@ export default function Availability() {
           </div>
           <button
             onClick={() => console.log('Submit button clicked')}
-            className={`w-32 p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500 ml-4`}
+            className={`w-32 p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500`}
           >
             Submit
           </button>
@@ -162,7 +162,7 @@ export default function Availability() {
 
         <div
           id="availability"
-          className="w-[90vw] h-[70vh] mt-[3vh] flex flex-row overflow-hidden"
+          className="w-[90vw] h-[64vh] mt-[1vh] flex flex-row overflow-hidden"
         >
           <div className="flex mt-4">
             {currentPage > 0 && (
@@ -204,7 +204,7 @@ export default function Availability() {
                   className="h-full"
                   style={{ height: `calc(100% / ${hours.length})` }}
                 >
-                  <td className="p-2 text-right text-[10pt]">
+                  <td className="pr-2 text-right text-[10pt]">
                     {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
                   </td>
                   {displayedDays.map((_, column) => (
