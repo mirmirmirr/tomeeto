@@ -6,6 +6,7 @@ export default function Result() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [hoveredCell, setHoveredCell] = useState({ row: null, column: null });
   const [currentPage, setCurrentPage] = useState(0);
+  const [isDisabled, setIsDisabled] = useState(true);
   const daysPerPage = 7; // Number of days per page
 
   const eventTitle = 'tomeeto planning';
@@ -147,6 +148,7 @@ export default function Result() {
                 onClick={goToNextPage}
                 className="h-full flex items-center justify-center px-4 py-2 opacity-0"
                 style={{ fontSize: '2rem' }}
+                disabled={isDisabled}
               >
                 &#65310;
               </button>
@@ -204,6 +206,7 @@ export default function Result() {
                 onClick={goToPrevPage}
                 className="px-4 py-2 opacity-0"
                 style={{ fontSize: '2rem' }}
+                disabled={isDisabled}
               >
                 &#65308; {/* Previous page entity */}
               </button>
