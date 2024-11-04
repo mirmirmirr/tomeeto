@@ -1,22 +1,20 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from './resources/ThemeContext';
+import { useTheme } from '../resources/ThemeContext';
 
-import Header from './Header';
-import darkEye from '../src/assets/eye_dark.png';
-import lightEye from '../src/assets/eye_light.png';
-import darkHidden from '../src/assets/hidden_dark.png';
-import lightHidden from '../src/assets/hidden_light.png';
+import Header from '../resources/Header';
+import darkEye from '../../src/assets/eye_dark.png';
+import lightEye from '../../src/assets/eye_light.png';
+import darkHidden from '../../src/assets/hidden_dark.png';
+import lightHidden from '../../src/assets/hidden_light.png';
 
-export default function Signup() {
+export default function Login() {
   const navigate = useNavigate();
 
   const { isDarkMode, toggleTheme } = useTheme();
   const [passwordValues, setPasswordValues] = useState({
     password: '',
-    confirmPassword: '',
     showPassword: false,
-    showConfirmPassword: false,
   });
 
   const handleTogglePasswordVisibility = (field) => {
@@ -35,7 +33,7 @@ export default function Signup() {
 
   return (
     <div
-      className={`relative flex flex-col items-center justify-center min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
+      className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
@@ -43,34 +41,38 @@ export default function Signup() {
         <div className="flex flex-col items-center justify-center">
           <div className="leading-snug -mt-[10vh]">
             <span
-              className={`text-[18vw] font-bold ${isDarkMode ? 'text-white' : 'text-[#3E505B]'}`}
+              className={`text-huge font-bold ${isDarkMode ? 'text-white' : 'text-[#3E505B]'}`}
             >
-              Signup
+              Login
             </span>
           </div>
-          <div className="leading-snug -mt-[26vh]">
-            <span className="text-[18vw] font-bold text-red-500">Signup</span>
+          <div className="leading-snug -mt-[30.4vh]">
+            <span className="text-huge font-bold text-red-500">Login</span>
           </div>
-          <div className="leading-snug -mt-[26vh]">
-            <span className="text-[18vw] font-bold text-green-500">Signup</span>
+          <div className="leading-snug -mt-[30.4vh]">
+            <span className="text-huge font-bold text-green-500">Login</span>
           </div>
         </div>
 
         <div className="w-1/2 flex flex-col items-center space-y-4 p-6">
-          <div id="email" className="w-full">
+          <div className="w-[35vw] mb-[20px]">
             <label
               className={`block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
             >
-              Email
+              Username
             </label>
             <input
-              type="email"
-              placeholder="Type email here"
-              className={`w-full py-2 bg-transparent border-b-2 focus:outline-none ${isDarkMode ? 'text-white border-white placeholder-white placeholder-opacity-50' : 'text-black border-black placeholder-black placeholder-opacity-50'}`}
+              type="text"
+              placeholder="enter username here"
+              className={`w-[35vw] py-2 bg-transparent border-b-2 focus:outline-none ${
+                isDarkMode
+                  ? 'text-white border-white placeholder-white placeholder-opacity-50'
+                  : 'text-black border-black placeholder-black placeholder-opacity-50'
+              }`}
             />
           </div>
 
-          <div id="password" className="w-[35vw] relative">
+          <div className="w-[35vw] relative">
             <label
               className={`mt-[30px] block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
             >
@@ -101,53 +103,25 @@ export default function Signup() {
               onClick={() => handleTogglePasswordVisibility('showPassword')}
               className="absolute right-2 top-[70px] w-6 h-6 cursor-pointer"
             />
-          </div>
-
-          <div id="confirmPassword" className="w-[35vw] relative">
-            <label
-              className={`block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
-            >
-              Password Again
-            </label>
-            <input
-              type={passwordValues.showConfirmPassword ? 'text' : 'password'}
-              placeholder="enter password again"
-              value={passwordValues.confirmPassword}
-              onChange={handlePasswordChange('confirmPassword')}
-              className={`w-full py-2 pr-10 bg-transparent border-b-2 focus:outline-none ${
-                isDarkMode
-                  ? 'text-white border-white placeholder-white placeholder-opacity-50'
-                  : 'text-black border-black placeholder-black placeholder-opacity-50'
-              }`}
-            />
-            <img
-              src={
-                passwordValues.showConfirmPassword
-                  ? isDarkMode
-                    ? darkEye
-                    : lightEye
-                  : isDarkMode
-                    ? darkHidden
-                    : lightHidden
-              }
-              alt="Toggle confirm password visibility"
-              onClick={() =>
-                handleTogglePasswordVisibility('showConfirmPassword')
-              }
-              className="absolute right-2 top-10 w-6 h-6 cursor-pointer"
-            />
+            <div className="w-full text-right leading-loose">
+              <button
+                className={`text-sm text-opacity-70 ${isDarkMode ? 'text-white' : 'text-black'} hover:underline hover:text-opacity-100`}
+              >
+                Forgot Password?
+              </button>
+            </div>
           </div>
 
           <button
             className={`w-[35vw] text-responsive py-3 font-semibold rounded-lg transition duration-300 ${isDarkMode ? 'bg-white text-[#3E505B]' : 'bg-[#3E505B] text-white'}`}
           >
-            Create account
+            Login
           </button>
           <p
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/signup')}
             className={`w-[35vw] subtext-responsive text-opacity-70 text-center ${isDarkMode ? 'text-white' : 'text-black'} hover:underline hover:text-opacity-100`}
           >
-            But I already have an account!
+            Signup
           </p>
           <div
             className={`w-[35vw] border-t-2 my-4 ${

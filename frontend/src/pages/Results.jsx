@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from './resources/ThemeContext';
+import { useTheme } from '../resources/ThemeContext';
 
-import Header from './Header';
+import Header from '../resources/Header';
 
 export default function Result() {
   const navigate = useNavigate();
