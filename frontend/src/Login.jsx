@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Toggle from './Toggle';
 import darkLogo from '../src/assets/tomeeto-dark.png';
 import lightLogo from '../src/assets/tomeeto-light.png';
 
@@ -18,12 +19,10 @@ export default function Login() {
         alt="Logo"
         className="absolute top-4 left-8 w-[9vw] h-auto object-contain"
       />
-      <button
-        onClick={toggleTheme}
-        className="absolute top-4 right-4 p-2 bg-gray-300 rounded-[40vw] shadow-md hover:bg-gray-400 transition duration-300"
-      >
-        {isDarkMode ? 'Dark Mode' : 'Light Mode'}
-      </button>
+      <Toggle
+        isDarkMode={isDarkMode}
+        toggleTheme={toggleTheme}
+      />
       <div className="flex flex-row justify-center items-center mt-[10vh]">
         <div className="flex flex-col items-center justify-center">
           <div className="leading-snug -mt-[10vh]">
