@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import darkLogo from '../src/assets/tomeeto-dark.png';
-import lightLogo from '../src/assets/tomeeto-light.png';
+import { useTheme } from '../resources/ThemeContext';
+import Header from '../resources/Header';
 
 export default function Availability() {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const navigate = useNavigate();
+
+  const { isDarkMode, toggleTheme } = useTheme();
   const [availability, setAvailability] = useState(
     Array(7).fill(Array(24).fill(false))
   );
@@ -12,11 +14,6 @@ export default function Availability() {
   const [dragStart, setDragStart] = useState(null);
   const [dragEnd, setDragEnd] = useState(null);
   const [name, setName] = useState('');
-  const navigate = useNavigate();
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
 
   const handleMouseDown = (day, hour) => {
     setIsDragging(true);
@@ -117,18 +114,8 @@ export default function Availability() {
       className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
       onMouseUp={handleMouseUp}
     >
-      <img
-        src={isDarkMode ? darkLogo : lightLogo}
-        alt="Logo"
-        className="absolute top-4 left-4 w-24 h-auto object-contain cursor-pointer"
-        onClick={() => navigate('/')}
-      />
-      <button
-        onClick={toggleTheme}
-        className="absolute top-4 right-4 p-2 bg-gray-300 rounded-full shadow-md hover:bg-gray-400 transition duration-300"
-      >
-        {isDarkMode ? 'Dark Mode' : 'Light Mode'}
-      </button>
+      <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+
       <div
         className={`flex flex-col mt-[7vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
@@ -169,7 +156,6 @@ export default function Availability() {
           id="availability"
           className="w-full h-[70vh] ml-auto mr-auto mt-[3vh] flex flex-col overflow-hidden"
         >
-          <div className="flex justify-between mt-4 w-full">
             <table className="w-full table-fixed">
               <thead>
                 <tr>
@@ -213,7 +199,6 @@ export default function Availability() {
                 ))}
               </tbody>
             </table>
-          </div>
         </div>
       </div>
     </div>
