@@ -1,12 +1,36 @@
 import { useState } from 'react';
 import darkLogo from '../src/assets/tomeeto-dark.png';
 import lightLogo from '../src/assets/tomeeto-light.png';
+import darkEye from '../src/assets/eye_dark.png';
+import lightEye from '../src/assets/eye_light.png';
+import darkHidden from '../src/assets/hidden_dark.png';
+import lightHidden from '../src/assets/hidden_light.png';
 
 export default function Signup() {
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [passwordValues, setPasswordValues] = useState({
+    password: '',
+    confirmPassword: '',
+    showPassword: false,
+    showConfirmPassword: false,
+  });
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const handleTogglePasswordVisibility = (field) => {
+    setPasswordValues((prevValues) => ({
+      ...prevValues,
+      [field]: !prevValues[field],
+    }));
+  };
+
+  const handlePasswordChange = (prop) => (event) => {
+    setPasswordValues({
+      ...passwordValues,
+      [prop]: event.target.value,
+    });
   };
 
   return (
@@ -73,37 +97,71 @@ export default function Signup() {
             />
           </div>
 
-          <div id="password" className="w-[35vw]">
+          <div id="password" className="w-[35vw] relative">
             <label
               className={`mt-[30px] block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
             >
               Password
             </label>
             <input
-              type="text"
+              type={passwordValues.showPassword ? 'text' : 'password'}
+              value={passwordValues.password}
+              onChange={handlePasswordChange('password')}
               placeholder="choose a password"
-              className={`w-[35vw] py-2 bg-transparent border-b-2 focus:outline-none ${
+              className={`w-full py-2 pr-10 bg-transparent border-b-2 focus:outline-none ${
                 isDarkMode
                   ? 'text-white border-white placeholder-white placeholder-opacity-50'
                   : 'text-black border-black placeholder-black placeholder-opacity-50'
               }`}
             />
+            <img
+              src={
+                passwordValues.showPassword
+                  ? isDarkMode
+                    ? darkEye
+                    : lightEye
+                  : isDarkMode
+                    ? darkHidden
+                    : lightHidden
+              }
+              alt="Toggle password visibility"
+              onClick={() => handleTogglePasswordVisibility('showPassword')}
+              className="absolute right-2 top-[70px] w-6 h-6 cursor-pointer"
+            />
           </div>
 
-          <div id="confirmPassword" className="w-[35vw]">
+          <div id="confirmPassword" className="w-[35vw] relative">
             <label
               className={`block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
             >
               Password Again
             </label>
             <input
-              type="text"
+              type={passwordValues.showConfirmPassword ? 'text' : 'password'}
               placeholder="enter password again"
-              className={`w-[35vw] py-2 bg-transparent border-b-2 focus:outline-none ${
+              value={passwordValues.confirmPassword}
+              onChange={handlePasswordChange('confirmPassword')}
+              className={`w-full py-2 pr-10 bg-transparent border-b-2 focus:outline-none ${
                 isDarkMode
                   ? 'text-white border-white placeholder-white placeholder-opacity-50'
                   : 'text-black border-black placeholder-black placeholder-opacity-50'
               }`}
+            />
+            <img
+              src={
+                passwordValues.showConfirmPassword
+                  ? isDarkMode
+                    ? darkEye
+                    : lightEye
+                  : isDarkMode
+                    ? darkHidden
+                    : lightHidden
+              }
+              alt="Toggle confirm password visibility"
+              onClick={() =>
+                handleTogglePasswordVisibility('showConfirmPassword')
+              }
+              className="absolute right-2 top-10 w-6 h-6 cursor-pointer"
             />
           </div>
 
