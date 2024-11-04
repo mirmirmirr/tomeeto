@@ -1,4 +1,3 @@
-from typing import Tuple
 from dotenv import load_dotenv
 import os
 import bcrypt
@@ -56,10 +55,10 @@ def add_user(email: str, pass_hash: str) -> bool:
     try:
         DB_CURSOR.execute(
             """
-                INSERT INTO
-                    user_account (email, password_hash, is_guest)
-                VALUES
-                    (%s, %s, FALSE)
+            INSERT INTO
+                user_account (email, password_hash, is_guest)
+            VALUES
+                (%s, %s, FALSE)
             """,
             (email, pass_hash),
         )
@@ -72,8 +71,30 @@ def add_user(email: str, pass_hash: str) -> bool:
 
 # Checks if a user's login info is correct
 def check_login(json: dict) -> bool:
-    if "email" not in json or "password" not in json:
-        return False
+    if "email" not in json:
+        if "guest_id" not in json:
+            return False
+        else:
+            DB_CURSOR.execute(
+                """
+                SELECT
+                    password_hash
+                FROM
+                    user_account
+                WHERE
+                    user_account_id = %s
+                    AND is_guest = TRUE
+                """,
+                (json["guest_id"],),
+            )
+            query_result = DB_CURSOR.fetchone()
+            if query_result is None:
+                return False
+            else:
+                return bcrypt.checkpw(
+                    json["password"].encode(), query_result["password_hash"].encode()
+                )
+    
     email: str = json["email"]
     password: str = json["password"]
     DB_CURSOR.execute(
@@ -86,10 +107,27 @@ def check_login(json: dict) -> bool:
     return bcrypt.checkpw(password.encode(), pw_hash.encode())
 
 
-# Function to generate a random link for the user once an event is made
-def generate_random_link(length: int = 10) -> str:
+# Generates a random string of numbers and letters
+def generate_random_string(length: int = 10) -> str:
     # Define the characters to use: uppercase, lowercase letters, and digits
     characters = string.ascii_letters + string.digits
     # Randomly select 'length' characters from the character set
-    random_link = "".join(random.choice(characters) for _ in range(length))
-    return "http://tomeeto.cs.rpi.edu/" + random_link
+    random_string = "".join(random.choice(characters) for _ in range(length))
+    return random_string
+
+
+# Creates a guest account
+def make_guest() -> dict:
+    password = generate_random_string()
+    pass_hash = hash_new_password(password)
+    try:
+        DB_CURSOR.execute(
+            "INSERT INTO user_account (password_hash, is_guest) VALUES (%s, TRUE)",
+            (pass_hash,),
+        )
+        DB_CONN.commit()
+        DB_CURSOR.execute("SELECT LAST_INSERT_ID() AS guest_id")
+        return {"id": DB_CURSOR.fetchone()["guest_id"], "password": password}
+    except MySQL.Error as e:
+        print(e)
+        return {"message": "Database error"}
