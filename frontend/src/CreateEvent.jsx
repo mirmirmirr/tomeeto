@@ -31,7 +31,7 @@ export default function CreateEvent() {
       <button
         onClick={toggleTheme}
         className="absolute top-4 right-4 p-2 bg-gray-300 rounded-full shadow-md
-            hover:bg-gray-400 transition duration-300"
+          hover:bg-gray-400 transition duration-300"
       >
         {isDarkMode ? 'Light Mode' : 'Dark Mode'}
       </button>
@@ -68,7 +68,7 @@ export default function CreateEvent() {
             <input
               type="date"
               defaultValue={today}
-              className="p-3 text-lg rounded-lg bg-red-500 text-white 
+              className="p-3 text-lg rounded-lg bg-red-500 text-white
                 text-center focus:outline-none"
             />
             <input
@@ -82,7 +82,7 @@ export default function CreateEvent() {
           {/* Time Interval Button */}
           <button
             className={`w-[25%] p-3 mb-4 text-lg font-semibold bg-red-500
-                rounded-lg text-[#F5F5F5] focus:outline-none`}
+              rounded-lg text-[#F5F5F5] focus:outline-none`}
           >
             Time Interval
           </button>
@@ -107,7 +107,7 @@ export default function CreateEvent() {
           <label className={`flex items-center mb-4 ${textColor}`}>
             <input
               type="checkbox"
-              className="mr-2 w-5 h-5 rounded-md focus:outline-none 
+              className="mr-2 w-5 h-5 rounded-md focus:outline-none
                 bg-transparent"
             />
             <span>Select from days of the week</span>
@@ -120,16 +120,16 @@ export default function CreateEvent() {
             </label>
             <input
               type="text"
-              className={`w-full px-0 py-2 text-lg bg-transparent text-left 
-                border-b-2 focus:outline-none focus:ring-2 focus:ring-blue-500 
+              className={`w-full px-0 py-2 text-lg bg-transparent text-left
+                border-b-2 focus:outline-none focus:ring-2 focus:ring-blue-500
                 ${textColor} ${borderColor} ${placeholderColor}`}
             />
           </div>
 
           {/* Create Event Button */}
           <button
-            className={`w-full p-3 mt-4 text-lg font-semibold bg-red-500 
-                rounded-lg text-[#F5F5F5] focus:outline-none`}
+            className={`w-full p-3 mt-4 text-lg font-semibold bg-red-500
+              rounded-lg text-[#F5F5F5] focus:outline-none`}
           >
             Create Event
           </button>
