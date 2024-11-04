@@ -7,8 +7,9 @@ from utils import (
     check_login,
     new_guest,
     check_code,
-    new_event,
+    new_code,
 )
+from event import Event
 
 app = FastAPI()
 
@@ -36,7 +37,7 @@ async def signup(request: Request):
 @app.post("/login")
 async def login(request: Request):
     body: dict = await request.json()
-    if check_login(body):
+    if check_login(body) >= 0:
         return {"message": "Login successful"}
     return {"message": "Login failed"}
 
@@ -65,34 +66,21 @@ async def check_custom_code(request: Request):
 @app.post("/create_event")
 async def create_event(request: Request):
     body: dict = await request.json()
-    if not check_login(body):
+    user_id = check_login(body)
+    if user_id < 0:
         return {"message": "Login failed"}
-
-    # ERROR CHECKING WOOHOO
-    required_fields = [
-        "event_name",
-        "description",
-        "start_time",
-        "end_time",
-        "duration",
-        "event_type",
-    ]
-    type_fields = {
-        "date_range": ["start_date", "end_date"],
-        "generic_week": ["start_day", "end_day"],
-    }
-    for field in required_fields:
-        if field not in body:
-            return {"message": f"Missing field: {field}"}
-    if body["event_type"] not in type_fields:
-        return {"message": "Invalid event type"}
-    for field in type_fields[body["event_type"]]:
-        if field not in body:
-            return {"message": f"Missing field: {field}"}
-        
-    # Add the event to the database
-    code = new_event(body)
-    if len(code) == 0:
-        return {"message": "Unable to create event"}
+    else:
+        body["account_id"] = user_id
     
+    # Check the custom code or get a new one
+    custom_code = ""
+    if "custom_code" in body:
+        custom_code = body["custom_code"]
+    code = new_code(custom_code)
+    if len(code) == 0:
+        return {"message": "Invalid custom code"}
+
+    new_event = Event.from_json(body)
+    print(new_event)
+
     return {"message": "Event created", "event_code": code}

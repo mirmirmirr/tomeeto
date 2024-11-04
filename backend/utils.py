@@ -70,7 +70,7 @@ def add_user(email: str, pass_hash: str) -> bool:
 
 
 # Checks if a user's login info is correct
-def check_login(json: dict) -> bool:
+def check_login(json: dict) -> int:
     if "email" in json and "password" in json:
         email: str = json["email"]
         password: str = json["password"]
@@ -79,9 +79,13 @@ def check_login(json: dict) -> bool:
         )
         query_result: dict = DB_CURSOR.fetchone()
         if query_result is None:
-            return False
+            return -1
         pw_hash: str = query_result["password_hash"]
-        return bcrypt.checkpw(password.encode(), pw_hash.encode())
+        if bcrypt.checkpw(password.encode(), pw_hash.encode()):
+            DB_CURSOR.execute(
+                "SELECT user_account_id FROM user_account WHERE email = %s", (email,)
+            )
+            return DB_CURSOR.fetchone()["user_account_id"]
     elif "guest_id" in json and "guest_password" in json:
         DB_CURSOR.execute(
             """
@@ -97,14 +101,15 @@ def check_login(json: dict) -> bool:
         )
         query_result: dict = DB_CURSOR.fetchone()
         if query_result is None:
-            return False
+            return -1
         else:
-            return bcrypt.checkpw(
+            if bcrypt.checkpw(
                 json["guest_password"].encode(),
                 query_result["password_hash"].encode(),
-            )
+            ):
+                return json["guest_id"]
     else:
-        return False
+        return -1
 
 
 # Generates a random string of numbers and letters
@@ -152,12 +157,13 @@ def check_code(code: str) -> bool:
         print(e)
         return False
 
+
 # Adds an event to the database and returns the url code
-def new_event(json: dict) -> str:
-    if "custom_code" in json:
-        if not check_code(json["custom_code"]):
+def new_code(custom: str = "") -> str:
+    if custom != "":
+        if not check_code(custom):
             return ""
-        return json["custom_code"]
+        return custom
     else:
         new_code = generate_random_string()
         while not check_code(new_code):
