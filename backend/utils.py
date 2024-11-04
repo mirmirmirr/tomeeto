@@ -71,40 +71,40 @@ def add_user(email: str, pass_hash: str) -> bool:
 
 # Checks if a user's login info is correct
 def check_login(json: dict) -> bool:
-    if "email" not in json:
-        if "guest_id" not in json:
+    if "email" in json and "password" in json:
+        email: str = json["email"]
+        password: str = json["password"]
+        DB_CURSOR.execute(
+            "SELECT password_hash FROM user_account WHERE email = %s", (email,)
+        )
+        query_result: dict = DB_CURSOR.fetchone()
+        if query_result is None:
+            return False
+        pw_hash: str = query_result["password_hash"]
+        return bcrypt.checkpw(password.encode(), pw_hash.encode())
+    elif "guest_id" in json and "guest_password" in json:
+        DB_CURSOR.execute(
+            """
+            SELECT
+                password_hash
+            FROM
+                user_account
+            WHERE
+                user_account_id = %s
+                AND is_guest = TRUE
+            """,
+            (json["guest_id"],),
+        )
+        query_result: dict = DB_CURSOR.fetchone()
+        if query_result is None:
             return False
         else:
-            DB_CURSOR.execute(
-                """
-                SELECT
-                    password_hash
-                FROM
-                    user_account
-                WHERE
-                    user_account_id = %s
-                    AND is_guest = TRUE
-                """,
-                (json["guest_id"],),
+            return bcrypt.checkpw(
+                json["guest_password"].encode(),
+                query_result["password_hash"].encode(),
             )
-            query_result = DB_CURSOR.fetchone()
-            if query_result is None:
-                return False
-            else:
-                return bcrypt.checkpw(
-                    json["password"].encode(), query_result["password_hash"].encode()
-                )
-    
-    email: str = json["email"]
-    password: str = json["password"]
-    DB_CURSOR.execute(
-        "SELECT password_hash FROM user_account WHERE email = %s", (email,)
-    )
-    query_result = DB_CURSOR.fetchone()
-    if query_result is None:
+    else:
         return False
-    pw_hash: str = query_result["password_hash"]
-    return bcrypt.checkpw(password.encode(), pw_hash.encode())
 
 
 # Generates a random string of numbers and letters
@@ -117,7 +117,7 @@ def generate_random_string(length: int = 10) -> str:
 
 
 # Creates a guest account
-def make_guest() -> dict:
+def create_guest() -> dict:
     password = generate_random_string()
     pass_hash = hash_new_password(password)
     try:
@@ -127,7 +127,10 @@ def make_guest() -> dict:
         )
         DB_CONN.commit()
         DB_CURSOR.execute("SELECT LAST_INSERT_ID() AS guest_id")
-        return {"id": DB_CURSOR.fetchone()["guest_id"], "password": password}
+        return {
+            "guest_id": DB_CURSOR.fetchone()["guest_id"],
+            "guest_password": password,
+        }
     except MySQL.Error as e:
         print(e)
         return {"message": "Database error"}

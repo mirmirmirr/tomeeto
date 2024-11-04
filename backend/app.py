@@ -5,7 +5,7 @@ from utils import (
     hash_new_password,
     add_user,
     check_login,
-    make_guest,
+    create_guest,
 )
 
 app = FastAPI()
@@ -39,14 +39,14 @@ async def login(request: Request):
     return {"message": "Login failed"}
 
 
-@app.get('/get_guest_info')
-async def get_guest_info():
-    return make_guest()
+@app.get("/new_guest")
+async def new_guest():
+    return create_guest()
 
 
 @app.post("/create_event")
 async def create_event(request: Request):
-    body = await request.json()
+    body: dict = await request.json()
     if not check_login(body):
         return {"message": "Login failed"}
 
