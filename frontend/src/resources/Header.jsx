@@ -11,7 +11,7 @@ export default function Header({ isDarkMode, toggleTheme }) {
       <img
         src={isDarkMode ? darkLogo : lightLogo}
         alt="Logo"
-        className="absolute top-8 left-8 w-[9vw] h-auto object-contain"
+        className="absolute top-8 left-8 w-[9vw] h-auto object-contain cursor-pointer"
         onClick={() => navigate('/')}
       />
 

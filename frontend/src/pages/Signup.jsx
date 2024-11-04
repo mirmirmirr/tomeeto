@@ -145,7 +145,7 @@ export default function Signup() {
           </button>
           <p
             onClick={() => navigate('/login')}
-            className={`w-[35vw] subtext-responsive text-opacity-70 text-center ${isDarkMode ? 'text-white' : 'text-black'} hover:underline hover:text-opacity-100`}
+            className={`w-[35vw] subtext-responsive text-opacity-70 text-center ${isDarkMode ? 'text-white' : 'text-black'} hover:underline hover:text-opacity-100 cursor-pointer`}
           >
             But I already have an account!
           </p>

@@ -119,7 +119,7 @@ export default function Login() {
           </button>
           <p
             onClick={() => navigate('/signup')}
-            className={`w-[35vw] subtext-responsive text-opacity-70 text-center ${isDarkMode ? 'text-white' : 'text-black'} hover:underline hover:text-opacity-100`}
+            className={`w-[35vw] subtext-responsive text-opacity-70 text-center ${isDarkMode ? 'text-white' : 'text-black'} hover:underline hover:text-opacity-100 cursor-pointer`}
           >
             Signup
           </p>
