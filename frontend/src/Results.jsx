@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from './resources/ThemeContext';
 
 import Header from './Header';
 
 export default function Result() {
   const navigate = useNavigate();
 
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { isDarkMode, toggleTheme } = useTheme();
   const [hoveredCell, setHoveredCell] = useState({ row: null, column: null });
   const [currentPage, setCurrentPage] = useState(0);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -76,10 +77,6 @@ export default function Result() {
       ],
     },
   ];
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
 
   const availabilityCounts = hours.map((_, row) =>
     displayedDays.map((_, column) => {

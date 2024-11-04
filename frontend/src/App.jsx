@@ -1,4 +1,3 @@
-// App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Landing from './Landing.jsx';
 import Signup from './Signup.jsx';

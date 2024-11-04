@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from './resources/ThemeContext';
 
 import Header from './Header';
 import darkEye from '../src/assets/eye_dark.png';
@@ -10,15 +11,11 @@ import lightHidden from '../src/assets/hidden_light.png';
 export default function Login() {
   const navigate = useNavigate();
 
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { isDarkMode, toggleTheme } = useTheme();
   const [passwordValues, setPasswordValues] = useState({
     password: '',
     showPassword: false,
   });
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
 
   const handleTogglePasswordVisibility = (field) => {
     setPasswordValues((prevValues) => ({
