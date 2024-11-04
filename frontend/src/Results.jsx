@@ -6,7 +6,7 @@ export default function Result() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [hoveredCell, setHoveredCell] = useState({ row: null, column: null });
   const [currentPage, setCurrentPage] = useState(0);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isDisabled] = useState(true);
   const daysPerPage = 7; // Number of days per page
 
   const eventTitle = 'tomeeto planning';
