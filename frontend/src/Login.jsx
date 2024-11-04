@@ -2,12 +2,34 @@ import { useState } from 'react';
 import Toggle from './Toggle';
 import darkLogo from '../src/assets/tomeeto-dark.png';
 import lightLogo from '../src/assets/tomeeto-light.png';
+import darkEye from '../src/assets/eye_dark.png';
+import lightEye from '../src/assets/eye_light.png';
+import darkHidden from '../src/assets/hidden_dark.png';
+import lightHidden from '../src/assets/hidden_light.png';
 
 export default function Login() {
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [passwordValues, setPasswordValues] = useState({
+    password: '',
+    showPassword: false,
+  });
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const handleTogglePasswordVisibility = (field) => {
+    setPasswordValues((prevValues) => ({
+      ...prevValues,
+      [field]: !prevValues[field],
+    }));
+  };
+
+  const handlePasswordChange = (prop) => (event) => {
+    setPasswordValues({
+      ...passwordValues,
+      [prop]: event.target.value,
+    });
   };
 
   return (
@@ -19,10 +41,7 @@ export default function Login() {
         alt="Logo"
         className="absolute top-4 left-8 w-[9vw] h-auto object-contain"
       />
-      <Toggle
-        isDarkMode={isDarkMode}
-        toggleTheme={toggleTheme}
-      />
+      <Toggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div className="flex flex-row justify-center items-center mt-[10vh]">
         <div className="flex flex-col items-center justify-center">
           <div className="leading-snug -mt-[10vh]">
@@ -58,20 +77,36 @@ export default function Login() {
             />
           </div>
 
-          <div className="w-[35vw]">
+          <div className="w-[35vw] relative">
             <label
-              className={`block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
+              className={`mt-[30px] block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
             >
               Password
             </label>
             <input
-              type="text"
-              placeholder="enter password here"
-              className={`w-[35vw] py-2 bg-transparent border-b-2 focus:outline-none ${
+              type={passwordValues.showPassword ? 'text' : 'password'}
+              value={passwordValues.password}
+              onChange={handlePasswordChange('password')}
+              placeholder="choose a password"
+              className={`w-full py-2 pr-10 bg-transparent border-b-2 focus:outline-none ${
                 isDarkMode
                   ? 'text-white border-white placeholder-white placeholder-opacity-50'
                   : 'text-black border-black placeholder-black placeholder-opacity-50'
               }`}
+            />
+            <img
+              src={
+                passwordValues.showPassword
+                  ? isDarkMode
+                    ? darkEye
+                    : lightEye
+                  : isDarkMode
+                    ? darkHidden
+                    : lightHidden
+              }
+              alt="Toggle password visibility"
+              onClick={() => handleTogglePasswordVisibility('showPassword')}
+              className="absolute right-2 top-[70px] w-6 h-6 cursor-pointer"
             />
             <div className="w-full text-right leading-loose">
               <button
