@@ -117,7 +117,7 @@ def generate_random_string(length: int = 10) -> str:
 
 
 # Creates a guest account
-def create_guest() -> dict:
+def new_guest() -> dict:
     password = generate_random_string()
     pass_hash = hash_new_password(password)
     try:
@@ -134,3 +134,20 @@ def create_guest() -> dict:
     except MySQL.Error as e:
         print(e)
         return {"message": "Database error"}
+
+
+# Basically purges old url codes after their grace periods
+def clear_unlocked_codes() -> None:
+    DB_CURSOR.execute("DELETE FROM url_code WHERE unlocked_at < NOW()")
+    DB_CONN.commit()
+
+
+# Checks if a custom code is available
+def check_code(code: str) -> bool:
+    try:
+        clear_unlocked_codes()
+        DB_CURSOR.execute("SELECT * FROM url_code WHERE url_code = %s", (code,))
+        return DB_CURSOR.fetchone() is None
+    except MySQL.Error as e:
+        print(e)
+        return False
