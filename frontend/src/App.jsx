@@ -3,6 +3,7 @@ import Landing from './pages/Landing.jsx';
 import Signup from './pages/Signup.jsx';
 import Login from './pages/Login.jsx';
 import Results from './pages/Results.jsx';
+import Availability from './pages/Availability.jsx';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/results" element={<Results />} />
+        <Route path="/landing" element={<Availability />} />
       </Routes>
     </Router>
   );
