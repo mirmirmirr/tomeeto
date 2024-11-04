@@ -71,7 +71,11 @@ def add_user(email: str, pass_hash: str) -> bool:
 
 
 # Checks if a user's login info is correct
-def check_login(email: str, password: str) -> bool:
+def check_login(json: dict) -> bool:
+    if "email" not in json or "password" not in json:
+        return False
+    email: str = json["email"]
+    password: str = json["password"]
     DB_CURSOR.execute(
         "SELECT password_hash FROM user_account WHERE email = %s", (email,)
     )
