@@ -32,9 +32,15 @@ export default function Availability() {
       const initialFillState = availability[startDay][startHour];
 
       const newAvailability = availability.map((dayArray, dayIndex) => {
-        if (dayIndex >= Math.min(startDay, endDay) && dayIndex <= Math.max(startDay, endDay)) {
+        if (
+          dayIndex >= Math.min(startDay, endDay) &&
+          dayIndex <= Math.max(startDay, endDay)
+        ) {
           return dayArray.map((hourValue, hourIndex) => {
-            if (hourIndex >= Math.min(startHour, endHour) && hourIndex <= Math.max(startHour, endHour)) {
+            if (
+              hourIndex >= Math.min(startHour, endHour) &&
+              hourIndex <= Math.max(startHour, endHour)
+            ) {
               return initialFillState ? false : true;
             }
             return hourValue;
@@ -140,13 +146,16 @@ export default function Availability() {
 
         <div className="flex justify-between items-center mt-4">
           <div className="pl-4" style={{ fontSize: `min(2vw, 30px)` }}>
-            Hi, <input
+            Hi,{' '}
+            <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="your name"
               className={`border-b-2 focus:outline-none ${isDarkMode ? 'bg-[#3E505B] text-white border-white' : 'bg-[#F5F5F5] text-black border-black'}`}
-            /><br />add your availability here
+            />
+            <br />
+            add your availability here
           </div>
           <button
             onClick={() => console.log('Submit button clicked')}
@@ -190,10 +199,10 @@ export default function Availability() {
                           backgroundColor: availability[column][hour]
                             ? 'rgba(72, 187, 120, 1)'
                             : isInDragArea(column, hour)
-                            ? availability[dragStart.day][dragStart.hour]
-                              ? 'rgba(255, 0, 0, 0.5)' // Preview for unfill
-                              : 'rgba(72, 187, 120, 0.5)' // Preview for fill
-                            : 'transparent',
+                              ? availability[dragStart.day][dragStart.hour]
+                                ? 'rgba(255, 0, 0, 0.5)' // Preview for unfill
+                                : 'rgba(72, 187, 120, 0.5)' // Preview for fill
+                              : 'transparent',
                         }}
                         onMouseDown={() => handleMouseDown(column, hour)}
                         onMouseEnter={() => handleMouseEnter(column, hour)}
