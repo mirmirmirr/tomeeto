@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import Header from './Header'
+import { useNavigate } from 'react-router-dom';
+import Header from './Header';
 
 export default function Landing() {
+  const navigate = useNavigate();
   const [code, setCode] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(true);
 
@@ -32,11 +34,15 @@ export default function Landing() {
         </div>
         <div className="flex space-x-4 w-full">
           <button
+            onClick={() => navigate('/login')}
             className={`flex-1 px-6 py-3 bg-transparent border-2 rounded-md shadow-md transition duration-300 ${isDarkMode ? 'text-white border-white' : 'text-black border-black'}`}
           >
             LOGIN
           </button>
-          <button className="flex-1 px-6 py-3 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300">
+          <button
+            onClick={() => navigate('/signup')}
+            className="flex-1 px-6 py-3 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300"
+          >
             SIGNUP
           </button>
         </div>

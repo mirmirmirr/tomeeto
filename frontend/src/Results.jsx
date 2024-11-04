@@ -1,7 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import Header from './Header';
 
 export default function Result() {
+  const navigate = useNavigate();
+
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [hoveredCell, setHoveredCell] = useState({ row: null, column: null });
   const [currentPage, setCurrentPage] = useState(0);

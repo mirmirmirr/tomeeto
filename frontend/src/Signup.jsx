@@ -1,11 +1,15 @@
 import { useState } from 'react';
-import Header from './Header'
+import { useNavigate } from 'react-router-dom';
+
+import Header from './Header';
 import darkEye from '../src/assets/eye_dark.png';
 import lightEye from '../src/assets/eye_light.png';
 import darkHidden from '../src/assets/hidden_dark.png';
 import lightHidden from '../src/assets/hidden_light.png';
 
 export default function Signup() {
+  const navigate = useNavigate();
+
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [passwordValues, setPasswordValues] = useState({
     password: '',
@@ -160,6 +164,7 @@ export default function Signup() {
             Create account
           </button>
           <p
+            onClick={() => navigate('/login')}
             className={`w-[35vw] subtext-responsive text-opacity-70 text-center ${isDarkMode ? 'text-white' : 'text-black'} hover:underline hover:text-opacity-100`}
           >
             But I already have an account!
