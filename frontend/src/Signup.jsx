@@ -70,23 +70,6 @@ export default function Signup() {
             />
           </div>
 
-          <div id="username" className="w-[35vw]">
-            <label
-              className={`block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              placeholder="enter username here (optional)"
-              className={`w-[35vw] py-2 bg-transparent border-b-2 focus:outline-none ${
-                isDarkMode
-                  ? 'text-white border-white placeholder-white placeholder-opacity-50'
-                  : 'text-black border-black placeholder-black placeholder-opacity-50'
-              }`}
-            />
-          </div>
-
           <div id="password" className="w-[35vw] relative">
             <label
               className={`mt-[30px] block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
