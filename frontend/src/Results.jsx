@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import darkLogo from '../src/assets/tomeeto-dark.png';
-import lightLogo from '../src/assets/tomeeto-light.png';
+import Header from './Header';
 
 export default function Result() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -103,17 +102,7 @@ export default function Result() {
     <div
       className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
     >
-      <img
-        src={isDarkMode ? darkLogo : lightLogo}
-        alt="Logo"
-        className="absolute top-4 left-8 w-[9vw] h-auto object-contain"
-      />
-      <button
-        onClick={toggleTheme}
-        className="absolute top-4 right-4 p-2 bg-gray-300 rounded-[40vw] shadow-md hover:bg-gray-400 transition duration-300"
-      >
-        {isDarkMode ? 'Dark Mode' : 'Light Mode'}
-      </button>
+      <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div
         className={`flex flex-col mt-[7vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
