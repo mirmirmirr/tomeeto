@@ -151,3 +151,15 @@ def check_code(code: str) -> bool:
     except MySQL.Error as e:
         print(e)
         return False
+
+# Adds an event to the database and returns the url code
+def new_event(json: dict) -> str:
+    if "custom_code" in json:
+        if not check_code(json["custom_code"]):
+            return ""
+        return json["custom_code"]
+    else:
+        new_code = generate_random_string()
+        while not check_code(new_code):
+            new_code = generate_random_string()
+    return new_code

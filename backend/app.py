@@ -7,6 +7,7 @@ from utils import (
     check_login,
     new_guest,
     check_code,
+    new_event,
 )
 
 app = FastAPI()
@@ -88,5 +89,10 @@ async def create_event(request: Request):
     for field in type_fields[body["event_type"]]:
         if field not in body:
             return {"message": f"Missing field: {field}"}
+        
+    # Add the event to the database
+    code = new_event(body)
+    if len(code) == 0:
+        return {"message": "Unable to create event"}
     
-    return {"message": "Event created", "event_code": "nothing"}
+    return {"message": "Event created", "event_code": code}
