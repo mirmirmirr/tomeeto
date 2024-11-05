@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import darkLogo from '../src/assets/tomeeto-dark.png';
-import lightLogo from '../src/assets/tomeeto-light.png';
+import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../resources/ThemeContext';
+import Header from '../resources/Header';
 
 export default function CreateEvent() {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const navigate = useNavigate();
+
+  const { isDarkMode, toggleTheme } = useTheme();
   const [intervalDropdownVisible, setIntervalDropdownVisible] = useState(false);
   const [selectedInterval, setSelectedInterval] = useState('');
   const [selectDaysOfWeek, setSelectDaysOfWeek] = useState(false);
@@ -19,10 +22,6 @@ export default function CreateEvent() {
   const placeholderColor = isDarkMode
     ? 'placeholder-[#F5F5F5]'
     : 'placeholder-[#3E505B]';
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
 
   // Functions to handle dropdown visibility for start day
   const toggleStartDayDropdown = () => {
@@ -96,20 +95,7 @@ export default function CreateEvent() {
       className={`relative flex flex-col items-start justify-center min-h-screen
         p-4 ${bgColor}`}
     >
-      {/* Logo */}
-      <img
-        src={isDarkMode ? darkLogo : lightLogo}
-        alt="Logo"
-        className="absolute top-4 left-4 w-24 h-auto object-contain"
-      />
-      {/* Theme */}
-      <button
-        onClick={toggleTheme}
-        className="absolute top-4 right-4 p-2 bg-gray-300 rounded-full shadow-md
-          hover:bg-gray-400 transition duration-300"
-      >
-        {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-      </button>
+      <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
       <div className="flex w-full">
         {/* Left Column */}
@@ -318,6 +304,7 @@ export default function CreateEvent() {
 
           {/* Create Event button */}
           <button
+            onClick={() => navigate('/confirmCreated')}
             className={`w-full p-3 mt-4 text-lg font-semibold bg-red-500
               rounded-lg text-[#F5F5F5] focus:outline-none`}
           >

@@ -153,7 +153,7 @@ export default function Availability() {
             add your availability here
           </div>
           <button
-            onClick={() => console.log('Submit button clicked')}
+            onClick={() => navigate('/results')}
             className={`w-32 p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500`}
           >
             Submit
