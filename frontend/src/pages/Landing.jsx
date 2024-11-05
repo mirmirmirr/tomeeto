@@ -15,6 +15,7 @@ export default function Landing() {
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div className="flex flex-col items-center space-y-6 p-6 w-full max-w-lg">
         <button
+          onClick={() => navigate('/create')}
           className={`w-full px-8 py-6 text-lg font-semibold rounded-lg shadow-md transition duration-300 ${isDarkMode ? 'bg-white text-[#3E505B]' : 'bg-[#3E505B] text-white'}`}
         >
           Create A New Event!
