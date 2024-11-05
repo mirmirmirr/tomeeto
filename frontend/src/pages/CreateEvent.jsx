@@ -304,6 +304,7 @@ export default function CreateEvent() {
 
           {/* Create Event button */}
           <button
+            onClick={() => navigate('/confirmCreated')}
             className={`w-full p-3 mt-4 text-lg font-semibold bg-red-500
               rounded-lg text-[#F5F5F5] focus:outline-none`}
           >

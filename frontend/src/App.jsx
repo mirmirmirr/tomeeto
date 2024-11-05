@@ -5,6 +5,7 @@ import Login from './pages/Login.jsx';
 import Results from './pages/Results.jsx';
 import Availability from './pages/Availability.jsx';
 import CreateEvent from './pages/CreateEvent.jsx';
+import ConfirmCreated from './pages/ConfirmCreated.jsx';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/create" element={<CreateEvent />} />
+        <Route path="/confirmCreated" element={<ConfirmCreated />} />
         <Route path="/availability" element={<Availability />} />
         <Route path="/results" element={<Results />} />
       </Routes>
