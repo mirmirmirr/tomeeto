@@ -51,6 +51,10 @@ async def create_guest():
 @app.get("/check_custom_code")
 async def check_custom_code(request: Request):
     body: dict = await request.json()
+    user_id = check_login(body)
+    if user_id < 0:
+        return {"message": "Login failed"}
+
     if "code" not in body:
         return {"message": "Missing field: code"}
     code: str = body["code"]
