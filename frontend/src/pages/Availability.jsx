@@ -98,11 +98,11 @@ export default function Availability() {
   };
 
   const handleClick = (day, hour) => {
-    setAvailability((prev) =>
-      prev.map((d, i) =>
-        i === day ? d.map((h, j) => (j === hour ? !h : h)) : d
-      )
-    );
+    setAvailability((prev) => {
+      const newAvailability = prev.map((dayArray) => dayArray.slice()); // Create a deep copy
+      newAvailability[day][hour] = !newAvailability[day][hour];
+      return newAvailability;
+    });
   };
 
   const isInDragArea = (day, hour) => {
@@ -213,13 +213,11 @@ export default function Availability() {
                       key={column}
                       className={`border ${isDarkMode ? 'border-white' : 'border-black'}`}
                       style={{
-                        backgroundColor: availability[column][hour]
-                          ? 'rgba(72, 187, 120, 1)'
-                          : isInDragArea(column, hour)
-                            ? availability[dragStart.day][dragStart.hour]
-                              ? 'rgba(255, 0, 0, 0.5)' // Preview for unfill
-                              : 'rgba(72, 187, 120, 0.5)' // Preview for fill
-                            : 'transparent',
+                        backgroundColor: isInDragArea(column, hour)
+                          ? 'rgba(72, 187, 120, 0.5)' // Highlight drag area
+                          : availability[column][hour]
+                            ? 'rgba(72, 187, 120, 1)' // Filled cell
+                            : 'transparent', // Empty cell
                         userSelect: 'none', // Disable text selection
                       }}
                       onMouseDown={() => handleMouseDown(column, hour)}
