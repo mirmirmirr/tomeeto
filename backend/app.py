@@ -76,7 +76,7 @@ async def create_event(request: Request):
         return {"message": "Login failed"}
     else:
         body["account_id"] = user_id
-    
+
     # Check the custom code or get a new one
     custom_code = ""
     if "custom_code" in body:

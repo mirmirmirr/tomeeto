@@ -12,6 +12,16 @@ class Duration(Enum):
     HOUR = 60
 
 
+class Weekday(Enum):
+    SUNDAY = 1
+    MONDAY = 2
+    TUESDAY = 3
+    WEDNESDAY = 4
+    THURSDAY = 5
+    FRIDAY = 6
+    SATURDAY = 7
+
+
 class Event(ABC):
     def __init__(
         self,
@@ -145,17 +155,29 @@ class GenericWeekEvent(Event):
         end_time: time,
         duration: Duration,
         availabilities: List[Availability],
-        start_weekday: int,
-        end_weekday: int,
+        start_weekday: str,
+        end_weekday: str,
     ) -> None:
         super().__init__(
             creator, title, description, start_time, end_time, duration, availabilities
         )
-        self.start_weekday: int = start_weekday
-        self.end_weekday: int = end_weekday
+        self.start_weekday: int = Weekday[start_weekday.upper()].value
+        self.end_weekday: int = Weekday[end_weekday.upper()].value
 
     def to_json(self) -> dict:
         pass
 
     def to_sql(self) -> tuple[str, List]:
-        pass
+        query = "INSERT INTO user_event (user_account_id, title, details, date_type, start_date, end_date, start_time, end_time, duration) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        values = [
+            self.creator.id,
+            self.title,
+            self.description,
+            "Generic",
+            "0000-01-0" + str(self.start_weekday),
+            "0000-01-0" + str(self.end_weekday),
+            self.start_time.isoformat(),
+            self.end_time.isoformat(),
+            self.duration.value,
+        ]
+        return query, values
