@@ -121,6 +121,7 @@ export default function Availability() {
     <div
       className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
       onMouseUp={handleMouseUp}
+      style={{ userSelect: 'none' }} // Disable text selection
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
@@ -219,6 +220,7 @@ export default function Availability() {
                               ? 'rgba(255, 0, 0, 0.5)' // Preview for unfill
                               : 'rgba(72, 187, 120, 0.5)' // Preview for fill
                             : 'transparent',
+                        userSelect: 'none', // Disable text selection
                       }}
                       onMouseDown={() => handleMouseDown(column, hour)}
                       onMouseEnter={() => handleMouseEnter(column, hour)}
