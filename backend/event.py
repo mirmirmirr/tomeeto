@@ -64,8 +64,8 @@ class Event(ABC):
                 creator,
                 json["title"],
                 json["description"],
-                datetime.strptime(json["start_time"], "%H:%M").date(),
-                datetime.strptime(json["end_time"], "%H:%M").date(),
+                datetime.strptime(json["start_time"], "%H:%M").time(),
+                datetime.strptime(json["end_time"], "%H:%M").time(),
                 Duration(json["duration"]),
                 [],
                 start_date,
@@ -76,8 +76,8 @@ class Event(ABC):
                 creator,
                 json["title"],
                 json["description"],
-                datetime.strptime(json["start_time"], "%H:%M").date(),
-                datetime.strptime(json["end_time"], "%H:%M").date(),
+                datetime.strptime(json["start_time"], "%H:%M").time(),
+                datetime.strptime(json["end_time"], "%H:%M").time(),
                 Duration(json["duration"]),
                 [],
                 json["start_day"],
@@ -93,7 +93,7 @@ class Event(ABC):
         pass
 
     @abstractmethod
-    def to_sql(self) -> str:
+    def to_sql(self) -> tuple[str, List]:
         pass
 
 
@@ -119,8 +119,20 @@ class DateEvent(Event):
     def to_json(self) -> dict:
         pass
 
-    def to_sql(self) -> str:
-        pass
+    def to_sql(self) -> tuple[str, List]:
+        query = "INSERT INTO user_event (user_account_id, title, details, date_type, start_date, end_date, start_time, end_time, duration) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        values = [
+            self.creator.id,
+            self.title,
+            self.description,
+            "Specific",
+            self.start_date.isoformat(),
+            self.end_date.isoformat(),
+            self.start_time.isoformat(),
+            self.end_time.isoformat(),
+            self.duration.value,
+        ]
+        return query, values
 
 
 class GenericWeekEvent(Event):
@@ -145,5 +157,5 @@ class GenericWeekEvent(Event):
     def to_json(self) -> dict:
         pass
 
-    def to_sql(self) -> str:
+    def to_sql(self) -> tuple[str, List]:
         pass

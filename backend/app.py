@@ -8,6 +8,7 @@ from utils import (
     new_guest,
     check_code,
     new_code,
+    new_event,
 )
 from event import Event
 
@@ -80,7 +81,10 @@ async def create_event(request: Request):
     if len(code) == 0:
         return {"message": "Invalid custom code"}
 
-    new_event = Event.from_json(body)
-    print(new_event)
+    event_obj = Event.from_json(body)
+    if event_obj is None:
+        return {"message": "Invalid event data"}
+    if not new_event(event_obj):
+        return {"message": "Database error"}
 
     return {"message": "Event created", "event_code": code}
