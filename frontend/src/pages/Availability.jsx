@@ -40,11 +40,11 @@ export default function Availability() {
   );
 
   const [availability, setAvailability] = useState(
-    Array(totalDays).fill(Array(hours.length).fill(0))
+    Array(hours.length).fill(Array(totalDays).fill(0))
   );
 
   useEffect(() => {
-    console.log("Availability updated:", availability);
+    console.log('Availability updated:', availability);
   }, [availability]);
 
   const goToPrevPage = () => {
@@ -211,15 +211,27 @@ export default function Availability() {
                       key={column}
                       className={`border ${isDarkMode ? 'border-white' : 'border-black'}`}
                       style={{
-                        backgroundColor: isInDragArea(column, row)
+                        backgroundColor: isInDragArea(
+                          row,
+                          currentPage * daysPerPage + column
+                        )
                           ? 'rgba(72, 187, 120, 0.5)' // Highlight drag area
-                          : availability[column][row]
+                          : availability[row][
+                                currentPage * daysPerPage + column
+                              ]
                             ? 'rgba(72, 187, 120, 1)' // Filled cell
                             : 'transparent', // Empty cell
                         userSelect: 'none', // Disable text selection
                       }}
-                      onMouseDown={() => handleMouseDown(column, row)}
-                      onMouseEnter={() => handleMouseEnter(column, row)}
+                      onMouseDown={() =>
+                        handleMouseDown(row, currentPage * daysPerPage + column)
+                      }
+                      onMouseEnter={() =>
+                        handleMouseEnter(
+                          row,
+                          currentPage * daysPerPage + column
+                        )
+                      }
                     ></td>
                   ))}
                 </tr>
