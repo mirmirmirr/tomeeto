@@ -5,6 +5,8 @@ import bcrypt
 import random
 import string
 
+from event import Event
+
 # MySQL Connector stuff
 import mysql.connector as MySQL
 from mysql.connector import MySQLConnection
@@ -168,3 +170,13 @@ def new_code(custom: str = "") -> str:
         while not check_code(new_code):
             new_code = generate_random_string()
     return new_code
+
+def new_event(event: Event) -> bool:
+    query, values = event.to_sql()
+    try:
+        DB_CURSOR.execute(query, values)
+        DB_CONN.commit()
+        return True
+    except MySQL.Error as e:
+        print(e)
+        return False

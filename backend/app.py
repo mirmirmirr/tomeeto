@@ -8,6 +8,7 @@ from utils import (
     new_guest,
     check_code,
     new_code,
+    new_event,
 )
 from event import Event
 
@@ -50,6 +51,10 @@ async def create_guest():
 @app.get("/check_custom_code")
 async def check_custom_code(request: Request):
     body: dict = await request.json()
+    user_id = check_login(body)
+    if user_id < 0:
+        return {"message": "Login failed"}
+
     if "code" not in body:
         return {"message": "Missing field: code"}
     code: str = body["code"]
@@ -71,7 +76,7 @@ async def create_event(request: Request):
         return {"message": "Login failed"}
     else:
         body["account_id"] = user_id
-    
+
     # Check the custom code or get a new one
     custom_code = ""
     if "custom_code" in body:
@@ -80,8 +85,11 @@ async def create_event(request: Request):
     if len(code) == 0:
         return {"message": "Invalid custom code"}
 
-    new_event = Event.from_json(body)
-    print(new_event)
+    event_obj = Event.from_json(body)
+    if event_obj is None:
+        return {"message": "Invalid event data"}
+    if not new_event(event_obj):
+        return {"message": "Database error"}
 
     return {"message": "Event created", "event_code": code}
 
