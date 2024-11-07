@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
@@ -7,9 +7,7 @@ export default function Availability() {
   const navigate = useNavigate();
 
   const { isDarkMode, toggleTheme } = useTheme();
-  const [availability, setAvailability] = useState(
-    Array(11).fill(Array(24).fill(false))
-  );
+
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
   const [dragEnd, setDragEnd] = useState(null);
@@ -40,6 +38,14 @@ export default function Availability() {
     currentPage * daysPerPage,
     (currentPage + 1) * daysPerPage
   );
+
+  const [availability, setAvailability] = useState(
+    Array(hours.length).fill(Array(totalDays).fill(0))
+  );
+
+  useEffect(() => {
+    console.log('Availability updated:', availability);
+  }, [availability]);
 
   const goToPrevPage = () => {
     if (currentPage > 0) {
@@ -76,7 +82,7 @@ export default function Availability() {
               hourIndex >= Math.min(startHour, endHour) &&
               hourIndex <= Math.max(startHour, endHour)
             ) {
-              return initialFillState ? false : true;
+              return initialFillState ? 0 : 1;
             }
             return hourValue;
           });
@@ -97,14 +103,6 @@ export default function Availability() {
     }
   };
 
-  const handleClick = (day, hour) => {
-    setAvailability((prev) =>
-      prev.map((d, i) =>
-        i === day ? d.map((h, j) => (j === hour ? !h : h)) : d
-      )
-    );
-  };
-
   const isInDragArea = (day, hour) => {
     if (!dragStart || !dragEnd) return false;
     const { day: startDay, hour: startHour } = dragStart;
@@ -121,6 +119,7 @@ export default function Availability() {
     <div
       className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
       onMouseUp={handleMouseUp}
+      style={{ userSelect: 'none' }} // Disable text selection
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
@@ -212,17 +211,27 @@ export default function Availability() {
                       key={column}
                       className={`border ${isDarkMode ? 'border-white' : 'border-black'}`}
                       style={{
-                        backgroundColor: availability[column][hour]
-                          ? 'rgba(72, 187, 120, 1)'
-                          : isInDragArea(column, hour)
-                            ? availability[dragStart.day][dragStart.hour]
-                              ? 'rgba(255, 0, 0, 0.5)' // Preview for unfill
-                              : 'rgba(72, 187, 120, 0.5)' // Preview for fill
-                            : 'transparent',
+                        backgroundColor: isInDragArea(
+                          row,
+                          currentPage * daysPerPage + column
+                        )
+                          ? 'rgba(72, 187, 120, 0.5)' // Highlight drag area
+                          : availability[row][
+                                currentPage * daysPerPage + column
+                              ]
+                            ? 'rgba(72, 187, 120, 1)' // Filled cell
+                            : 'transparent', // Empty cell
+                        userSelect: 'none', // Disable text selection
                       }}
-                      onMouseDown={() => handleMouseDown(column, hour)}
-                      onMouseEnter={() => handleMouseEnter(column, hour)}
-                      onClick={() => handleClick(column, hour)}
+                      onMouseDown={() =>
+                        handleMouseDown(row, currentPage * daysPerPage + column)
+                      }
+                      onMouseEnter={() =>
+                        handleMouseEnter(
+                          row,
+                          currentPage * daysPerPage + column
+                        )
+                      }
                     ></td>
                   ))}
                 </tr>
