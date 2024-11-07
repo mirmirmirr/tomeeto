@@ -116,7 +116,6 @@ def check_login(json: dict) -> int:
 def generate_random_string(length: int = 10) -> str:
     # Define the characters to use: uppercase, lowercase letters, and digits
     characters = string.ascii_letters + string.digits
-    # Randomly select 'length' characters from the character set
     random_string = "".join(random.choice(characters) for _ in range(length))
     return random_string
 

@@ -84,3 +84,9 @@ async def create_event(request: Request):
     print(new_event)
 
     return {"message": "Event created", "event_code": code}
+
+@app.post("/add_availability")
+async def add_availability(request: Request):
+    body: dict = await request.json()
+    # (email and password) or (guest id and guest password), event code, nickname, 2d_array 
+    return {"message" : "u suck"}
