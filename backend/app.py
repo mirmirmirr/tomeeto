@@ -1,4 +1,6 @@
 from fastapi import Request, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from utils import (
     db_hello_world,
     check_user_exists,
@@ -13,6 +15,14 @@ from utils import (
 from event import Event
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -93,8 +103,9 @@ async def create_event(request: Request):
 
     return {"message": "Event created", "event_code": code}
 
+
 @app.post("/add_availability")
 async def add_availability(request: Request):
     body: dict = await request.json()
-    # (email and password) or (guest id and guest password), event code, nickname, 2d_array 
-    return {"message" : "u suck"}
+    # (email and password) or (guest id and guest password), event code, nickname, 2d_array
+    return {"message": "u suck"}
