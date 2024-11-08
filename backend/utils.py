@@ -88,6 +88,8 @@ def check_login(json: dict) -> int:
                 "SELECT user_account_id FROM user_account WHERE email = %s", (email,)
             )
             return DB_CURSOR.fetchone()["user_account_id"]
+        else:
+            return -1
     elif "guest_id" in json and "guest_password" in json:
         DB_CURSOR.execute(
             """
@@ -170,6 +172,7 @@ def new_code(custom: str = "") -> str:
         while not check_code(new_code):
             new_code = generate_random_string()
     return new_code
+
 
 def new_event(event: Event) -> bool:
     query, values = event.to_sql()
