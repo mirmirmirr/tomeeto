@@ -29,8 +29,12 @@ DB_CURSOR: MySQLCursorDict = DB_CONN.cursor(dictionary=True)
 
 # Function to execute a query on the database
 def db_hello_world() -> dict:
-    DB_CURSOR.execute("Select 'Hello, World!' AS message")
-    return DB_CURSOR.fetchone()
+    try:
+        DB_CURSOR.execute("SELECT 'Hello, World!' AS message")
+        return DB_CURSOR.fetchone()
+    except MySQL.Error as e:
+        print(e)
+        return {"message": "Database error"}
 
 
 # Checks if a user already has an account
@@ -146,8 +150,11 @@ def new_guest() -> dict:
 
 # Basically purges old url codes after their grace periods
 def clear_unlocked_codes() -> None:
-    DB_CURSOR.execute("DELETE FROM url_code WHERE unlocked_at < NOW()")
-    DB_CONN.commit()
+    try:
+        DB_CURSOR.execute("DELETE FROM url_code WHERE unlocked_at < NOW()")
+        DB_CONN.commit()
+    except MySQL.Error as e:
+        print(e)
 
 
 # Checks if a custom code is available
