@@ -19,6 +19,11 @@ export default function Signup() {
     showConfirmPassword: false,
   });
 
+  const [email, setEmailValue] = useState({
+    email: '',
+    showEmail: false,
+  });
+
   const handleTogglePasswordVisibility = (field) => {
     setPasswordValues((prevValues) => ({
       ...prevValues,
@@ -31,6 +36,44 @@ export default function Signup() {
       ...passwordValues,
       [prop]: event.target.value,
     });
+  };
+
+  const handleEmailChange = (prop) => (event) => {
+    setEmailValue({
+      ...email,
+      [prop]: event.target.value,
+    });
+  };
+
+  const signupClick = async () => {
+    console.log(passwordValues.password);
+    console.log(email.email);
+    const data = {
+      email: email.email,
+      password: passwordValues.password,
+    };
+
+    try {
+      const response = await fetch('http://tomeeto.cs.rpi.edu:8000/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Login successful:', result);
+
+        // this shpould be dashboard whenever gavin finishes
+        navigate('/dashboard');
+      } else {
+        console.error('Failed to log in:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -64,8 +107,10 @@ export default function Signup() {
               Email
             </label>
             <input
-              type="email"
+              type={email.showEmail ? 'text' : 'email'}
+              value={email.email}
               placeholder="Type email here"
+              onChange={handleEmailChange('email')}
               className={`w-full py-2 bg-transparent border-b-2 focus:outline-none ${isDarkMode ? 'text-white border-white placeholder-white placeholder-opacity-50' : 'text-black border-black placeholder-black placeholder-opacity-50'}`}
             />
           </div>
@@ -139,12 +184,12 @@ export default function Signup() {
           </div>
 
           <button
+            onClick={signupClick}
             className={`w-[35vw] text-responsive py-3 font-semibold rounded-lg transition duration-300 ${isDarkMode ? 'bg-white text-[#3E505B]' : 'bg-[#3E505B] text-white'}`}
           >
             Create account
           </button>
           <p
-            onClick={() => navigate('/login')}
             className={`w-[35vw] subtext-responsive text-opacity-70 text-center ${isDarkMode ? 'text-white' : 'text-black'} hover:underline hover:text-opacity-100 cursor-pointer`}
           >
             But I already have an account!
