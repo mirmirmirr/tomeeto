@@ -71,7 +71,7 @@ export default function Result() {
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div
-        className={`flex flex-col mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
+        className={`flex flex-col flex-grow mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
         <div
           id="eventName"
@@ -90,55 +90,57 @@ export default function Result() {
         </div>
         <div
           id="availability"
-          className="w-[90vw] h-[64vh] mt-[2vh] flex flex-row overflow-hidden"
+          className="w-[90vw] flex-grow mt-[2vh] flex flex-row overflow-x-auto overflow-y-auto"
         >
-          <table className="w-full table-fixed mt-4">
-            <thead>
-              <tr>
-                <th className="p-2" style={{ width: `min(10vw, 55px)` }}></th>
-                {displayedDays.map((day, index) => (
-                  <th
-                    key={index}
-                    className="p-2 font-[400] text-center text-[10pt]"
-                  >
-                    {day}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {hours.map((hour, row) => (
-                <tr
-                  key={row}
-                  className="h-full"
-                  style={{ height: `calc(100% / ${hours.length})` }}
-                >
-                  <td className="pr-2 text-right text-[10pt] sm:text-[12pt]">
-                    {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
-                  </td>
-                  {displayedDays.map((_, column) => (
-                    <td
-                      key={column}
-                      className={`border ${isDarkMode ? 'border-white' : 'border-black'}`}
-                      style={{
-                        backgroundColor:
-                          hoveredCell.row === row &&
-                          hoveredCell.column === column
-                            ? 'rgba(72, 187, 120, 0.5)'
-                            : 'transparent',
-                        userSelect: 'none',
-                      }}
-                      onMouseEnter={() => setHoveredCell({ row, column })}
-                      onMouseLeave={() =>
-                        setHoveredCell({ row: null, column: null })
-                      }
-                      onClick={() => handleCellClick(row, column)}
-                    ></td>
+          <div className="overflow-x-auto">
+            <table className="w-full table-fixed mt-4">
+              <thead>
+                <tr>
+                  <th className="p-2" style={{ width: `min(10vw, 55px)` }}></th>
+                  {displayedDays.map((day, index) => (
+                    <th
+                      key={index}
+                      className="p-2 font-[400] text-center text-[10pt] sm:text-[12pt]"
+                    >
+                      {day}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {hours.map((hour, row) => (
+                  <tr
+                    key={row}
+                    className="h-full"
+                    style={{ height: `calc(100% / ${hours.length})` }}
+                  >
+                    <td className="pr-2 text-right text-[10pt] sm:text-[12pt]">
+                      {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
+                    </td>
+                    {displayedDays.map((_, column) => (
+                      <td
+                        key={column}
+                        className={`border ${isDarkMode ? 'border-white' : 'border-black'}`}
+                        style={{
+                          backgroundColor:
+                            hoveredCell.row === row &&
+                            hoveredCell.column === column
+                              ? 'rgba(72, 187, 120, 0.5)'
+                              : 'transparent',
+                          userSelect: 'none',
+                        }}
+                        onMouseEnter={() => setHoveredCell({ row, column })}
+                        onMouseLeave={() =>
+                          setHoveredCell({ row: null, column: null })
+                        }
+                        onClick={() => handleCellClick(row, column)}
+                      ></td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           <div className="flex flex-col justify-center ml-4">
             {currentPage > 0 && (
               <button
