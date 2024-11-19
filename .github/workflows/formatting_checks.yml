@@ -20,12 +20,10 @@ jobs:
 
       - name: Install Frontend Dependencies
         run: |
-          cd frontend
           npm install
 
       - name: Run Frontend Prettier Check
         run: |
-          cd frontend
           npm run check
 
       - name: Setup Python
