@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 
 import Header from '../resources/Header';
-import darkEye from '../../src/assets/eye_dark.png';
-import lightEye from '../../src/assets/eye_light.png';
-import darkHidden from '../../src/assets/hidden_dark.png';
-import lightHidden from '../../src/assets/hidden_light.png';
+import darkEye from '../assets/eye_dark.png';
+import lightEye from '../assets/eye_light.png';
+import darkHidden from '../assets/hidden_dark.png';
+import lightHidden from '../assets/hidden_light.png';
 
 export default function Login() {
   const navigate = useNavigate();
