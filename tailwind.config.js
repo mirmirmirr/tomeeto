@@ -5,7 +5,7 @@ export default {
     fontSize: {
       tiny: '0.625rem',
       huge: '20vw',
-    }
+    },
   },
   plugins: [],
 };
