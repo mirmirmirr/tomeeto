@@ -35,16 +35,20 @@ export default function ConfirmCreated() {
 
   return (
     <div
-      className={`relative flex flex-col items-start justify-center min-h-[90vh] lg:min-h-screen p-4 ${bgColor}`}
+      className={`relative flex flex-col items-start lg:justify-center min-h-screen p-4 ${bgColor}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-      <div className="flex flex-col lg:flex-row w-full align-center lg:m-0 m-[10px]">
+      <div className="flex flex-col lg:flex-row w-full align-center lg:m-0 m-[10px] mt-[10vh] lg:mt-0">
         <div>
-          <h1 className={`text-[15vw] leading-[7vh] lg:leading-[25vh] font-bold ${textColor}`}>
+          <h1
+            className={`text-[15vw] leading-[7vh] lg:leading-[25vh] font-bold ${textColor}`}
+          >
             Event Created!
           </h1>
 
-          <p className={`text-[20px] mt-[10px] lg:text-[2vw] lg:text-center ${textColor}`}>
+          <p
+            className={`text-[20px] mt-[10px] lg:text-[2vw] lg:text-center ${textColor}`}
+          >
             (Your event will be deleted after <b>two weeks</b> inactivity)
           </p>
         </div>
@@ -63,7 +67,10 @@ export default function ConfirmCreated() {
                 </p>
               )}
             </label>
-            <div onClick={handleCopy} className="w-[60vw] lg:w-full mt-[-10px] py-2 flex items-center relative group">
+            <div
+              onClick={handleCopy}
+              className="w-[60vw] lg:w-full mt-[-10px] py-2 flex items-center relative group"
+            >
               <p
                 className={`flex-1 text-responsive py-2 font-bold bg-transparent border-b-2 rounded-none focus:outline-none ${isDarkMode ? 'text-white border-white' : 'text-black border-black'}`}
               >
