@@ -4,7 +4,7 @@ import Header from '../resources/Header';
 
 export default function Result() {
   const { isDarkMode, toggleTheme } = useTheme();
-  const [setHoveredCell] = useState({ row: null, column: null });
+  const [hoveredCell, setHoveredCell] = useState({ row: null, column: null });
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedCell, setSelectedCell] = useState(null);
   const daysPerPage = 7; // Number of days per page
@@ -144,15 +144,33 @@ export default function Result() {
           id="availability"
           className="w-[90vw] flex-grow mt-[2vh] flex flex-row overflow-x-auto overflow-y-auto"
         >
-          <div className="overflow-x-auto">
-            <table className="w-full table-fixed mt-4">
+          <div
+            className="flex flex-col justify-center"
+            style={{ minWidth: '50px' }}
+          >
+            {currentPage > 0 && (
+              <button
+                onClick={goToPrevPage}
+                className="px-4 py-2 font-bold opacity-25 hover:opacity-100 mb-2"
+                style={{ fontSize: '2rem' }}
+              >
+                &#65308; {/* Previous page entity */}
+              </button>
+            )}
+          </div>
+          <div className="overflow-x-auto" style={{ flexGrow: 1 }}>
+            <table
+              className="w-full table-fixed mt-4"
+              style={{ minWidth: '800px' }}
+            >
               <thead>
                 <tr>
-                  <th className="p-2" style={{ width: `min(10vw, 55px)` }}></th>
+                  <th className="p-2" style={{ width: '100px' }}></th>
                   {displayedDays.map((day, index) => (
                     <th
                       key={index}
                       className="p-2 font-[400] text-center text-[10pt] sm:text-[12pt]"
+                      style={{ width: '100px' }}
                     >
                       {day}
                     </th>
@@ -180,6 +198,7 @@ export default function Result() {
                           style={{
                             backgroundColor: `rgba(72, 187, 120, ${opacity})`,
                             userSelect: 'none',
+                            width: '100px',
                           }}
                           onMouseEnter={() => setHoveredCell({ row, column })}
                           onMouseLeave={() =>
@@ -194,16 +213,10 @@ export default function Result() {
               </tbody>
             </table>
           </div>
-          <div className="flex flex-col justify-center ml-4">
-            {currentPage > 0 && (
-              <button
-                onClick={goToPrevPage}
-                className="px-4 py-2 font-bold opacity-25 hover:opacity-100 mb-2"
-                style={{ fontSize: '2rem' }}
-              >
-                &#65308; {/* Previous page entity */}
-              </button>
-            )}
+          <div
+            className="flex flex-col justify-center ml-4"
+            style={{ minWidth: '50px', width: '50px' }}
+          >
             {(currentPage + 1) * daysPerPage < totalDays && (
               <button
                 onClick={goToNextPage}
@@ -214,17 +227,56 @@ export default function Result() {
               </button>
             )}
           </div>
+          <div className="hidden sm:flex w-[25%] flex-col ml-4 items-center">
+            <div className="text-[23px] font-[500] p-5">
+              Attendees ({scheduleData.length})
+            </div>
+            {scheduleData.map((attendee, index) => {
+              const isAvailable =
+                hoveredCell.row !== null &&
+                hoveredCell.column !== null &&
+                attendee.availability[hoveredCell.row][hoveredCell.column] == 1;
+              const opacityStyle = isAvailable
+                ? 'opacity-100'
+                : 'opacity-50 line-through';
+
+              return (
+                <div
+                  key={index}
+                  className={`text-[19px] font-[300] transition duration-300 ${opacityStyle}`}
+                >
+                  {attendee.name}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
       {selectedCell && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 sm:hidden">
           <div className="bg-white p-4 rounded-md shadow-md w-[80vw] max-w-md text-center">
             <h2 className="text-xl font-bold mb-4">Availability Details</h2>
-            <p>
-              Details for cell at row {selectedCell.row} and column{' '}
-              {selectedCell.column}
-            </p>
-            {/* Add your details here */}
+            <div className="text-left">
+              {scheduleData.map((attendee, index) => {
+                const isAvailable =
+                  attendee.availability[selectedCell.row][
+                    selectedCell.column
+                  ] == 1;
+                const availabilityStyle = isAvailable
+                  ? 'text-green-500'
+                  : 'text-red-500';
+
+                return (
+                  <div
+                    key={index}
+                    className={`text-[19px] font-[300] text-center ${availabilityStyle}`}
+                  >
+                    {attendee.name}:{' '}
+                    {isAvailable ? 'Available' : 'Not Available'}
+                  </div>
+                );
+              })}
+            </div>
             <button
               onClick={closeModal}
               className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md"
