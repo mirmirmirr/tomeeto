@@ -20,6 +20,18 @@ export default function Login() {
     showPassword: false,
   });
 
+  const [email, setEmailValue] = useState({
+    email: '',
+    showEmail: false,
+  });
+
+  const handleEmailChange = (prop) => (event) => {
+    setEmailValue({
+      ...email,
+      [prop]: event.target.value,
+    });
+  };
+
   const handleTogglePasswordVisibility = (field) => {
     setPasswordValues((prevValues) => ({
       ...prevValues,
@@ -32,6 +44,39 @@ export default function Login() {
       ...passwordValues,
       [prop]: event.target.value,
     });
+  };
+
+  const login_user = async () => {
+    console.log(passwordValues.password);
+    console.log(email.email);
+    const data = {
+      email: email.email,
+      password: passwordValues.password,
+    };
+
+    try {
+      const response = await fetch('http://tomeeto.cs.rpi.edu:8000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Login successful:', result);
+        if (result.message.localeCompare('Login failed') == 0) {
+          alert('Login Failed');
+        } else {
+          navigate('/signup');
+        }
+      } else {
+        console.error('Failed to log in:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -83,6 +128,7 @@ export default function Login() {
             </label>
             <input
               type="text"
+              onChange={handleEmailChange('email')}
               placeholder="enter username here"
               className={`w-[80vw] lg:w-[35vw] py-2 bg-transparent border-b-2 rounded-none focus:outline-none ${
                 isDarkMode
@@ -135,7 +181,7 @@ export default function Login() {
           {isLargeScreen && (
             <div>
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={login_user}
                 className={`w-[80vw] lg:w-[35vw] text-responsive py-3 font-semibold rounded-lg transition duration-300 ${isDarkMode ? 'bg-white text-[#3E505B]' : 'bg-[#3E505B] text-white'}`}
               >
                 Login
