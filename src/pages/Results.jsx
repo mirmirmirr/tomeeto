@@ -4,7 +4,7 @@ import Header from '../resources/Header';
 
 export default function Result() {
   const { isDarkMode, toggleTheme } = useTheme();
-  const [hoveredCell, setHoveredCell] = useState({ row: null, column: null });
+  const [setHoveredCell] = useState({ row: null, column: null });
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedCell, setSelectedCell] = useState(null);
   const daysPerPage = 7; // Number of days per page
@@ -43,6 +43,58 @@ export default function Result() {
   const displayedDays = allDays.slice(
     currentPage * daysPerPage,
     (currentPage + 1) * daysPerPage
+  );
+
+  const scheduleData = [
+    {
+      name: 'Alice',
+      availability: [
+        [0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 7 AM
+        [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 8 AM
+        [0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 9 AM
+        [0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0], // 10 AM
+        [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0], // 11 AM
+        [0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0], // 12 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 1 PM
+        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+        [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+        [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+      ],
+    },
+    {
+      name: 'Bob',
+      availability: [
+        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 8 AM
+        [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 7 AM
+        [0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 9 AM
+        [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 10 AM
+        [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 11 AM
+        [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 12 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 1 PM
+        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+        [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+      ],
+    },
+  ];
+
+  const availabilityCounts = hours.map((_, row) =>
+    displayedDays.map((_, column) => {
+      const count = scheduleData.filter(
+        (attendee) => attendee.availability[row][column] == 1
+      ).length;
+      return count / scheduleData.length;
+    })
   );
 
   const goToPrevPage = () => {
@@ -114,28 +166,29 @@ export default function Result() {
                     className="h-full"
                     style={{ height: `calc(100% / ${hours.length})` }}
                   >
-                    <td className="pr-2 text-right text-[10pt] sm:text-[12pt]">
+                    <td className="pr-2 text-right text-[10pt] sm:text-[12pt] whitespace-nowrap">
                       {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
                     </td>
-                    {displayedDays.map((_, column) => (
-                      <td
-                        key={column}
-                        className={`border ${isDarkMode ? 'border-white' : 'border-black'}`}
-                        style={{
-                          backgroundColor:
-                            hoveredCell.row === row &&
-                            hoveredCell.column === column
-                              ? 'rgba(72, 187, 120, 0.5)'
-                              : 'transparent',
-                          userSelect: 'none',
-                        }}
-                        onMouseEnter={() => setHoveredCell({ row, column })}
-                        onMouseLeave={() =>
-                          setHoveredCell({ row: null, column: null })
-                        }
-                        onClick={() => handleCellClick(row, column)}
-                      ></td>
-                    ))}
+                    {displayedDays.map((_, column) => {
+                      const availability = availabilityCounts[row][column];
+                      const opacity = availability > 0 ? availability : 0;
+
+                      return (
+                        <td
+                          key={column}
+                          className={`border ${isDarkMode ? 'border-white' : 'border-black'}`}
+                          style={{
+                            backgroundColor: `rgba(72, 187, 120, ${opacity})`,
+                            userSelect: 'none',
+                          }}
+                          onMouseEnter={() => setHoveredCell({ row, column })}
+                          onMouseLeave={() =>
+                            setHoveredCell({ row: null, column: null })
+                          }
+                          onClick={() => handleCellClick(row, column)}
+                        ></td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
@@ -164,7 +217,7 @@ export default function Result() {
         </div>
       </div>
       {selectedCell && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 sm:hidden">
           <div className="bg-white p-4 rounded-md shadow-md w-[80vw] max-w-md text-center">
             <h2 className="text-xl font-bold mb-4">Availability Details</h2>
             <p>
