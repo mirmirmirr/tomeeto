@@ -14,6 +14,10 @@ export default function CreateEvent() {
   const [selectedEndDay, setSelectedEndDay] = useState('End Day');
   const [startDayDropdownVisible, setStartDayDropdownVisible] = useState(false);
   const [endDayDropdownVisible, setEndDayDropdownVisible] = useState(false);
+  const [eventName, setEventName] = useState('');
+  const [description, setDescription] = useState('');
+  const [startTime, setEmailValue] = useState('07:00');
+  const [endTime, setEndTime] = useState('19:00');
 
   // Styling based on the current theme
   const bgColor = isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]';
@@ -22,6 +26,14 @@ export default function CreateEvent() {
   const placeholderColor = isDarkMode
     ? 'placeholder-[#F5F5F5]'
     : 'placeholder-[#3E505B]';
+
+  
+  const handleStartTimeChange = (prop) => (event) => {
+    setStartValue({
+      ...startTime,
+      [prop]: event.target.value,
+    });
+  };
 
   // Functions to handle dropdown visibility for start day
   const toggleStartDayDropdown = () => {
@@ -90,6 +102,24 @@ export default function CreateEvent() {
     'Sunday',
   ];
 
+  const create_event = async () => {
+    console.log("works");
+    console.log(startTime);
+    console.log(endTime);
+    const data = {
+      'title': eventName,
+      'descriptiom': description,
+      'start_time': startTime, 
+      'end_time': endTime,
+    }
+    // if its individual days
+    if (selectDaysOfWeek) {
+
+    } else {
+
+    }
+  }
+
   return (
     <div
       className={`relative flex flex-col items-start justify-center min-h-screen
@@ -103,6 +133,7 @@ export default function CreateEvent() {
           {/* Input for event name */}
           <div className="flex items-center mb-4">
             <input
+              onChange = {(e) => setEventName(e.target.value)}
               type="text"
               placeholder="Add event name"
               className={`flex-grow px-0 py-2 text-2xl bg-transparent text-left
@@ -146,7 +177,8 @@ export default function CreateEvent() {
                 </div>
                 <input
                   type="time"
-                  defaultValue="07:00"
+                  onChange={handleStartTimeChange('')}
+                  // defaultValue="07:00"
                   className="p-3 text-lg rounded-lg bg-red-500 text-white
                     text-center focus:outline-none"
                 />
@@ -182,8 +214,9 @@ export default function CreateEvent() {
                   )}
                 </div>
                 <input
+                  onChange={(e) => setEndTime(e.target.value)} 
                   type="time"
-                  defaultValue="19:00"
+                  // defaultValue="19:00"
                   className="p-3 text-lg rounded-lg bg-red-500 text-white
                     text-center focus:outline-none"
                 />
@@ -267,6 +300,8 @@ export default function CreateEvent() {
           </label>
           <div className={`border-2 ${borderColor} rounded-lg p-2 mb-4`}>
             <textarea
+              value = {description}
+              onChange={(e) => setDescription(e.target.value)}
               rows="11"
               className={`w-full p-3 text-lg rounded-lg ${bgColor} ${textColor}
                 focus:outline-none resize-none`}
@@ -304,7 +339,7 @@ export default function CreateEvent() {
 
           {/* Create Event button */}
           <button
-            onClick={() => navigate('/confirmCreated')}
+            onClick={create_event}
             className={`w-full p-3 mt-4 text-lg font-semibold bg-red-500
               rounded-lg text-[#F5F5F5] focus:outline-none`}
           >
