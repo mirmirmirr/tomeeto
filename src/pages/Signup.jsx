@@ -160,7 +160,7 @@ export default function Signup() {
           {isLargeScreen && (
             <div>
               <button
-              onClick={() => navigate('/dashboard')}
+                onClick={() => navigate('/dashboard')}
                 className={`w-full text-responsive py-3 font-semibold rounded-lg transition duration-300 ${isDarkMode ? 'bg-white text-[#3E505B]' : 'bg-[#3E505B] text-white'}`}
               >
                 Create account
