@@ -8,7 +8,7 @@ export default function Toggle({ isDarkMode, toggleTheme }) {
   // Update screen size state on window resize
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 640);
+      setIsSmallScreen(window.innerWidth < 1023);
       setIsLargeScreen(window.innerWidth >= 1024);
     };
 
