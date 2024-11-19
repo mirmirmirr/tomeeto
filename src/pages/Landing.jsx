@@ -16,7 +16,7 @@ export default function Landing() {
 
   return (
     <div
-      className={`relative flex flex-col items-center min-h-screen px-4 sm:px-8 ${
+      className={`z-50 relative flex flex-col items-center min-h-screen px-4 sm:px-8 ${
         isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'
       }`}
     >
