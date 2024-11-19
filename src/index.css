@@ -9,3 +9,7 @@
 .subtext-responsive {
   font-size: clamp(15px, 1vw, 20px);
 }
+
+input:focus::placeholder {
+  opacity: 0;
+}
