@@ -11,8 +11,8 @@ export default function Landing() {
   const { isSmallScreen, isLargeScreen } = useScreenSize();
 
   const handelFocus = () => {
-    setIsFocused
-  }
+    setIsFocused;
+  };
 
   return (
     <div
