@@ -108,6 +108,7 @@ export default function Login() {
             </label>
             <input
               type="text"
+              onChange={handleEmailChange('email')}
               placeholder="enter username here"
               className={`w-[35vw] py-2 bg-transparent border-b-2 focus:outline-none ${
                 isDarkMode

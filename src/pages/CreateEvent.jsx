@@ -16,8 +16,8 @@ export default function CreateEvent() {
   const [endDayDropdownVisible, setEndDayDropdownVisible] = useState(false);
   const [eventName, setEventName] = useState('');
   const [description, setDescription] = useState('');
-  const [startTime, setEmailValue] = useState('07:00');
-  const [endTime, setEndTime] = useState('19:00');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
 
   // Styling based on the current theme
   const bgColor = isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]';
@@ -28,12 +28,10 @@ export default function CreateEvent() {
     : 'placeholder-[#3E505B]';
 
   
-  const handleStartTimeChange = (prop) => (event) => {
-    setStartValue({
-      ...startTime,
-      [prop]: event.target.value,
-    });
+  const handleStartTimeChange = (event) => {
+    setStartTime(event.target.value); // Update state directly
   };
+    
 
   // Functions to handle dropdown visibility for start day
   const toggleStartDayDropdown = () => {
@@ -177,7 +175,8 @@ export default function CreateEvent() {
                 </div>
                 <input
                   type="time"
-                  onChange={handleStartTimeChange('')}
+                  value={"22:00"}
+                  onClick={handleStartTimeChange}
                   // defaultValue="07:00"
                   className="p-3 text-lg rounded-lg bg-red-500 text-white
                     text-center focus:outline-none"
@@ -339,7 +338,8 @@ export default function CreateEvent() {
 
           {/* Create Event button */}
           <button
-            onClick={create_event}
+            onClick={() => navigate('/confirmCreated')}
+            // onClick={create_event}
             className={`w-full p-3 mt-4 text-lg font-semibold bg-red-500
               rounded-lg text-[#F5F5F5] focus:outline-none`}
           >

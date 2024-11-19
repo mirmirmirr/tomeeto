@@ -104,8 +104,29 @@ async def create_event(request: Request):
     return {"message": "Event created", "event_code": code}
 
 
-# @app.post("/add_availability")
-# async def add_availability(request: Request):
-#     body: dict = await request.json()
-#     # (email and password) or (guest id and guest password), event code, nickname, 2d_array
-#     return {"message": "u suck"}
+@app.post("/add_availability")
+async def add_availability(request: Request):
+    body: dict = await request.json()
+    user_id = check_login(body)
+    if user_id < 0:
+        return {"message": "Login failed"}
+
+    if "code" not in body:
+        return {"message": "Missing field: code"}
+    code: str = body["code"]
+    if len(code) >= 255:
+        return {"message": "Code too long"}
+    if not code.isalnum():
+        return {"message": "Code must be alphanumeric"}
+
+    # (email and password) or (guest id and guest password), event code, 2d_array
+
+    return {"message": "u suck"}
+
+@app.get("/results")
+async def get_results(request: Request):
+    body: dict = await request.json()
+
+    # email and password or guest id and guest password, event code, 2d array
+
+    return {"message": "bruh"}
