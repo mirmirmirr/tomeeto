@@ -16,11 +16,11 @@ export default function Login() {
     password: '',
     showPassword: false,
   });
-   
+
   const [email, setEmailValue] = useState({
     email: '',
     showEmail: false,
-  })
+  });
 
   const handleEmailChange = (prop) => (event) => {
     setEmailValue({
@@ -47,12 +47,12 @@ export default function Login() {
     console.log(passwordValues.password);
     console.log(email.email);
     const data = {
-      "email": email.email,
-      "password": passwordValues.password
+      email: email.email,
+      password: passwordValues.password,
     };
 
     try {
-      const response = await fetch("http://tomeeto.cs.rpi.edu:8000/login", {
+      const response = await fetch('http://tomeeto.cs.rpi.edu:8000/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,8 +63,8 @@ export default function Login() {
       if (response.ok) {
         const result = await response.json();
         console.log('Login successful:', result);
-        if ((result.message).localeCompare("Login failed") == 0) {
-          alert("Login Failed");
+        if (result.message.localeCompare('Login failed') == 0) {
+          alert('Login Failed');
         } else {
           navigate('/signup');
         }
@@ -74,7 +74,7 @@ export default function Login() {
     } catch (error) {
       console.error('Error:', error);
     }
-  }
+  };
 
   return (
     <div

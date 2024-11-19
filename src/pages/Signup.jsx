@@ -8,7 +8,6 @@ import lightEye from '../assets/eye_light.png';
 import darkHidden from '../assets/hidden_dark.png';
 import lightHidden from '../assets/hidden_light.png';
 
-
 export default function Signup() {
   const navigate = useNavigate();
 
@@ -19,11 +18,11 @@ export default function Signup() {
     showPassword: false,
     showConfirmPassword: false,
   });
-  
+
   const [email, setEmailValue] = useState({
     email: '',
     showEmail: false,
-  })
+  });
 
   const handleTogglePasswordVisibility = (field) => {
     setPasswordValues((prevValues) => ({
@@ -50,12 +49,12 @@ export default function Signup() {
     console.log(passwordValues.password);
     console.log(email.email);
     const data = {
-      "email": email.email,
-      "password": passwordValues.password
+      email: email.email,
+      password: passwordValues.password,
     };
 
     try {
-      const response = await fetch("http://tomeeto.cs.rpi.edu:8000/signup", {
+      const response = await fetch('http://tomeeto.cs.rpi.edu:8000/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,14 +67,14 @@ export default function Signup() {
         console.log('Login successful:', result);
 
         // this shpould be dashboard whenever gavin finishes
-        navigate('/dashboard')
+        navigate('/dashboard');
       } else {
         console.error('Failed to log in:', response.statusText);
       }
     } catch (error) {
       console.error('Error:', error);
     }
-  }
+  };
 
   return (
     <div
