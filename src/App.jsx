@@ -20,7 +20,6 @@ function App() {
         <Route path="/availability" element={<Availability />} />
         <Route path="/results" element={<Results />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        {/* Add Dashboard route */}
       </Routes>
     </Router>
   );

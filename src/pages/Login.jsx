@@ -135,6 +135,7 @@ export default function Login() {
           {isLargeScreen && (
             <div>
               <button
+              onClick={() => navigate('/dashboard')}
                 className={`w-[80vw] lg:w-[35vw] text-responsive py-3 font-semibold rounded-lg transition duration-300 ${isDarkMode ? 'bg-white text-[#3E505B]' : 'bg-[#3E505B] text-white'}`}
               >
                 Login
@@ -177,7 +178,7 @@ export default function Login() {
               No account? <span className="underline">Sign up here!</span>
             </button>
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/dashboard')}
               className={`w-[125px] p-[10px] rounded-md ${
                 isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'
               }`}
