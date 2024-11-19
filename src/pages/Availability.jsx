@@ -34,6 +34,39 @@ export default function Availability() {
   const totalDays = allDays.length; // Total number of days
   const hours = Array.from({ length: 15 }, (_, i) => 7 + i);
 
+  const submit_button = async () => {
+    console.log("Ran");
+    console.log(name);
+    console.log(availability);
+    const data = {
+      "name": name,
+      "availability": availability,
+      "event_code": "some event code"
+    }
+
+    try {
+      const response = await fetch("http://tomeeto.cs.rpi.edu:8000/add_availability", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Time Set Successfully', result);
+
+        // session management with dashboard
+        navigate('/results');
+      } else {
+        console.error('Failed to record time:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   const displayedDays = allDays.slice(
     currentPage * daysPerPage,
     (currentPage + 1) * daysPerPage
@@ -152,7 +185,7 @@ export default function Availability() {
             add your availability here
           </div>
           <button
-            onClick={() => navigate('/results')}
+            onClick={submit_button}
             className={`w-32 p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500`}
           >
             Submit
