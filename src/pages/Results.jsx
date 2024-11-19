@@ -1,14 +1,11 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
 
 export default function Result() {
-  const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
   const [hoveredCell, setHoveredCell] = useState({ row: null, column: null });
   const [currentPage, setCurrentPage] = useState(0);
-  const [isDisabled] = useState(true);
   const [selectedCell, setSelectedCell] = useState(null);
   const daysPerPage = 7; // Number of days per page
 
@@ -21,6 +18,24 @@ export default function Result() {
     'THU 10',
     'FRI 11',
     'SAT 12',
+    'SUN 13',
+    'MON 14',
+    'TUE 15',
+    'WED 16',
+    'THU 17',
+    'FRI 18',
+    'SAT 19',
+    'SUN 20',
+    'MON 21',
+    'TUE 22',
+    'WED 23',
+    'THU 24',
+    'FRI 25',
+    'SAT 26',
+    'SUN 27',
+    'MON 28',
+    'TUE 29',
+    'WED 30',
   ];
 
   const totalDays = allDays.length; // Total number of days
@@ -60,8 +75,8 @@ export default function Result() {
       >
         <div
           id="eventName"
-          className="pl-4"
-          style={{ fontSize: `min(3vw, 60px)` }}
+          className="pl-4 mb-4"
+          style={{ fontSize: `min(4vh, 70px)` }}
         >
           {eventTitle}
         </div>
@@ -69,41 +84,23 @@ export default function Result() {
           className={`w-[93vw] border-t-2 m-auto opacity-25 ${isDarkMode ? 'border-gray-300' : 'border-gray-500'}`}
         ></div>
         <div className="flex w-[90vw] justify-between items-center mt-4">
-          <div className="pl-4" style={{ fontSize: `min(2vw, 20px)` }}>
+          <div className="pl-4" style={{ fontSize: `min(3vh, 25px)` }}>
             Results
           </div>
         </div>
         <div
           id="availability"
-          className="w-[90vw] h-[64vh] mt-[1vh] flex flex-row overflow-hidden"
+          className="w-[90vw] h-[64vh] mt-[2vh] flex flex-row overflow-hidden"
         >
-          <div className="flex mt-4">
-            {currentPage > 0 && (
-              <button
-                onClick={goToPrevPage}
-                className="px-4 py-2 font-bold opacity-25 hover:opacity-100"
-                style={{ fontSize: '2rem' }}
-              >
-                &#65308; {/* Previous page entity */}
-              </button>
-            )}
-            {(currentPage + 1) * daysPerPage < totalDays && (
-              <button
-                onClick={goToNextPage}
-                className="h-full flex items-center justify-center px-4 py-2 opacity-0"
-                style={{ fontSize: '2rem' }}
-                disabled={isDisabled}
-              >
-                &#65310;
-              </button>
-            )}
-          </div>
-          <table className="w-full table-fixed">
+          <table className="w-full table-fixed mt-4">
             <thead>
               <tr>
                 <th className="p-2" style={{ width: `min(10vw, 55px)` }}></th>
                 {displayedDays.map((day, index) => (
-                  <th key={index} className="p-2 font-[400]">
+                  <th
+                    key={index}
+                    className="p-2 font-[400] text-center text-[10pt]"
+                  >
                     {day}
                   </th>
                 ))}
@@ -116,7 +113,7 @@ export default function Result() {
                   className="h-full"
                   style={{ height: `calc(100% / ${hours.length})` }}
                 >
-                  <td className="pr-2 text-right text-[10pt]">
+                  <td className="pr-2 text-right text-[10pt] sm:text-[12pt]">
                     {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
                   </td>
                   {displayedDays.map((_, column) => (
@@ -142,6 +139,26 @@ export default function Result() {
               ))}
             </tbody>
           </table>
+          <div className="flex flex-col justify-center ml-4">
+            {currentPage > 0 && (
+              <button
+                onClick={goToPrevPage}
+                className="px-4 py-2 font-bold opacity-25 hover:opacity-100 mb-2"
+                style={{ fontSize: '2rem' }}
+              >
+                &#65308; {/* Previous page entity */}
+              </button>
+            )}
+            {(currentPage + 1) * daysPerPage < totalDays && (
+              <button
+                onClick={goToNextPage}
+                className="px-4 py-2 font-bold opacity-25 hover:opacity-100"
+                style={{ fontSize: '2rem' }}
+              >
+                &#65310; {/* Next page entity */}
+              </button>
+            )}
+          </div>
         </div>
       </div>
       {selectedCell && (
