@@ -55,7 +55,7 @@ export default function Signup() {
     };
 
     try {
-      const response = await fetch("http://129.161.89.45:8000/signup", {
+      const response = await fetch("http://tomeeto.cs.rpi.edu:8000/signup", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export default function Signup() {
         console.log('Login successful:', result);
 
         // this shpould be dashboard whenever gavin finishes
-        navigate('/login')
+        navigate('/dashboard')
       } else {
         console.error('Failed to log in:', response.statusText);
       }
