@@ -2,14 +2,14 @@ import { useNavigate } from 'react-router-dom';
 import darkLogo from '../assets/tomeeto-dark.png';
 import lightLogo from '../assets/tomeeto-light.png';
 import Toggle from './Toggle';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function Header({ isDarkMode, toggleTheme }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const menuRef = useRef(null);
 
   // Update screen size state on window resize
   useEffect(() => {
@@ -18,18 +18,31 @@ export default function Header({ isDarkMode, toggleTheme }) {
       setIsLargeScreen(window.innerWidth >= 1024);
     };
 
-    // Initial check on mount
-    handleResize();
-
-    // Add event listener to track screen size changes
+    handleResize(); // Initial check on mount
     window.addEventListener('resize', handleResize);
 
-    // Cleanup event listener on unmount
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Hide menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuOpen]);
+
   return (
-    <div className="p-4 justify-between w-full p-4">
+    <div className="p-4 justify-between w-full">
       <div
         className={`${menuOpen ? 'bg-black bg-opacity-25 absolute top-0 left-0 w-full h-full' : 'absolute top-8 left-8'}`}
       ></div>
@@ -59,6 +72,7 @@ export default function Header({ isDarkMode, toggleTheme }) {
 
       {menuOpen && (
         <div
+          ref={menuRef} // Attach ref to the menu
           className={`absolute left-0 top-0 w-[65vw] h-[100vh] z-10 ${
             isDarkMode
               ? 'bg-[#3E505B] text-white'
