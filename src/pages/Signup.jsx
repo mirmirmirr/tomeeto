@@ -249,7 +249,7 @@ export default function Signup() {
               Have an account? <span className="underline">Login!</span>
             </button>
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={signupClick}
               className={`w-[150px] p-[10px] rounded-md ${
                 isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'
               }`}

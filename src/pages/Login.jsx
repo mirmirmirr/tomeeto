@@ -69,7 +69,7 @@ export default function Login() {
         if (result.message.localeCompare('Login failed') == 0) {
           alert('Login Failed');
         } else {
-          navigate('/signup');
+          navigate('/dashboard');
         }
       } else {
         console.error('Failed to log in:', response.statusText);
@@ -224,7 +224,7 @@ export default function Login() {
               No account? <span className="underline">Sign up here!</span>
             </button>
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={login_user}
               className={`w-[125px] p-[10px] rounded-md ${
                 isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'
               }`}
