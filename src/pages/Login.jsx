@@ -42,7 +42,7 @@ export default function Login() {
 
       <div className="flex flex-col lg:flex-row justify-center items-center mt-[10vh]">
         {/*login text */}
-        <div className="flex flex-row lg:flex-col items-center justify-center mt-[15vh] -mb-[50px]">
+        <div className="flex flex-row lg:flex-col items-center justify-center mt-[15vh] -mb-[50px] ml-[20px]">
           <div
             className="leading-snug -ml-[20px]"
             style={{ marginTop: 'calc((14vh - 100vh) / 3)' }}
