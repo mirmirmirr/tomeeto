@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import darkLogo from '../../src/assets/tomeeto-dark.png';
-import lightLogo from '../../src/assets/tomeeto-light.png';
+import darkLogo from '../assets/tomeeto-dark.png';
+import lightLogo from '../assets/tomeeto-light.png';
 import Toggle from './Toggle';
 
 export default function Header({ isDarkMode, toggleTheme }) {
