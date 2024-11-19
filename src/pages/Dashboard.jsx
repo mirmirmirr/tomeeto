@@ -83,7 +83,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-
         <div className="mt-4 pl-4">
           <h2 className="text-2xl font-bold mb-4">Events Created by You</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
