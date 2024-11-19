@@ -10,6 +10,10 @@ export default function Landing() {
   const { isDarkMode, toggleTheme } = useTheme();
   const { isSmallScreen, isLargeScreen } = useScreenSize();
 
+  const handelFocus = () => {
+    setIsFocused
+  }
+
   return (
     <div
       className={`relative flex flex-col items-center min-h-screen px-4 sm:px-8 ${
@@ -33,7 +37,7 @@ export default function Landing() {
           value={code}
           onChange={(e) => setCode(e.target.value)}
           placeholder="or enter code here"
-          className={`w-[50vw] min-w-[300px] mt-[2vh] px-3 py-2 bg-transparent text-center border-b-2 rounded-none lg:text-[2vw] ${
+          className={`w-[50vw] min-w-[300px] mt-[2vh] px-3 py-2 text-[20px] bg-transparent text-center border-b-2 rounded-none lg:text-[2vw] focus:outline-none ${
             isDarkMode
               ? 'text-white border-white placeholder-white'
               : 'text-black border-black placeholder-black'
