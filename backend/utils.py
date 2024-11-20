@@ -27,6 +27,26 @@ DB_CONN: MySQLConnection = MySQL.connect(
 DB_CURSOR: MySQLCursorDict = DB_CONN.cursor(dictionary=True)
 
 
+# Thread to query the database every hour
+class Repeat(Thread):
+    def __init__(self, event):
+        Thread.__init__(self)
+        self.stopped = event
+
+    def run(self):
+        while not self.stopped.wait(1800):
+            DB_CURSOR.execute("SELECT 'https://www.youtube.com/watch?v=YAgJ9XugGBo'")
+            DB_CURSOR.fetchone()
+
+
+# Initialize the thread
+stopFlag = ThreadEvent()
+thread = Repeat(stopFlag)
+thread.start()
+
+signal.signal(signal.SIGINT, lambda *args: stopFlag.set())
+
+
 # Function to execute a query on the database
 def db_hello_world() -> dict:
     try:
