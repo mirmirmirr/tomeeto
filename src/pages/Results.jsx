@@ -109,14 +109,14 @@ export default function Result() {
       >
         <div
           id="eventName"
-          className="pl-4"
+          className="ml-8"
           style={{ fontSize: `min(3vw, 60px)` }}
         >
           {eventTitle}
         </div>
 
         <div
-          className={`w-[90vw] border-t-2 ml-4 opacity-25 ${isDarkMode ? 'border-gray-300' : 'border-gray-500'}`}
+          className={`w-[90vw] border-t-2 ml-8 opacity-25 ${isDarkMode ? 'border-gray-300' : 'border-gray-500'}`}
         ></div>
 
         <div
@@ -145,27 +145,54 @@ export default function Result() {
             )}
           </div>
 
+          <div className="flex flex-col mr-[10px]">
+            <div className="text-[1vw] text-right align-top p-2 opacity-0">
+              nnn
+            </div>
+            {hours.map((hour, index) => (
+              <div
+                key={index}
+                className="relative text-right text-[10pt] align-top"
+                style={{
+                  height: `calc(100% / ${hours.length})`,
+                  display: 'flex',
+                  justifyContent: 'end',
+                }}
+              >
+                <span
+                  className="absolute top-0 right-0"
+                  style={{ transform: `translate(0, -50%)` }}
+                >
+                  {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
+                </span>
+              </div>
+            ))}
+          </div>
+
           <table className="w-[80%] table-fixed">
             <thead>
               <tr>
-                <th className="p-2" style={{ width: `min(10vw, 55px)` }}></th>
+                <th style={{ width: `0.5vw` }}></th>
                 {displayedDays.map((day, index) => (
-                  <th key={index} className="p-2 font-[400]">
+                  <th key={index} className="p-2 font-[400] text-[1vw]">
                     {day}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {hours.map((hour, row) => (
+              {hours.map((_, row) => (
                 <tr
                   key={row}
-                  className="h-full"
                   style={{ height: `calc(100% / ${hours.length})` }}
                 >
-                  <td className="text-right text-[10pt]">
-                    {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
-                  </td>
+                  <td
+                    className="border-gray-400 p-2 relative"
+                    style={{
+                      borderTop: '1px solid #b9b9b9',
+                    }}
+                  ></td>
+
                   {displayedDays.map((_, column) => {
                     const availability = availabilityCounts[row][column];
                     const opacity = availability > 0 ? availability : 0;
@@ -173,7 +200,7 @@ export default function Result() {
                     return (
                       <td
                         key={column}
-                        className="border border-gray-400 p-2"
+                        className="border border-gray-400 p-2 relative"
                         style={{
                           backgroundColor: `rgba(72, 187, 120, ${opacity})`,
                           border: '1px solid #b9b9b9',
@@ -198,7 +225,7 @@ export default function Result() {
                 style={{ fontSize: '2rem' }}
                 disabled={isDisabled}
               >
-                &#65308; {/* Previous page entity */}
+                &#65308;
               </button>
             )}
             {(currentPage + 1) * daysPerPage < totalDays && (
@@ -207,7 +234,7 @@ export default function Result() {
                 className="h-full flex items-center justify-center px-4 py-2 font-bold opacity-25 hover:opacity-100"
                 style={{ fontSize: '2rem' }}
               >
-                &#65310; {/* Next page entity */}
+                &#65310;
               </button>
             )}
           </div>
