@@ -7,9 +7,26 @@ export default function ConfirmCreated() {
   const navigate = useNavigate();
 
   const { isDarkMode, toggleTheme } = useTheme();
+  const eventCode = 'tomeetoplanningBETA';
+
+  const [copySuccess, setCopySuccess] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(eventCode)
+      .then(() => {
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000);
+      })
+      .catch((err) => {
+        console.error('Failed to copy text: ', err);
+      });
+  };
 
   // Styling based on the current theme
   const bgColor = isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]';
+  const buttonBG = !isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]';
+  const buttonText = !isDarkMode ? 'text-[#F5F5F5]' : 'text-[#3E505B]';
   const textColor = isDarkMode ? 'text-[#F5F5F5]' : 'text-[#3E505B]';
   const borderColor = isDarkMode ? 'border-[#F5F5F5]' : 'border-[#3E505B]';
   const placeholderColor = isDarkMode
@@ -18,53 +35,82 @@ export default function ConfirmCreated() {
 
   return (
     <div
-      className={`relative flex flex-col items-start justify-center min-h-screen
-        p-4 ${bgColor}`}
+      className={`relative flex flex-col items-start lg:justify-center min-h-screen p-4 ${bgColor}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-
-      <div className="flex w-full align-center">
-        <div className=" -mt-[10vh]">
-          <span
-            className={`text-[30vh] leading-[25vh] font-bold ${isDarkMode ? 'text-white' : 'text-[#3E505B]'}`}
+      <div className="flex flex-col lg:flex-row w-full align-center lg:m-0 m-[10px] mt-[10vh] lg:mt-0">
+        <div>
+          <h1
+            className={`text-[15vw] leading-[7vh] lg:leading-[25vh] font-bold ${textColor}`}
           >
             Event Created!
-          </span>
-          <br></br>
+          </h1>
 
-          <div className="flex flex-row justify-between items-center">
-            <span
-              className={`text-[3vh] leading-[10vh] ml-[10vw] ${isDarkMode ? 'text-white' : 'text-[#3E505B]'}`}
+          <p
+            className={`text-[20px] mt-[10px] lg:text-[2vw] lg:text-center ${textColor}`}
+          >
+            (Your event will be deleted after <b>two weeks</b> inactivity)
+          </p>
+        </div>
+
+        <div className="flex flex-col items-center align-center justify-end space-y-4 mr-[5vw]">
+          <div className="w-[60vw] lg:w-full relative">
+            <label
+              className={`mt-[30px] mb-[0px] block text-[20px] lg:text-[1vw] ${textColor} flex flex-row`}
             >
-              (Your event will be deleted after two weeks inactivity)
-            </span>
+              EVENT CODE
+              {copySuccess && (
+                <p
+                  className={`text-[12px] lg:text-[0.8vw] absolute right-0 lg:right-[100px] ${textColor}`}
+                >
+                  hazzah!
+                </p>
+              )}
+            </label>
+            <div
+              onClick={handleCopy}
+              className="w-[60vw] lg:w-full mt-[-10px] py-2 flex items-center relative group"
+            >
+              <p
+                className={`flex-1 text-responsive py-2 font-bold bg-transparent border-b-2 rounded-none focus:outline-none ${isDarkMode ? 'text-white border-white' : 'text-black border-black'}`}
+              >
+                {eventCode}
+              </p>
 
-            <div className="flex flex-col items-center space-y-4 mr-[5vw] -mt-[10vh]">
+              <button
+                onClick={handleCopy}
+                className={`hidden lg:block absolute text-[0.8vw] right-0 bottom-[55px] py-1 px-4 cursor-pointer rounded-lg opacity-0 group-hover:opacity-100 transition-opacity ${buttonText} ${buttonBG}`}
+              >
+                copy link
+              </button>
               <button
                 onClick={() => navigate('/availability')}
-                className={`w-[15vw] text-responsive py-2 font-semibold rounded-lg transition duration-300 ${isDarkMode ? 'bg-white text-[#3E505B]' : 'bg-[#3E505B] text-white'} hover:bg-red-500 hover:text-white hover:border-transparent`}
+                className={`hidden lg:block absolute text-[0.8vw] right-0 bottom-[20px] py-1 px-4 cursor-pointer rounded-lg opacity-0 group-hover:opacity-100 transition-opacity ${buttonText} ${buttonBG}`}
               >
-                Add Availability
+                fill availability
               </button>
-              <div>
-                <button
-                  onClick={() => navigate('/create')}
-                  className={`w-[10vw] m-[10px] text-responsive py-2 font-semibold rounded-lg transition duration-300 ${
-                    isDarkMode
-                      ? 'text-white bg-transparent border-2 border-white'
-                      : 'text-back bg-transparent border-2 border-[#3E505B]'
-                  } hover:bg-red-500 hover:text-white hover:border-transparent`}
-                >
-                  Edit Event
-                </button>
-                <button
-                  onClick={() => navigate('/results')}
-                  className={`w-[10vw] m-[10px] text-responsive py-2 font-semibold rounded-lg transition duration-300 ${isDarkMode ? 'bg-white text-[#3E505B]' : 'bg-[#3E505B] text-white'}  hover:bg-red-500 hover:text-white hover:border-transparent`}
-                >
-                  Results
-                </button>{' '}
-              </div>
             </div>
+          </div>
+
+          <div className="flex flex-col lg:flex-row">
+            <button
+              onClick={() => navigate('/availability')}
+              className={`lg:hidden w-[60vw] lg:w-[13vw] m-[10px] bg-transparent border-2 text-responsive py-2 font-semibold rounded-lg ${textColor} ${borderColor} hover:bg-red-500 hover:text-white hover:border-transparent`}
+            >
+              Add Availability
+            </button>
+            <button
+              onClick={() => navigate('/create')}
+              className={`w-[60vw] lg:w-[13vw] m-[10px] bg-transparent border-2 text-responsive py-2 font-semibold rounded-lg ${textColor} ${borderColor} hover:bg-red-500 hover:text-white hover:border-transparent`}
+            >
+              Edit Event
+            </button>
+            <button
+              onClick={() => navigate('/results')}
+              className={`w-[60vw] lg:w-[13vw] m-[10px] text-responsive py-2 font-semibold rounded-lg ${buttonText} ${buttonBG}  hover:bg-red-500 hover:text-white hover:border-transparent`}
+            >
+              Results
+            </button>
           </div>
         </div>
       </div>
