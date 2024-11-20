@@ -1,3 +1,6 @@
+from threading import Thread, Event as ThreadEvent
+import signal
+
 from dotenv import load_dotenv
 import os
 import bcrypt
@@ -45,6 +48,8 @@ thread = Repeat(stopFlag)
 thread.start()
 
 signal.signal(signal.SIGINT, lambda *args: stopFlag.set())
+
+TWO_WEEKS_SQL: str = "DATE_ADD(NOW(), INTERVAL 14 DAY)"
 
 
 # Function to execute a query on the database
@@ -158,9 +163,8 @@ def new_guest() -> dict:
             (pass_hash,),
         )
         DB_CONN.commit()
-        DB_CURSOR.execute("SELECT LAST_INSERT_ID() AS guest_id")
         return {
-            "guest_id": DB_CURSOR.fetchone()["guest_id"],
+            "guest_id": DB_CURSOR.lastrowid,
             "guest_password": password,
         }
     except MySQL.Error as e:
@@ -178,7 +182,7 @@ def clear_unlocked_codes() -> None:
 
 
 # Checks if a custom code is available
-def check_code(code: str) -> bool:
+def check_code_avail(code: str) -> bool:
     try:
         clear_unlocked_codes()
         DB_CURSOR.execute("SELECT * FROM url_code WHERE url_code = %s", (code,))
@@ -191,20 +195,25 @@ def check_code(code: str) -> bool:
 # Adds an event to the database and returns the url code
 def new_code(custom: str = "") -> str:
     if custom != "":
-        if not check_code(custom):
+        if not check_code_avail(custom):
             return ""
         return custom
     else:
         new_code = generate_random_string()
-        while not check_code(new_code):
+        while not check_code_avail(new_code):
             new_code = generate_random_string()
     return new_code
 
 
-def new_event(event: Event) -> bool:
+def new_event(event: Event, code: str) -> bool:
     query, values = event.to_sql()
     try:
         DB_CURSOR.execute(query, values)
+        event_id = DB_CURSOR.lastrowid
+        DB_CURSOR.execute(
+            f"INSERT INTO url_code (url_code, user_event_id, unlocked_at) VALUES (%s, %s, {TWO_WEEKS_SQL})",
+            (code, event_id),
+        )
         DB_CONN.commit()
         return True
     except MySQL.Error as e:

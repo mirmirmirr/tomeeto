@@ -8,7 +8,7 @@ from utils import (
     add_user,
     check_login,
     new_guest,
-    check_code,
+    check_code_avail,
     new_code,
     new_event,
 )
@@ -73,7 +73,7 @@ async def check_custom_code(request: Request):
     if not code.isalnum():
         return {"message": "Code must be alphanumeric"}
 
-    if check_code(code):
+    if check_code_avail(code):
         return {"message": "Custom code is available"}
     return {"message": "Custom code is NOT available"}
 
@@ -98,7 +98,7 @@ async def create_event(request: Request):
     event_obj = Event.from_json(body)
     if event_obj is None:
         return {"message": "Invalid event data"}
-    if not new_event(event_obj):
+    if not new_event(event_obj, code):
         return {"message": "Database error"}
 
     return {"message": "Event created", "event_code": code}
