@@ -10,6 +10,7 @@ export default function Header({ isDarkMode, toggleTheme }) {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
   const menuRef = useRef(null);
+  const hamburgerRef = useRef(null);
 
   // Update screen size state on window resize
   useEffect(() => {
@@ -26,20 +27,17 @@ export default function Header({ isDarkMode, toggleTheme }) {
 
   // Hide menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClick = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setMenuOpen(false);
+        setMenuOpen(menuOpen);
+      }
+      if (hamburgerRef.current && hamburgerRef.current.contains(event.target)) {
+        setMenuOpen(!menuOpen);
       }
     };
 
-    if (menuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [menuOpen]);
+    document.addEventListener('mousedown', handleClick);
+  });
 
   return (
     <div className="p-4 justify-between w-full">
@@ -48,7 +46,7 @@ export default function Header({ isDarkMode, toggleTheme }) {
       ></div>
 
       <button
-        onClick={() => setMenuOpen(!menuOpen)}
+        ref={hamburgerRef}
         className={`absolute top-10 left-8 lg:hidden text-[30px] focus:outline-none z-20 ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
         <div className="w-10 h-10 cursor-pointer flex flex-col items-center justify-center">
