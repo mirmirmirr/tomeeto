@@ -205,7 +205,7 @@ def check_code_avail(code: str) -> bool:
         return False
 
 
-# Adds an event to the database and returns the url code
+# Generates a new url code
 def new_code(custom: str = "") -> str:
     if custom != "":
         if not check_code_avail(custom):
@@ -218,6 +218,7 @@ def new_code(custom: str = "") -> str:
     return new_code
 
 
+# Adds an event to the database and returns the url code
 def new_event(event: Event, code: str) -> bool:
     query, values = event.to_sql()
     try:
@@ -229,6 +230,27 @@ def new_event(event: Event, code: str) -> bool:
         )
         DB_CONN.commit()
         return True
+    except MySQL.Error as e:
+        print(e)
+        return False
+
+
+# Checks if a code refers to an existing event
+def check_code_event(code: str) -> bool:
+    try:
+        clear_unlocked_codes()
+        DB_CURSOR.execute(
+            """
+            SELECT
+                user_event_id
+            FROM
+                url_code
+            WHERE
+                url_code = %s
+            """,
+            (code,),
+        )
+        return DB_CURSOR.fetchone() is not None
     except MySQL.Error as e:
         print(e)
         return False
