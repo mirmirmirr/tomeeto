@@ -56,6 +56,7 @@ These and all required packages can be installed using `pip install -r backend/r
 - The repository is configured with formatting checks using `prettier` and `black` for React and python code, respectively. This is to ensure that the code is formatted well and meets coding standards. **You will not be able merge the branch until these tests pass.**
   - Run `npm run format` for React
   - Run `black --check .` for python
+- Anyone who is not an explicitly invited collaborator cannot make branches or commit on the main repo. Instead, they have to fork the repo and the make a pull request through that.
 
 ## Contributors
 
