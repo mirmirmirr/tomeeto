@@ -105,34 +105,47 @@ def check_login(json: dict) -> int:
     if "email" in json and "password" in json:
         email: str = json["email"]
         password: str = json["password"]
-        DB_CURSOR.execute(
-            "SELECT password_hash FROM user_account WHERE email = %s", (email,)
-        )
+        try:
+            DB_CURSOR.execute(
+                "SELECT password_hash FROM user_account WHERE email = %s", (email,)
+            )
+        except MySQL.Error as e:
+            print(e)
+            return -1
         query_result: dict = DB_CURSOR.fetchone()
         if query_result is None:
             return -1
         pw_hash: str = query_result["password_hash"]
         if bcrypt.checkpw(password.encode(), pw_hash.encode()):
-            DB_CURSOR.execute(
-                "SELECT user_account_id FROM user_account WHERE email = %s", (email,)
-            )
-            return DB_CURSOR.fetchone()["user_account_id"]
+            try:
+                DB_CURSOR.execute(
+                    "SELECT user_account_id FROM user_account WHERE email = %s",
+                    (email,),
+                )
+                return DB_CURSOR.fetchone()["user_account_id"]
+            except MySQL.Error as e:
+                print(e)
+                return -1
         else:
             return -1
     elif "guest_id" in json and "guest_password" in json:
-        DB_CURSOR.execute(
-            """
-            SELECT
-                password_hash
-            FROM
-                user_account
-            WHERE
-                user_account_id = %s
-                AND is_guest = TRUE
-            """,
-            (json["guest_id"],),
-        )
-        query_result: dict = DB_CURSOR.fetchone()
+        try:
+            DB_CURSOR.execute(
+                """
+                SELECT
+                    password_hash
+                FROM
+                    user_account
+                WHERE
+                    user_account_id = %s
+                    AND is_guest = TRUE
+                """,
+                (json["guest_id"],),
+            )
+            query_result: dict = DB_CURSOR.fetchone()
+        except MySQL.Error as e:
+            print(e)
+            return -1
         if query_result is None:
             return -1
         else:
