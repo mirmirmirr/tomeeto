@@ -288,11 +288,15 @@ const attendeesFraction = `${attendeesAvailable}/${scheduleData.length}`;
                     {displayedDays.map((_, column) => {
                       const availability = availabilityCounts[row][column];
                       const opacity = availability > 0 ? availability : 0;
+                      const isSelected =
+                      hoveredCell.row === row && hoveredCell.column === column;
 
                       return (
                         <td
                           key={column}
-                          className="border border-gray-400 p-2 relative"
+                          className={`p-2 relative cursor-pointer z-50 overflow-visible ${
+                            isSelected ? 'ring-2 ring-[#FF5C5C]' : ''
+                          }`}
                           style={{
                             backgroundColor: `rgba(72, 187, 120, ${opacity})`,
                             border: '1px solid #b9b9b9',
