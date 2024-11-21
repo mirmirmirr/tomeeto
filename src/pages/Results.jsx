@@ -297,8 +297,8 @@ export default function Result() {
             </div>
           </div>
 
-          <div className="w-[25%] flex flex-col ml-auto mr-auto items-center">
-            <div className="text-[23px] font-[500] p-5">
+          <div className="w-full flex flex-col items-center">
+            <div className="text-[23px] font-[500] w-[150px] pt-4">
               Attendees ({scheduleData.length})
             </div>
             {scheduleData.map((attendee, index) => {
