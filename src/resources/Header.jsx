@@ -35,10 +35,10 @@ export default function Header({ isDarkMode, toggleTheme }) {
         setMenuOpen(!menuOpen);
       }
     };
-  
+
     document.addEventListener('mousedown', handleClick);
   });
-  
+
   return (
     <div className="p-4 justify-between w-full">
       <div

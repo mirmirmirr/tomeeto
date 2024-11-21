@@ -106,14 +106,15 @@ export default function Result() {
     })
   );
 
-  const attendeesAvailable = hoveredCell.row !== null && hoveredCell.column !== null
-  ? scheduleData.filter(
-      (attendee) =>
-        attendee.availability[hoveredCell.row][hoveredCell.column] == 1
-    ).length
-  : 0;
+  const attendeesAvailable =
+    hoveredCell.row !== null && hoveredCell.column !== null
+      ? scheduleData.filter(
+          (attendee) =>
+            attendee.availability[hoveredCell.row][hoveredCell.column] == 1
+        ).length
+      : 0;
 
-const attendeesFraction = `${attendeesAvailable}/${scheduleData.length}`;
+  const attendeesFraction = `${attendeesAvailable}/${scheduleData.length}`;
 
   const goToPrevPage = () => {
     if (currentPage > 0) {
@@ -160,7 +161,8 @@ const attendeesFraction = `${attendeesAvailable}/${scheduleData.length}`;
                 const isAvailable =
                   hoveredCell.row !== null &&
                   hoveredCell.column !== null &&
-                  attendee.availability[hoveredCell.row][hoveredCell.column] == 1;
+                  attendee.availability[hoveredCell.row][hoveredCell.column] ==
+                    1;
                 const opacityStyle = isAvailable
                   ? 'opacity-100'
                   : 'opacity-50 line-through';
@@ -289,7 +291,8 @@ const attendeesFraction = `${attendeesAvailable}/${scheduleData.length}`;
                       const availability = availabilityCounts[row][column];
                       const opacity = availability > 0 ? availability : 0;
                       const isSelected =
-                      hoveredCell.row === row && hoveredCell.column === column;
+                        hoveredCell.row === row &&
+                        hoveredCell.column === column;
 
                       return (
                         <td
