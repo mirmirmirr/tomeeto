@@ -67,6 +67,7 @@ export default function Calendar({ onDateSelect }) {
     <div className={`${bgColor} ${textColor} p-2 shadow-md border-0`}>
       {/* Calendar Header */}
       <div className="flex justify-between items-center mb-2">
+        {/* Previous Month Button */}
         {!isCurrentMonth && (
           <button
             onClick={() => handleMonthChange(-1)}
@@ -76,27 +77,29 @@ export default function Calendar({ onDateSelect }) {
             &#8592;
           </button>
         )}
-        <p className="font-bold text-sm">
-          {currentDate.toLocaleString('default', { month: 'long' })} {year}
-        </p>
-        <button
-          onClick={() => handleMonthChange(1)}
-          className={`text-sm font-bold ${textColor} flex items-center justify-center p-1 ${
-            isAtMaxMonth ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-          disabled={isAtMaxMonth} // Disable when at the third month
-          aria-label="Next Month"
-        >
-          &#8594;
-        </button>
+        
+        {/* Month Name and Year */}
+        <div className="flex justify-center flex-grow">
+          <p className="font-bold text-sm">
+            {currentDate.toLocaleString('default', { month: 'long' })} {year}
+          </p>
+        </div>
+
+        {/* Next Month Button (conditionally rendered) */}
+        {!isAtMaxMonth && (
+          <button
+            onClick={() => handleMonthChange(1)}
+            className={`text-sm font-bold ${textColor} flex items-center justify-center p-1`}
+            aria-label="Next Month"
+          >
+            &#8594;
+          </button>
+        )}
       </div>
       {/* Day Names */}
       <div className={`grid grid-cols-7 gap-x-2 text-center ${textColor} mb-1`}>
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
-          <div
-            key={index}
-            className="h-6 w-10 flex items-center justify-center text-xs"
-          >
+          <div key={index} className="h-6 w-10 flex items-center justify-center text-xs">
             {day}
           </div>
         ))}
