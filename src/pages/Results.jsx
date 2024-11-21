@@ -106,6 +106,15 @@ export default function Result() {
     })
   );
 
+  const attendeesAvailable = hoveredCell.row !== null && hoveredCell.column !== null
+  ? scheduleData.filter(
+      (attendee) =>
+        attendee.availability[hoveredCell.row][hoveredCell.column] == 1
+    ).length
+  : 0;
+
+const attendeesFraction = `${attendeesAvailable}/${scheduleData.length}`;
+
   const goToPrevPage = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
@@ -140,8 +149,34 @@ export default function Result() {
 
         <div
           id="results"
-          className="w-full lg:w-[80vw] h-[100vh] lg:h-[70vh] lg:ml-[5%] mr-auto mt-[3vh] flex flex-col lg:flex-row overflow-hidden"
+          className="w-full lg:w-[80vw] h-[100vh] lg:h-[70vh] lg:ml-[5%] items-center mr-auto mt-[3vh] flex flex-col lg:flex-row overflow-hidden"
         >
+          <div className="block lg:hidden w-[80vw] flex flex-col mb-[3vh]">
+            <div className="text-[20px] font-[500]">
+              Attendees ({attendeesFraction})
+            </div>
+            <div className="grid grid-flow-row auto-rows-max grid-cols-[repeat(auto-fill,minmax(50px,1fr))] gap-[10px] justify-center w-full">
+              {scheduleData.map((attendee, index) => {
+                const isAvailable =
+                  hoveredCell.row !== null &&
+                  hoveredCell.column !== null &&
+                  attendee.availability[hoveredCell.row][hoveredCell.column] == 1;
+                const opacityStyle = isAvailable
+                  ? 'opacity-100'
+                  : 'opacity-50 line-through';
+
+                return (
+                  <div
+                    key={index}
+                    className={`text-[16px] font-[300] transition duration-300 ${opacityStyle}`}
+                  >
+                    {attendee.name}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="flex flex-row">
             <div className="flex justify-between mt-4">
               {currentPage > 0 && (
@@ -297,9 +332,9 @@ export default function Result() {
             </div>
           </div>
 
-          <div className="w-full flex flex-col items-center">
-            <div className="text-[23px] font-[500] w-[150px] pt-4">
-              Attendees ({scheduleData.length})
+          <div className="hidden lg:block w-full flex flex-col text-center h-[70vh]">
+            <div className="text-[23px] font-[500] w-[200px] pt-4">
+              Attendees ({attendeesFraction})
             </div>
             {scheduleData.map((attendee, index) => {
               const isAvailable =
