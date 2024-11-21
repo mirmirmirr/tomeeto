@@ -294,7 +294,7 @@ const attendeesFraction = `${attendeesAvailable}/${scheduleData.length}`;
                       return (
                         <td
                           key={column}
-                          className={`p-2 relative cursor-pointer z-50 overflow-visible ${
+                          className={`p-2 relative cursor-pointer overflow-visible ${
                             isSelected ? 'ring-2 ring-[#FF5C5C]' : ''
                           }`}
                           style={{
