@@ -14,23 +14,42 @@ export default function Result() {
   const daysPerPage = 7; // Number of days per page
 
   const eventTitle = 'tomeeto planning';
+  const weekdays = [
+    'SUN',
+    'MON',
+    'TUE',
+    'WED',
+    'THU',
+    'FRI',
+    'SAT',
+    'SUN',
+    'MON',
+    'TUE',
+    'WED',
+  ];
+
   const allDays = [
-    'SUN 6',
-    'MON 7',
-    'TUE 8',
-    'WED 9',
-    'THU 10',
-    'FRI 11',
-    'SAT 12',
-    'SUN 13',
-    'MON 14',
-    'TUE 15',
-    'WED 16',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16',
   ];
   const totalDays = allDays.length; // Total number of days
   const hours = Array.from({ length: 15 }, (_, i) => 7 + i);
 
   const displayedDays = allDays.slice(
+    currentPage * daysPerPage,
+    (currentPage + 1) * daysPerPage
+  );
+
+  const displayedWeekDays = weekdays.slice(
     currentPage * daysPerPage,
     (currentPage + 1) * daysPerPage
   );
@@ -105,138 +124,177 @@ export default function Result() {
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div
-        className={`flex flex-col mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
+        className={`flex flex-col mt-[5vh] items-center ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
         <div
           id="eventName"
-          className="ml-8"
-          style={{ fontSize: `min(3vw, 60px)` }}
+          className="w-[80vw] lg:w-[93vw]"
+          style={{ fontSize: `max(3vw, 35px)` }}
         >
           {eventTitle}
         </div>
 
         <div
-          className={`w-[90vw] border-t-2 ml-8 opacity-25 ${isDarkMode ? 'border-gray-300' : 'border-gray-500'}`}
+          className={`w-[80vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
         ></div>
 
         <div
           id="results"
-          className="w-[80vw] h-[70vh] ml-[5%] mr-auto mt-[3vh] flex flex-row overflow-hidden"
+          className="w-full lg:w-[80vw] h-[100vh] lg:h-[70vh] lg:ml-[5%] mr-auto mt-[3vh] flex flex-col lg:flex-row overflow-hidden"
         >
-          <div className="flex justify-between mt-4">
-            {currentPage > 0 && (
-              <button
-                onClick={goToPrevPage}
-                className="px-4 py-2 font-bold opacity-25 hover:opacity-100"
-                style={{ fontSize: '2rem' }}
-              >
-                &#65308; {/* Previous page entity */}
-              </button>
-            )}
-            {(currentPage + 1) * daysPerPage < totalDays && (
-              <button
-                onClick={goToNextPage}
-                className="h-full flex items-center justify-center px-4 py-2 opacity-0"
-                style={{ fontSize: '2rem' }}
-                disabled={isDisabled}
-              >
-                &#65310;
-              </button>
-            )}
-          </div>
-
-          <div className="flex flex-col mr-[10px]">
-            <div className="text-[1vw] text-right align-top p-2 opacity-0">
-              nnn
+          <div className="flex flex-row">
+            <div className="flex justify-between mt-4">
+              {currentPage > 0 && (
+                <button
+                  onClick={goToPrevPage}
+                  className="lg:px-4 py-2 font-bold opacity-25 hover:opacity-100"
+                  style={{ fontSize: '2rem' }}
+                >
+                  &#65308;
+                </button>
+              )}
+              {(currentPage + 1) * daysPerPage < totalDays && (
+                <button
+                  onClick={goToNextPage}
+                  className="h-full flex items-center justify-center lg:px-4 py-2 opacity-0"
+                  style={{ fontSize: '2rem' }}
+                  disabled={isDisabled}
+                >
+                  &#65310;
+                </button>
+              )}
             </div>
-            {hours.map((hour, index) => (
+
+            <div className="flex flex-col mr-[10px] h-[70vh]">
               <div
-                key={index}
-                className="relative text-right text-[10pt] align-top"
+                className=" pb-1 font-[400] opacity-0"
                 style={{
-                  height: `calc(100% / ${hours.length})`,
-                  display: 'flex',
-                  justifyContent: 'end',
+                  fontSize: `min(3vw, 15px)`,
+                  width: `min(10vw, 40px)`,
                 }}
               >
-                <span
-                  className="absolute top-0 right-0"
-                  style={{ transform: `translate(0, -50%)` }}
-                >
-                  {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
-                </span>
+                nnn
               </div>
-            ))}
-          </div>
-
-          <table className="w-[80%] table-fixed">
-            <thead>
-              <tr>
-                <th style={{ width: `0.5vw` }}></th>
-                {displayedDays.map((day, index) => (
-                  <th key={index} className="p-2 font-[400] text-[1vw]">
-                    {day}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {hours.map((_, row) => (
-                <tr
-                  key={row}
-                  style={{ height: `calc(100% / ${hours.length})` }}
+              <div
+                className="pb-2 font-[400] opacity-0"
+                style={{
+                  fontSize: `min(3vw, 15px)`,
+                }}
+              >
+                nnn
+              </div>
+              {hours.map((hour, index) => (
+                <div
+                  key={index}
+                  className="relative text-right align-top"
+                  style={{
+                    height: `calc(100% / ${hours.length})`,
+                    display: 'flex',
+                    justifyContent: 'end',
+                    fontSize: `min(3vw, 12px)`,
+                  }}
                 >
-                  <td
-                    className="border-gray-400 p-2 relative"
-                    style={{
-                      borderTop: '1px solid #b9b9b9',
-                    }}
-                  ></td>
-
-                  {displayedDays.map((_, column) => {
-                    const availability = availabilityCounts[row][column];
-                    const opacity = availability > 0 ? availability : 0;
-
-                    return (
-                      <td
-                        key={column}
-                        className="border border-gray-400 p-2 relative"
-                        style={{
-                          backgroundColor: `rgba(72, 187, 120, ${opacity})`,
-                          border: '1px solid #b9b9b9',
-                        }}
-                        onMouseEnter={() => setHoveredCell({ row, column })}
-                        onMouseLeave={() =>
-                          setHoveredCell({ row: null, column: null })
-                        }
-                      ></td>
-                    );
-                  })}
-                </tr>
+                  <span
+                    className="absolute top-0 right-0"
+                    style={{ transform: `translate(0, -50%)` }}
+                  >
+                    {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
+                  </span>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
 
-          <div className="flex justify-between mt-4">
-            {currentPage > 0 && (
-              <button
-                onClick={goToPrevPage}
-                className="px-4 py-2 opacity-0"
-                style={{ fontSize: '2rem' }}
-                disabled={isDisabled}
-              >
-                &#65308;
-              </button>
-            )}
-            {(currentPage + 1) * daysPerPage < totalDays && (
-              <button
-                onClick={goToNextPage}
-                className="h-full flex items-center justify-center px-4 py-2 font-bold opacity-25 hover:opacity-100"
-                style={{ fontSize: '2rem' }}
-              >
-                &#65310;
-              </button>
-            )}
+            <table className="w-[80%] table-fixed h-[70vh]">
+              <thead>
+                <tr>
+                  <th style={{ width: `0.5vw` }}></th>
+                  {displayedWeekDays.map((day, index) => (
+                    <th
+                      key={index}
+                      className="font-[400] opacity-75"
+                      style={{
+                        fontSize: `min(3vw, 15px)`,
+                        height: `calc(100% / (${hours.length}+2))`,
+                      }}
+                    >
+                      {day}
+                    </th>
+                  ))}
+                </tr>
+                <tr>
+                  <th style={{ width: `0.5vw` }}></th>
+                  {displayedDays.map((day, index) => (
+                    <th
+                      key={index}
+                      className="pb-2 font-[400]"
+                      style={{
+                        fontSize: `min(3vw, 15px)`,
+                        height: `calc(100% / (${hours.length}+2))`,
+                      }}
+                    >
+                      {day}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {hours.map((_, row) => (
+                  <tr
+                    key={row}
+                    style={{ height: `calc(100% / (${hours.length}+2))` }}
+                  >
+                    <td
+                      className="border-gray-400 p-2 relative"
+                      style={{
+                        borderTop: '1px solid #b9b9b9',
+                      }}
+                    ></td>
+
+                    {displayedDays.map((_, column) => {
+                      const availability = availabilityCounts[row][column];
+                      const opacity = availability > 0 ? availability : 0;
+
+                      return (
+                        <td
+                          key={column}
+                          className="border border-gray-400 p-2 relative"
+                          style={{
+                            backgroundColor: `rgba(72, 187, 120, ${opacity})`,
+                            border: '1px solid #b9b9b9',
+                          }}
+                          onMouseEnter={() => setHoveredCell({ row, column })}
+                          onMouseLeave={() =>
+                            setHoveredCell({ row: null, column: null })
+                          }
+                        ></td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <div className="flex justify-between mt-4">
+              {currentPage > 0 && (
+                <button
+                  onClick={goToPrevPage}
+                  className="lg:px-4 py-2 opacity-0"
+                  style={{ fontSize: '2rem' }}
+                  disabled={isDisabled}
+                >
+                  &#65308;
+                </button>
+              )}
+              {(currentPage + 1) * daysPerPage < totalDays && (
+                <button
+                  onClick={goToNextPage}
+                  className="h-full flex items-center justify-center lg:px-4 py-2 font-bold opacity-25 hover:opacity-100"
+                  style={{ fontSize: '2rem' }}
+                >
+                  &#65310;
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="w-[25%] flex flex-col ml-auto mr-auto items-center">
