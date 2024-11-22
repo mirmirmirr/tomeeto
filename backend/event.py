@@ -5,6 +5,8 @@ from enum import Enum
 from user import User
 from availability import Availability
 
+from mysql.connector.cursor import MySQLCursorDict
+
 
 class Duration(Enum):
     QUARTER = 15
@@ -20,6 +22,10 @@ class Weekday(Enum):
     THURSDAY = 5
     FRIDAY = 6
     SATURDAY = 7
+
+
+def date_to_weekday(date: date) -> Weekday:
+    return Weekday(date.day)
 
 
 class Event(ABC):
@@ -95,8 +101,36 @@ class Event(ABC):
             )
 
     @staticmethod
-    def from_sql(sql: dict) -> "Event":
-        pass
+    def from_sql(cursor: MySQLCursorDict, id: int) -> "Event":
+        query = "SELECT * FROM user_event WHERE user_event_id = %s"
+        cursor.execute(query, (id,))
+        result = cursor.fetchone()
+        if result is None:
+            return None
+        if result["date_type"] == "Specific":
+            return DateEvent(
+                User(result["user_account_id"]),
+                result["title"],
+                result["details"],
+                result["start_time"],
+                result["end_time"],
+                Duration(result["duration"]),
+                [],
+                result["start_date"],
+                result["end_date"],
+            )
+        else:
+            return GenericWeekEvent(
+                User(result["user_account_id"]),
+                result["title"],
+                result["details"],
+                result["start_time"],
+                result["end_time"],
+                Duration(result["duration"]),
+                [],
+                date_to_weekday(result["start_date"]),
+                date_to_weekday(result["end_date"]),
+            )
 
     @abstractmethod
     def to_json(self) -> dict:
@@ -155,14 +189,20 @@ class GenericWeekEvent(Event):
         end_time: time,
         duration: Duration,
         availabilities: List[Availability],
-        start_weekday: str,
-        end_weekday: str,
+        start_weekday: str | int,
+        end_weekday: str | int,
     ) -> None:
         super().__init__(
             creator, title, description, start_time, end_time, duration, availabilities
         )
-        self.start_weekday: int = Weekday[start_weekday.upper()].value
-        self.end_weekday: int = Weekday[end_weekday.upper()].value
+        if isinstance(start_weekday, str):
+            self.start_weekday: int = Weekday[start_weekday.upper()].value
+        else:
+            self.start_weekday: int = start_weekday
+        if isinstance(end_weekday, str):
+            self.end_weekday: int = Weekday[end_weekday.upper()].value
+        else:
+            self.end_weekday: int = end_weekday
 
     def to_json(self) -> dict:
         pass
