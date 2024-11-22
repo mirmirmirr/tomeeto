@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
 import Calendar from '../assets/Calendar';
+import TimeSelector from '../assets/TimeSelector';
 
 export default function CreateEvent() {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ export default function CreateEvent() {
   const [showEndCalendar, setShowEndCalendar] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
+  const [startTime, setStartTime] = useState('07:00');
+  const [endTime, setEndTime] = useState('19:00');
 
   // Theme-based styling
   const bgColor = isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]';
@@ -116,21 +119,13 @@ export default function CreateEvent() {
   ];
 
   return (
-    <div
-      className={`relative flex flex-col min-h-screen p-4 ${bgColor}`}
-    >
+    <div className={`relative flex flex-col min-h-screen p-4 ${bgColor}`}>
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-      <div
-        className="flex w-full mt-[4vh] p-4"
-      >
+      <div className="flex w-full mt-[4vh] p-4">
         {/* Left Column */}
-        <div
-          className="pl-4 flex-shrink-0 w-[60%]"
-        >
+        <div className="pl-4 flex-shrink-0 w-[60%]">
           {/* Input for event name */}
-          <div
-            className="flex items-center pb-5"
-          >
+          <div className="flex items-center pb-5">
             <input
               type="text"
               placeholder="Add Event Name"
@@ -142,15 +137,11 @@ export default function CreateEvent() {
           </div>
 
           {/* Date and Time Selection */}
-          <div
-            className="flex items-center gap-4 pb-4"
-          >
+          <div className="flex items-center gap-4 pb-4">
             {selectDaysOfWeek ? (
               <>
                 {/* Dropdown for start day */}
-                <div
-                  className="relative w-[25%]"
-                >
+                <div className="relative w-[25%]">
                   <button
                     onClick={toggleStartDayDropdown}
                     className="p-3 w-full text-lg font-semibold bg-[#FF5C5C]
@@ -163,9 +154,7 @@ export default function CreateEvent() {
                       className="absolute z-10 mt-1 w-full bg-[#FF5C5C]
                         rounded-md shadow-lg"
                     >
-                      <ul
-                        className="flex flex-col"
-                      >
+                      <ul className="flex flex-col">
                         {daysOfWeek.map((day) => (
                           <li
                             key={day}
@@ -184,19 +173,16 @@ export default function CreateEvent() {
                   )}
                 </div>
 
-                <input
-                  type="time"
-                  defaultValue="07:00"
-                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white
-                    text-center focus:outline-none"
+                <TimeSelector
+                  defaultTime={startTime}
+                  onTimeSelect={setStartTime}
+                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white"
                 />
 
                 <span className={`${textColor} text-lg`}>to</span>
 
                 {/* Dropdown for end day */}
-                <div
-                  className="relative w-[25%]"
-                >
+                <div className="relative w-[25%]">
                   <button
                     onClick={toggleEndDayDropdown}
                     className="p-3 w-full text-lg font-semibold bg-[#FF5C5C]
@@ -209,9 +195,7 @@ export default function CreateEvent() {
                       className="absolute z-10 mt-1 w-full bg-[#FF5C5C]
                       rounded-md shadow-lg"
                     >
-                      <ul
-                        className="flex flex-col"
-                      >
+                      <ul className="flex flex-col">
                         {daysOfWeek.map((day) => (
                           <li
                             key={day}
@@ -230,11 +214,10 @@ export default function CreateEvent() {
                   )}
                 </div>
 
-                <input
-                  type="time"
-                  defaultValue="19:00"
-                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white
-                    text-center focus:outline-none"
+                <TimeSelector
+                  defaultTime={endTime}
+                  onTimeSelect={setEndTime}
+                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white"
                 />
               </>
             ) : (
@@ -248,11 +231,10 @@ export default function CreateEvent() {
                   {startDate.toLocaleDateString()}
                 </button>
 
-                <input
-                  type="time"
-                  defaultValue="07:00"
-                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white
-                    text-center focus:outline-none"
+                <TimeSelector
+                  defaultTime={startTime}
+                  onTimeSelect={setStartTime}
+                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white"
                 />
 
                 <span className={`${textColor} text-lg`}>to</span>
@@ -266,11 +248,10 @@ export default function CreateEvent() {
                   {endDate.toLocaleDateString()}
                 </button>
 
-                <input
-                  type="time"
-                  defaultValue="19:00"
-                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white
-                    text-center focus:outline-none"
+                <TimeSelector
+                  defaultTime={endTime}
+                  onTimeSelect={setEndTime}
+                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white"
                 />
               </>
             )}
@@ -278,24 +259,18 @@ export default function CreateEvent() {
 
           {/* Render Calendars */}
           {showStartCalendar && (
-            <div
-              className="absolute z-10 bg-gray-700 rounded-md shadow-md p-4"
-            >
+            <div className="absolute z-10 bg-gray-700 rounded-md shadow-md p-4">
               <Calendar onDateSelect={handleStartDateSelect} />
             </div>
           )}
           {showEndCalendar && (
-            <div
-              className="absolute z-10 bg-gray-700 rounded-md shadow-md p-4"
-            >
+            <div className="absolute z-10 bg-gray-700 rounded-md shadow-md p-4">
               <Calendar onDateSelect={handleEndDateSelect} />
             </div>
           )}
 
           {/* Time interval selection dropdown */}
-          <div
-            className="relative pb-3"
-          >
+          <div className="relative pb-3">
             <button
               onClick={toggleIntervalDropdown}
               className={`w-[25%] p-3 text-lg font-semibold bg-[#FF5C5C]
@@ -308,9 +283,7 @@ export default function CreateEvent() {
                 className="absolute z-10 mt-1 w-[25%] bg-[#FF5C5C]
                 rounded-md shadow-lg"
               >
-                <ul
-                  className="flex flex-col"
-                >
+                <ul className="flex flex-col">
                   <li
                     onClick={() => handleSelectInterval('15 minutes')}
                     className="p-2 cursor-pointer hover:bg-red-600 rounded-md
@@ -338,14 +311,10 @@ export default function CreateEvent() {
           </div>
 
           {/* Event description input */}
-          <label
-            className={`block text-lg font-semibold ${textColor} mb-2`}
-          >
+          <label className={`block text-lg font-semibold ${textColor} mb-2`}>
             Event Description
           </label>
-          <div
-            className={`border-2 ${borderColor} rounded-lg p-2 mb-4`}
-          >
+          <div className={`border-2 ${borderColor} rounded-lg p-2 mb-4`}>
             <textarea
               rows="9"
               className={`w-full p-3 text-lg rounded-lg ${bgColor} ${textColor}
@@ -356,13 +325,9 @@ export default function CreateEvent() {
         </div>
 
         {/* Right Column */}
-        <div
-          className="pl-8 pr-4 flex-shrink-0 w-[40%] flex flex-col items-start"
-        >
+        <div className="pl-8 pr-4 flex-shrink-0 w-[40%] flex flex-col items-start">
           {/* Checkbox for selecting days of the week */}
-          <label
-            className={`flex items-center mb-4 ${textColor}`}
-          >
+          <label className={`flex items-center mb-4 ${textColor}`}>
             <input
               type="checkbox"
               checked={selectDaysOfWeek}
@@ -374,12 +339,8 @@ export default function CreateEvent() {
           </label>
 
           {/* Invite URL input */}
-          <div
-            className="w-full mt-[50vh]"
-          >
-            <label
-              className={`block text-lg font-semibold ${textColor}`}
-            >
+          <div className="w-full mt-[50vh]">
+            <label className={`block text-lg font-semibold ${textColor}`}>
               Invite URL
             </label>
             <input
