@@ -5,7 +5,41 @@ from enum import Enum
 from user import User
 from availability import Availability
 
+import mysql.connector as MySQL
+from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursorDict
+
+TWO_WEEKS_SQL: str = "DATE_ADD(NOW(), INTERVAL 14 DAY)"
+DATE_INSERT = """
+    INSERT INTO
+        user_event (
+            user_account_id,
+            title,
+            details,
+            date_type,
+            start_date,
+            end_date,
+            start_time,
+            end_time,
+            duration
+        )
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+"""
+WEEK_INSERT = """
+    INSERT INTO
+        user_event (
+            user_account_id,
+            title,
+            details,
+            date_type,
+            start_date,
+            end_date,
+            start_time,
+            end_time,
+            duration
+        )
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+"""
 
 
 class Duration(Enum):
@@ -26,6 +60,40 @@ class Weekday(Enum):
 
 def date_to_weekday(date: date) -> Weekday:
     return Weekday(date.day)
+
+
+def insert_code(cursor: MySQLCursorDict, code: str, event_id: int) -> None:
+    query = f"""
+        INSERT INTO
+            url_code (
+                url_code,
+                user_event_id,
+                unlocked_at
+            )
+        VALUES (%s, %s, {TWO_WEEKS_SQL})
+    """
+    # Intentionally not catching errors here so it propagates to the calling function
+    cursor.execute(query, (code, event_id))
+
+
+def insert_event(
+    cursor: MySQLCursorDict,
+    conn: MySQLConnection,
+    event_values: tuple,
+    code: str,
+) -> bool:
+    try:
+        if event_values[3] == "Specific":
+            cursor.execute(DATE_INSERT, event_values)
+        else:
+            cursor.execute(WEEK_INSERT, event_values)
+        event_id = cursor.lastrowid
+        insert_code(cursor, code, event_id)
+        conn.commit()
+        return True
+    except MySQL.Error as e:
+        print(e)
+        return False
 
 
 class Event(ABC):
@@ -137,7 +205,9 @@ class Event(ABC):
         pass
 
     @abstractmethod
-    def to_sql(self) -> tuple[str, List]:
+    def to_sql_insert(
+        self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
+    ) -> tuple[str, List]:
         pass
 
 
@@ -163,9 +233,10 @@ class DateEvent(Event):
     def to_json(self) -> dict:
         pass
 
-    def to_sql(self) -> tuple[str, List]:
-        query = "INSERT INTO user_event (user_account_id, title, details, date_type, start_date, end_date, start_time, end_time, duration) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        values = [
+    def to_sql_insert(
+        self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
+    ) -> bool:
+        values = (
             self.creator.id,
             self.title,
             self.description,
@@ -175,8 +246,8 @@ class DateEvent(Event):
             self.start_time.isoformat(),
             self.end_time.isoformat(),
             self.duration.value,
-        ]
-        return query, values
+        )
+        return insert_event(cursor, conn, values, code)
 
 
 class GenericWeekEvent(Event):
@@ -207,9 +278,10 @@ class GenericWeekEvent(Event):
     def to_json(self) -> dict:
         pass
 
-    def to_sql(self) -> tuple[str, List]:
-        query = "INSERT INTO user_event (user_account_id, title, details, date_type, start_date, end_date, start_time, end_time, duration) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        values = [
+    def to_sql_insert(
+        self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
+    ) -> bool:
+        values = (
             self.creator.id,
             self.title,
             self.description,
@@ -219,5 +291,5 @@ class GenericWeekEvent(Event):
             self.start_time.isoformat(),
             self.end_time.isoformat(),
             self.duration.value,
-        ]
-        return query, values
+        )
+        return insert_event(cursor, conn, values, code)

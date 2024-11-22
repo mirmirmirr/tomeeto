@@ -218,21 +218,9 @@ def new_code(custom: str = "") -> str:
     return new_code
 
 
-# Adds an event to the database and returns the url code
+# Adds an event to the database
 def new_event(event: Event, code: str) -> bool:
-    query, values = event.to_sql()
-    try:
-        DB_CURSOR.execute(query, values)
-        event_id = DB_CURSOR.lastrowid
-        DB_CURSOR.execute(
-            f"INSERT INTO url_code (url_code, user_event_id, unlocked_at) VALUES (%s, %s, {TWO_WEEKS_SQL})",
-            (code, event_id),
-        )
-        DB_CONN.commit()
-        return True
-    except MySQL.Error as e:
-        print(e)
-        return False
+    return event.to_sql_insert(DB_CURSOR, DB_CONN, code)
 
 
 # Checks if a code refers to an existing event
