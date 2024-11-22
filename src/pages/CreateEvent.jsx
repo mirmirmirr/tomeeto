@@ -119,7 +119,7 @@ export default function CreateEvent() {
   ];
 
   return (
-    <div className={`relative flex flex-col min-h-screen p-4 ${bgColor}`}>
+    <div className={`relative flex flex-col min-h-screen p-6 ${bgColor}`}>
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div className="flex w-full mt-[4vh] p-4">
         {/* Left Column */}
@@ -225,8 +225,8 @@ export default function CreateEvent() {
                 {/* Start Date Selector */}
                 <button
                   onClick={toggleStartCalendar}
-                  className="w-[25%] p-3 text-lg rounded-lg bg-[#FF5C5C]
-                    text-white text-center focus:outline-none"
+                  className="w-[25%] p-3 rounded-lg bg-[#FF5C5C] text-lg
+                    text-white text-center font-semibold focus:outline-none"
                 >
                   {startDate.toLocaleDateString()}
                 </button>
@@ -242,8 +242,8 @@ export default function CreateEvent() {
                 {/* End Date Selector */}
                 <button
                   onClick={toggleEndCalendar}
-                  className="w-[25%] p-3 text-lg rounded-lg bg-[#FF5C5C]
-                    text-white text-center focus:outline-none"
+                  className="w-[25%] p-3 rounded-lg bg-[#FF5C5C] text-lg
+                    text-white text-center font-semibold focus:outline-none"
                 >
                   {endDate.toLocaleDateString()}
                 </button>
@@ -325,7 +325,7 @@ export default function CreateEvent() {
         </div>
 
         {/* Right Column */}
-        <div className="pl-8 pr-4 flex-shrink-0 w-[40%] flex flex-col items-start">
+        <div className="pl-8 flex-shrink-0 w-[40%] flex flex-col items-start">
           {/* Checkbox for selecting days of the week */}
           <label className={`flex items-center mb-4 ${textColor}`}>
             <input

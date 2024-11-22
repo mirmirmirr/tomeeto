@@ -170,7 +170,8 @@ export default function TimeSelector() {
       {/* Time Display Button */}
       <button
         onClick={toggleDropdown}
-        className="w-full p-2 text-lg font-semibold bg-[#FF5C5C] text-white rounded-md focus:outline-none"
+        className="p-2 w-full rounded-md bg-[#FF5C5C] text-white text-lg
+          font-semibold focus:outline-none"
       >
         {selectedTime}
       </button>
@@ -178,7 +179,8 @@ export default function TimeSelector() {
       {/* Dropdown Menu */}
       {timeDropdownVisible && (
         <div
-          className={`absolute z-10 mt-2 w-full ${bgColor} text-white shadow-lg max-h-[150px] overflow-y-auto`}
+          className={`absolute z-10 mt-2 w-full max-h-[150px] rounded-md 
+            bg-[#FF5C5C] text-white shadow-lg overflow-y-auto`}
           style={{
             scrollbarWidth: 'none', // Hides scrollbar for Firefox
             msOverflowStyle: 'none', // Hides scrollbar for Internet Explorer

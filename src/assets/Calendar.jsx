@@ -77,7 +77,7 @@ export default function Calendar({ onDateSelect }) {
             &#8592;
           </button>
         )}
-        
+
         {/* Month Name and Year */}
         <div className="flex justify-center flex-grow">
           <p className="font-bold text-sm">
@@ -99,7 +99,10 @@ export default function Calendar({ onDateSelect }) {
       {/* Day Names */}
       <div className={`grid grid-cols-7 gap-x-2 text-center ${textColor} mb-1`}>
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
-          <div key={index} className="h-6 w-10 flex items-center justify-center text-xs">
+          <div
+            key={index}
+            className="h-6 w-10 flex items-center justify-center text-xs"
+          >
             {day}
           </div>
         ))}
