@@ -259,12 +259,12 @@ export default function CreateEvent() {
 
           {/* Render Calendars */}
           {showStartCalendar && (
-            <div className="absolute z-10 bg-gray-700 rounded-md shadow-md p-4">
+            <div className="absolute z-10 rounded-md shadow-md">
               <Calendar onDateSelect={handleStartDateSelect} />
             </div>
           )}
           {showEndCalendar && (
-            <div className="absolute z-10 bg-gray-700 rounded-md shadow-md p-4">
+            <div className="absolute z-10 rounded-md shadow-md">
               <Calendar onDateSelect={handleEndDateSelect} />
             </div>
           )}
