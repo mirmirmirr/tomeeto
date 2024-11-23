@@ -137,7 +137,7 @@ export default function CreateEvent() {
           </div>
 
           {/* Date and Time Selection */}
-          <div className="flex items-center gap-4 pb-4">
+          <div className="relative flex items-center gap-4 pb-4">
             {selectDaysOfWeek ? (
               <>
                 {/* Dropdown for start day */}
@@ -223,13 +223,20 @@ export default function CreateEvent() {
             ) : (
               <>
                 {/* Start Date Selector */}
-                <button
-                  onClick={toggleStartCalendar}
-                  className="w-[25%] p-3 rounded-lg bg-[#FF5C5C] text-lg
-                    text-white text-center font-semibold focus:outline-none"
-                >
-                  {startDate.toLocaleDateString()}
-                </button>
+                <div className="w-[25%] rounded-lg bg-[#FF5C5C] text-lg
+                      text-white text-center font-semibold focus:outline-none">
+                  <button
+                    onClick={toggleStartCalendar}
+                    className="h-full w-full p-3"
+                  >
+                    {startDate.toLocaleDateString()}
+                  </button>
+                  {showStartCalendar && (
+                    <div className="absolute self-bottom pt-2 z-10 rounded-md shadow-md">
+                      <Calendar onDateSelect={handleStartDateSelect} />
+                    </div>
+                  )}
+                </div>
 
                 <TimeSelector
                   defaultTime={startTime}
@@ -240,13 +247,20 @@ export default function CreateEvent() {
                 <span className={`${textColor} text-lg`}>to</span>
 
                 {/* End Date Selector */}
-                <button
-                  onClick={toggleEndCalendar}
-                  className="w-[25%] p-3 rounded-lg bg-[#FF5C5C] text-lg
-                    text-white text-center font-semibold focus:outline-none"
-                >
-                  {endDate.toLocaleDateString()}
-                </button>
+                <div className="w-[25%] rounded-lg bg-[#FF5C5C] text-lg
+                      text-white text-center font-semibold focus:outline-none">
+                  <button
+                    onClick={toggleEndCalendar}
+                    className="h-full w-full p-3"
+                  >
+                    {endDate.toLocaleDateString()}
+                  </button>
+                  {showEndCalendar && (
+                    <div className="absolute self-bottom pt-2 z-10 rounded-md shadow-md">
+                      <Calendar onDateSelect={handleEndDateSelect} />
+                    </div>
+                  )}
+                </div>
 
                 <TimeSelector
                   defaultTime={endTime}
@@ -256,18 +270,6 @@ export default function CreateEvent() {
               </>
             )}
           </div>
-
-          {/* Render Calendars */}
-          {showStartCalendar && (
-            <div className="absolute z-10 rounded-md shadow-md">
-              <Calendar onDateSelect={handleStartDateSelect} />
-            </div>
-          )}
-          {showEndCalendar && (
-            <div className="absolute z-10 rounded-md shadow-md">
-              <Calendar onDateSelect={handleEndDateSelect} />
-            </div>
-          )}
 
           {/* Time interval selection dropdown */}
           <div className="relative pb-3">
