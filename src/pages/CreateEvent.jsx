@@ -223,8 +223,10 @@ export default function CreateEvent() {
             ) : (
               <>
                 {/* Start Date Selector */}
-                <div className="w-[25%] rounded-lg bg-[#FF5C5C] text-lg
-                      text-white text-center font-semibold focus:outline-none">
+                <div
+                  className="w-[25%] rounded-lg bg-[#FF5C5C] text-lg
+                      text-white text-center font-semibold focus:outline-none"
+                >
                   <button
                     onClick={toggleStartCalendar}
                     className="h-full w-full p-3"
@@ -247,8 +249,10 @@ export default function CreateEvent() {
                 <span className={`${textColor} text-lg`}>to</span>
 
                 {/* End Date Selector */}
-                <div className="w-[25%] rounded-lg bg-[#FF5C5C] text-lg
-                      text-white text-center font-semibold focus:outline-none">
+                <div
+                  className="w-[25%] rounded-lg bg-[#FF5C5C] text-lg
+                      text-white text-center font-semibold focus:outline-none"
+                >
                   <button
                     onClick={toggleEndCalendar}
                     className="h-full w-full p-3"
