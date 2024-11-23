@@ -109,9 +109,16 @@ class Event(ABC):
 
         creator: User = User(json["account_id"])
 
+        start_time = datetime.strptime(json["start_time"], "%H:%M").time()
+        end_time = datetime.strptime(json["end_time"], "%H:%M").time()
+        if end_time < start_time:
+            return None
+
         if json["event_type"] == "date_range":
             start_date = datetime.strptime(json["start_date"], "%m/%d/%Y").date()
             end_date = datetime.strptime(json["end_date"], "%m/%d/%Y").date()
+            if end_date < start_date:
+                return None
             return DateEvent(
                 creator,
                 json["title"],
@@ -124,6 +131,10 @@ class Event(ABC):
                 end_date,
             )
         else:
+            start_weekday = Weekday[json["start_day"].upper()]
+            end_weekday = Weekday[json["end_day"].upper()]
+            if end_weekday.value < start_weekday.value:
+                return None
             return GenericWeekEvent(
                 creator,
                 json["title"],
