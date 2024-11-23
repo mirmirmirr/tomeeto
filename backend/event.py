@@ -231,7 +231,16 @@ class DateEvent(Event):
         self.end_date: date = end_date
 
     def to_json(self) -> dict:
-        pass
+        return {
+            "title": self.title,
+            "description": self.description,
+            "start_time": self.start_time.strftime("%H:%M"),
+            "end_time": self.end_time.strftime("%H:%M"),
+            "duration": self.duration.value,
+            "event_type": "date_range",
+            "start_date": self.start_date.strftime("%m/%d/%Y"),
+            "end_date": self.end_date.strftime("%m/%d/%Y"),
+        }
 
     def to_sql_insert(
         self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
@@ -276,7 +285,16 @@ class GenericWeekEvent(Event):
             self.end_weekday: int = end_weekday
 
     def to_json(self) -> dict:
-        pass
+        return {
+            "title": self.title,
+            "description": self.description,
+            "start_time": self.start_time.strftime("%H:%M"),
+            "end_time": self.end_time.strftime("%H:%M"),
+            "duration": self.duration.value,
+            "event_type": "generic_week",
+            "start_day": Weekday(self.start_weekday).name,
+            "end_day": Weekday(self.end_weekday).name,
+        }
 
     def to_sql_insert(
         self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
