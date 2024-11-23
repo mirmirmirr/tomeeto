@@ -10,36 +10,6 @@ from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursorDict
 
 TWO_WEEKS_SQL: str = "DATE_ADD(NOW(), INTERVAL 14 DAY)"
-DATE_INSERT = """
-    INSERT INTO
-        user_event (
-            user_account_id,
-            title,
-            details,
-            date_type,
-            start_date,
-            end_date,
-            start_time,
-            end_time,
-            duration
-        )
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-"""
-WEEK_INSERT = """
-    INSERT INTO
-        user_event (
-            user_account_id,
-            title,
-            details,
-            date_type,
-            start_date,
-            end_date,
-            start_time,
-            end_time,
-            duration
-        )
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-"""
 
 
 class Duration(Enum):
@@ -79,14 +49,12 @@ def insert_code(cursor: MySQLCursorDict, code: str, event_id: int) -> None:
 def insert_event(
     cursor: MySQLCursorDict,
     conn: MySQLConnection,
+    event_query: str,
     event_values: tuple,
     code: str,
 ) -> bool:
     try:
-        if event_values[3] == "Specific":
-            cursor.execute(DATE_INSERT, event_values)
-        else:
-            cursor.execute(WEEK_INSERT, event_values)
+        cursor.execute(event_query, event_values)
         event_id = cursor.lastrowid
         insert_code(cursor, code, event_id)
         conn.commit()
@@ -245,6 +213,21 @@ class DateEvent(Event):
     def to_sql_insert(
         self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
     ) -> bool:
+        query = """
+            INSERT INTO
+                user_event (
+                    user_account_id,
+                    title,
+                    details,
+                    date_type,
+                    start_date,
+                    end_date,
+                    start_time,
+                    end_time,
+                    duration
+                )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
         values = (
             self.creator.id,
             self.title,
@@ -256,7 +239,7 @@ class DateEvent(Event):
             self.end_time.isoformat(),
             self.duration.value,
         )
-        return insert_event(cursor, conn, values, code)
+        return insert_event(cursor, conn, query, values, code)
 
 
 class GenericWeekEvent(Event):
@@ -299,6 +282,21 @@ class GenericWeekEvent(Event):
     def to_sql_insert(
         self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
     ) -> bool:
+        query = """
+            INSERT INTO
+                user_event (
+                    user_account_id,
+                    title,
+                    details,
+                    date_type,
+                    start_date,
+                    end_date,
+                    start_time,
+                    end_time,
+                    duration
+                )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
         values = (
             self.creator.id,
             self.title,
@@ -310,4 +308,4 @@ class GenericWeekEvent(Event):
             self.end_time.isoformat(),
             self.duration.value,
         )
-        return insert_event(cursor, conn, values, code)
+        return insert_event(cursor, conn, query, values, code)
