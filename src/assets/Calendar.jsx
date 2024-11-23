@@ -13,11 +13,13 @@ export default function Calendar({ onDateSelect }) {
   maxDate.setMonth(maxDate.getMonth() + 3);
 
   const handleMonthChange = (direction) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to 00:00:00 for comparison
     const newDate = new Date(currentDate);
     newDate.setMonth(currentDate.getMonth() + direction);
 
     // Allow change only if newDate is within bounds
-    if (newDate <= maxDate && newDate >= new Date()) {
+    if (newDate <= maxDate && newDate >= today) {
       setCurrentDate(newDate);
     }
   };
