@@ -351,8 +351,7 @@ export default function CreateEvent() {
             </label>
             <input
               type="text"
-              className={`w-full px-0 py-2 text-lg bg-transparent text-left
-                border-b-2 focus:outline-none focus:ring-2 focus:ring-blue-500
+              className={`w-full px-0 py-2 text-lg bg-transparent text-left border-b-2 focus:outline-none
                 ${textColor} ${borderColor} ${placeholderColor}`}
             />
           </div>
