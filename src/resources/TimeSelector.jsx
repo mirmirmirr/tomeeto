@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTheme } from '../resources/ThemeContext';
+import { useTheme } from './ThemeContext';
 
 export default function TimeSelector() {
   const { isDarkMode } = useTheme();
@@ -170,8 +170,9 @@ export default function TimeSelector() {
       {/* Time Display Button */}
       <button
         onClick={toggleDropdown}
-        className="p-2 w-full rounded-md bg-[#FF5C5C] text-white text-lg
+        className="p-3 w-full rounded-md bg-[#FF5C5C] text-white text-lg
           font-semibold focus:outline-none"
+        style={{ fontSize: `min(3vw, 20px)` }}
       >
         {selectedTime}
       </button>

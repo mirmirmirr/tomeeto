@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
-import Calendar from '../assets/Calendar';
-import TimeSelector from '../assets/TimeSelector';
+import Calendar from '../resources/Calendar';
+import TimeSelector from '../resources/TimeSelector';
 
 export default function CreateEvent() {
   const navigate = useNavigate();
@@ -130,9 +130,9 @@ export default function CreateEvent() {
               type="text"
               placeholder="Add Event Name"
               className={`flex-grow px-0 py-2 text-2xl bg-transparent text-left
-                border-b-2 focus:outline-none ${textColor} ${borderColor}
-                ${placeholderColor}`}
-              style={{ fontSize: `min(3vw, 20px)` }}
+                font-semibold border-b-2 focus:outline-none ${textColor} 
+                ${borderColor} ${placeholderColor}`}
+              style={{ fontSize: `min(3vw, 35px)` }}
             />
           </div>
 
@@ -144,8 +144,9 @@ export default function CreateEvent() {
                 <div className="relative w-[25%]">
                   <button
                     onClick={toggleStartDayDropdown}
-                    className="p-3 w-full text-lg font-semibold bg-[#FF5C5C]
+                    className="p-3 w-full font-semibold bg-[#FF5C5C]
                       rounded-lg text-[#F5F5F5] focus:outline-none"
+                    style={{ fontSize: `min(3vw, 20px)` }}
                   >
                     {selectedStartDay}
                   </button>
@@ -176,17 +177,23 @@ export default function CreateEvent() {
                 <TimeSelector
                   defaultTime={startTime}
                   onTimeSelect={setStartTime}
-                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white"
+                  className="p-3 rounded-lg bg-[#FF5C5C] text-white"
                 />
 
-                <span className={`${textColor} text-lg`}>to</span>
+                <span
+                  className={`${textColor}`}
+                  style={{ fontSize: `min(3vw, 20px)` }}
+                >
+                  to
+                </span>
 
                 {/* Dropdown for end day */}
                 <div className="relative w-[25%]">
                   <button
                     onClick={toggleEndDayDropdown}
-                    className="p-3 w-full text-lg font-semibold bg-[#FF5C5C]
+                    className="p-3 w-full font-semibold bg-[#FF5C5C]
                       rounded-lg text-[#F5F5F5] focus:outline-none"
+                    style={{ fontSize: `min(3vw, 20px)` }}
                   >
                     {selectedEndDay}
                   </button>
@@ -217,15 +224,16 @@ export default function CreateEvent() {
                 <TimeSelector
                   defaultTime={endTime}
                   onTimeSelect={setEndTime}
-                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white"
+                  className="p-3 rounded-lg bg-[#FF5C5C] text-white"
                 />
               </>
             ) : (
               <>
                 {/* Start Date Selector */}
                 <div
-                  className="w-[25%] rounded-lg bg-[#FF5C5C] text-lg
-                      text-white text-center font-semibold focus:outline-none"
+                  className="w-[25%] rounded-lg bg-[#FF5C5C] text-white text-center
+                  font-semibold focus:outline-none"
+                  style={{ fontSize: `min(3vw, 20px)` }}
                 >
                   <button
                     onClick={toggleStartCalendar}
@@ -243,15 +251,20 @@ export default function CreateEvent() {
                 <TimeSelector
                   defaultTime={startTime}
                   onTimeSelect={setStartTime}
-                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white"
                 />
 
-                <span className={`${textColor} text-lg`}>to</span>
+                <span
+                  className={`${textColor}`}
+                  style={{ fontSize: `min(3vw, 20px)` }}
+                >
+                  to
+                </span>
 
                 {/* End Date Selector */}
                 <div
-                  className="w-[25%] rounded-lg bg-[#FF5C5C] text-lg
+                  className="w-[25%] rounded-lg bg-[#FF5C5C]
                       text-white text-center font-semibold focus:outline-none"
+                  style={{ fontSize: `min(3vw, 20px)` }}
                 >
                   <button
                     onClick={toggleEndCalendar}
@@ -269,7 +282,6 @@ export default function CreateEvent() {
                 <TimeSelector
                   defaultTime={endTime}
                   onTimeSelect={setEndTime}
-                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white"
                 />
               </>
             )}
@@ -279,8 +291,9 @@ export default function CreateEvent() {
           <div className="relative pb-3">
             <button
               onClick={toggleIntervalDropdown}
-              className={`w-[25%] p-3 text-lg font-semibold bg-[#FF5C5C]
+              className={`w-[25%] p-3 font-semibold bg-[#FF5C5C]
                 rounded-lg text-[#F5F5F5] focus:outline-none`}
+              style={{ fontSize: `min(3vw, 20px)` }}
             >
               {selectedInterval || 'Time Interval'}
             </button>
@@ -317,14 +330,18 @@ export default function CreateEvent() {
           </div>
 
           {/* Event description input */}
-          <label className={`block text-lg font-semibold ${textColor} mb-2`}>
+          <label
+            className={`block font-semibold ${textColor} mb-2`}
+            style={{ fontSize: `min(3vw, 20px)` }}
+          >
             Event Description
           </label>
           <div className={`border-2 ${borderColor} rounded-lg p-2 mb-4`}>
             <textarea
               rows="9"
-              className={`w-full p-3 text-lg rounded-lg ${bgColor} ${textColor}
+              className={`w-full p-3 rounded-lg ${bgColor} ${textColor}
                 focus:outline-none resize-none`}
+              style={{ fontSize: `min(3vw, 20px)` }}
               placeholder="Describe your event here..."
             ></textarea>
           </div>
@@ -333,7 +350,7 @@ export default function CreateEvent() {
         {/* Right Column */}
         <div className="pl-8 flex-shrink-0 w-[40%] flex flex-col items-start">
           {/* Checkbox for selecting days of the week */}
-          <label className={`flex items-center mb-4 ${textColor}`}>
+          <label className={`flex items-center mt-4 ${textColor}`}>
             <input
               type="checkbox"
               checked={selectDaysOfWeek}
@@ -341,26 +358,33 @@ export default function CreateEvent() {
               className="mr-2 w-5 h-5 rounded-md focus:outline-none
                 bg-transparent"
             />
-            <span>Select from days of the week</span>
+            <span style={{ fontSize: `min(3vw, 20px)` }}>
+              Select from days of the week
+            </span>
           </label>
 
           {/* Invite URL input */}
           <div className="w-full mt-[50vh]">
-            <label className={`block text-lg font-semibold ${textColor}`}>
+            <label
+              className={`block font-semibold ${textColor}`}
+              style={{ fontSize: `min(3vw, 20px)` }}
+            >
               Invite URL
             </label>
             <input
               type="text"
               className={`w-full px-0 py-2 text-lg bg-transparent text-left border-b-2 focus:outline-none
                 ${textColor} ${borderColor} ${placeholderColor}`}
+              style={{ fontSize: `min(3vw, 20px)` }}
             />
           </div>
 
           {/* Create Event button */}
           <button
             onClick={() => navigate('/confirmCreated')}
-            className={`w-full p-3 mt-4 text-lg font-semibold bg-[#FF5C5C]
+            className={`w-full p-3 mt-4 font-semibold bg-[#FF5C5C]
               rounded-lg text-[#F5F5F5] focus:outline-none`}
+            style={{ fontSize: `min(3vw, 20px)` }}
           >
             Create Event
           </button>

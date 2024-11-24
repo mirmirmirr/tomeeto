@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useTheme } from '../resources/ThemeContext';
+import { useState } from 'react';
+import { useTheme } from './ThemeContext';
 
 export default function Calendar({ onDateSelect }) {
   const { isDarkMode } = useTheme();
