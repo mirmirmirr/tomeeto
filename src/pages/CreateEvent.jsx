@@ -279,10 +279,7 @@ export default function CreateEvent() {
                   )}
                 </div>
 
-                <TimeSelector
-                  defaultTime={endTime}
-                  onTimeSelect={setEndTime}
-                />
+                <TimeSelector defaultTime={endTime} onTimeSelect={setEndTime} />
               </>
             )}
           </div>
