@@ -4,6 +4,7 @@ import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
 
 export default function CreateEvent() {
+  const today = new Date().toISOString().split('T')[0];
   const navigate = useNavigate();
 
   const { isDarkMode, toggleTheme } = useTheme();
@@ -14,6 +15,12 @@ export default function CreateEvent() {
   const [selectedEndDay, setSelectedEndDay] = useState('End Day');
   const [startDayDropdownVisible, setStartDayDropdownVisible] = useState(false);
   const [endDayDropdownVisible, setEndDayDropdownVisible] = useState(false);
+  const [eventName, setEventName] = useState("");
+  const [eventDescription, setEventDescription] = useState("");
+  const [startTime, setStartTime] = useState("07:00");
+  const [endTime, setEndTime] = useState("19:00");
+  const [startCalendarDay, setCalendarStart] = useState(today);
+  const [endCalendarDay, setCalendarEnd] = useState(today);
 
   // Styling based on the current theme
   const bgColor = isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]';
@@ -22,6 +29,30 @@ export default function CreateEvent() {
   const placeholderColor = isDarkMode
     ? 'placeholder-[#F5F5F5]'
     : 'placeholder-[#3E505B]';
+
+  const handleCalendarStartChange = (event) => {
+    setCalendarStart(event.target.value); 
+  };
+
+  const handleCalendarEndChange = (event) => {
+    setCalendarEnd(event.target.value); 
+  };
+
+  const handleInputChange = (event) => {
+    setEventName(event.target.value); 
+  };
+
+  const handleDescriptionChange = (event) => {
+    setEventDescription(event.target.value);
+  };
+
+  const handleStartTimeChange = (event) => {
+    setStartTime(event.target.value);
+  };
+
+  const handleEndTimeChange = (event) => {
+    setEndTime(event.target.value);
+  };
 
   // Functions to handle dropdown visibility for start day
   const toggleStartDayDropdown = () => {
@@ -77,8 +108,53 @@ export default function CreateEvent() {
     }
   }, [selectDaysOfWeek]);
 
+
+  const get_event_data = async () => {
+    const data = {
+      'email': 'test@rpi.edu',
+      'password': 'password',
+      'title': eventName,
+      'description': eventDescription,
+      'duration': parseInt(selectedInterval),
+      'start_time': startTime,
+      'end_time': endTime,
+
+    };
+
+    if (selectDaysOfWeek) {
+      data.event_type = "generic_week";
+      data.start_day = selectedStartDay.toLowerCase();
+      data.end_day = selectedEndDay.toLowerCase();
+    } else {
+      data.event_type = "date_range";
+      const startDate = startCalendarDay.split("-");
+      const endDate = endCalendarDay.split("-");
+      data.start_date = (startDate[1] + "/" + startDate[2] + "/" + startDate[0]);
+      data.end_date = (endDate[1] + "/" + endDate[2] + "/" + endDate[0]);
+    }
+
+    console.log("works");
+
+    try {
+      const response = await fetch("http://tomeeto.cs.rpi.edu:8000/create_event", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        navigate('/confirmCreated')
+      } else {
+        console.error('Failed to create event:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
   // Get current date for default date selection
-  const today = new Date().toISOString().split('T')[0];
 
   const daysOfWeek = [
     'Monday',
@@ -108,6 +184,8 @@ export default function CreateEvent() {
               className={`flex-grow px-0 py-2 text-2xl bg-transparent text-left
                 border-b-2 focus:outline-none focus:ring-2 focus:ring-blue-500
                 ${textColor} ${borderColor} ${placeholderColor}`}
+              value={eventName}
+              onChange={handleInputChange} // Attaching event listener
             />
           </div>
 
@@ -146,9 +224,10 @@ export default function CreateEvent() {
                 </div>
                 <input
                   type="time"
-                  defaultValue="07:00"
+                  defaultValue={startTime}
                   className="p-3 text-lg rounded-lg bg-red-500 text-white
                     text-center focus:outline-none"
+                  onChange={handleStartTimeChange}
                 />
                 <span className={`${textColor} text-lg`}>to</span>
 
@@ -183,9 +262,10 @@ export default function CreateEvent() {
                 </div>
                 <input
                   type="time"
-                  defaultValue="19:00"
+                  defaultValue={endTime}
                   className="p-3 text-lg rounded-lg bg-red-500 text-white
                     text-center focus:outline-none"
+                  onChange={handleEndTimeChange}
                 />
               </>
             ) : (
@@ -196,12 +276,14 @@ export default function CreateEvent() {
                   defaultValue={today}
                   className="w-[25%] p-3 text-lg rounded-lg bg-red-500
                     text-white text-center focus:outline-none"
+                  onChange={handleCalendarStartChange}
                 />
                 <input
                   type="time"
-                  defaultValue="07:00"
+                  defaultValue={startTime}
                   className="p-3 text-lg rounded-lg bg-red-500 text-white
                     text-center focus:outline-none"
+                  onChange={handleStartTimeChange}
                 />
                 <span className={`${textColor} text-lg`}>to</span>
                 <input
@@ -209,12 +291,14 @@ export default function CreateEvent() {
                   defaultValue={today}
                   className="w-[25%] p-3 text-lg rounded-lg bg-red-500
                     text-white text-center focus:outline-none"
+                  onChange={handleCalendarEndChange}
                 />
                 <input
                   type="time"
-                  defaultValue="19:00"
+                  defaultValue={endTime}
                   className="p-3 text-lg rounded-lg bg-red-500 text-white
                     text-center focus:outline-none"
+                  onChange={handleEndTimeChange}
                 />
               </>
             )}
@@ -271,6 +355,8 @@ export default function CreateEvent() {
               className={`w-full p-3 text-lg rounded-lg ${bgColor} ${textColor}
                 focus:outline-none resize-none`}
               placeholder="Describe your event here..."
+              value={eventDescription}
+              onChange={handleDescriptionChange} // Attaching event listener
             ></textarea>
           </div>
         </div>
@@ -304,7 +390,7 @@ export default function CreateEvent() {
 
           {/* Create Event button */}
           <button
-            onClick={() => navigate('/confirmCreated')}
+            onClick={get_event_data}
             className={`w-full p-3 mt-4 text-lg font-semibold bg-red-500
               rounded-lg text-[#F5F5F5] focus:outline-none`}
           >
