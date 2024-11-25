@@ -119,7 +119,7 @@ export default function CreateEvent() {
   ];
 
   return (
-    <div className={`relative flex flex-col min-h-screen p-6 ${bgColor}`}>
+    <div className={`relative flex flex-col min-h-screen p-4 ${bgColor}`}>
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div className="flex w-full mt-[4vh] p-4">
         {/* Left Column */}
@@ -146,14 +146,14 @@ export default function CreateEvent() {
                     onClick={toggleStartDayDropdown}
                     className="p-3 w-full font-semibold bg-[#FF5C5C]
                       rounded-lg text-[#F5F5F5] focus:outline-none"
-                    style={{ fontSize: `min(3vw, 20px)` }}
+                    style={{ fontSize: `min(3vw, 15px)` }}
                   >
                     {selectedStartDay}
                   </button>
                   {startDayDropdownVisible && (
                     <div
-                      className="absolute z-10 mt-1 w-full bg-[#FF5C5C]
-                        rounded-md shadow-lg"
+                      className={`absolute z-10 mt-2 w-full ${bgColor} ${textColor}
+                      rounded-md shadow-lg`}
                     >
                       <ul className="flex flex-col">
                         {daysOfWeek.map((day) => (
@@ -182,7 +182,7 @@ export default function CreateEvent() {
 
                 <span
                   className={`${textColor}`}
-                  style={{ fontSize: `min(3vw, 20px)` }}
+                  style={{ fontSize: `min(3vw, 15px)` }}
                 >
                   to
                 </span>
@@ -193,14 +193,14 @@ export default function CreateEvent() {
                     onClick={toggleEndDayDropdown}
                     className="p-3 w-full font-semibold bg-[#FF5C5C]
                       rounded-lg text-[#F5F5F5] focus:outline-none"
-                    style={{ fontSize: `min(3vw, 20px)` }}
+                    style={{ fontSize: `min(3vw, 15px)` }}
                   >
                     {selectedEndDay}
                   </button>
                   {endDayDropdownVisible && (
                     <div
-                      className="absolute z-10 mt-1 w-full bg-[#FF5C5C]
-                      rounded-md shadow-lg"
+                      className={`absolute z-10 mt-2 w-full ${bgColor} ${textColor}
+                      rounded-md shadow-lg`}
                     >
                       <ul className="flex flex-col">
                         {daysOfWeek.map((day) => (
@@ -233,7 +233,7 @@ export default function CreateEvent() {
                 <div
                   className="w-[25%] rounded-lg bg-[#FF5C5C] text-white text-center
                   font-semibold focus:outline-none"
-                  style={{ fontSize: `min(3vw, 20px)` }}
+                  style={{ fontSize: `min(3vw, 15px)` }}
                 >
                   <button
                     onClick={toggleStartCalendar}
@@ -255,7 +255,7 @@ export default function CreateEvent() {
 
                 <span
                   className={`${textColor}`}
-                  style={{ fontSize: `min(3vw, 20px)` }}
+                  style={{ fontSize: `min(3vw, 15px)` }}
                 >
                   to
                 </span>
@@ -264,7 +264,7 @@ export default function CreateEvent() {
                 <div
                   className="w-[25%] rounded-lg bg-[#FF5C5C]
                       text-white text-center font-semibold focus:outline-none"
-                  style={{ fontSize: `min(3vw, 20px)` }}
+                  style={{ fontSize: `min(3vw, 15px)` }}
                 >
                   <button
                     onClick={toggleEndCalendar}
@@ -285,39 +285,36 @@ export default function CreateEvent() {
           </div>
 
           {/* Time interval selection dropdown */}
-          <div className="relative pb-3">
+          <div className="relative pb-4">
             <button
               onClick={toggleIntervalDropdown}
               className={`w-[25%] p-3 font-semibold bg-[#FF5C5C]
                 rounded-lg text-[#F5F5F5] focus:outline-none`}
-              style={{ fontSize: `min(3vw, 20px)` }}
+              style={{ fontSize: `min(3vw, 15px)` }}
             >
               {selectedInterval || 'Time Interval'}
             </button>
             {intervalDropdownVisible && (
               <div
-                className="absolute z-10 mt-1 w-[25%] bg-[#FF5C5C]
-                rounded-md shadow-lg"
+                className={`absolute z-10 mt-2 w-[25%] ${bgColor} rounded-md
+                shadow-lg`}
               >
                 <ul className="flex flex-col">
                   <li
                     onClick={() => handleSelectInterval('15 minutes')}
-                    className="p-2 cursor-pointer hover:bg-red-600 rounded-md
-                    text-center text-[#F5F5F5]"
+                    className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                   >
                     15 minutes
                   </li>
                   <li
                     onClick={() => handleSelectInterval('30 minutes')}
-                    className="p-2 cursor-pointer hover:bg-red-600 rounded-md
-                    text-center text-[#F5F5F5]"
+                    className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                   >
                     30 minutes
                   </li>
                   <li
                     onClick={() => handleSelectInterval('60 minutes')}
-                    className="p-2 cursor-pointer hover:bg-red-600 rounded-md
-                    text-center text-[#F5F5F5]"
+                    className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                   >
                     60 minutes
                   </li>
@@ -335,17 +332,17 @@ export default function CreateEvent() {
           </label>
           <div className={`border-2 ${borderColor} rounded-lg p-2 mb-4`}>
             <textarea
-              rows="9"
+              rows="8"
               className={`w-full p-3 rounded-lg ${bgColor} ${textColor}
                 focus:outline-none resize-none`}
-              style={{ fontSize: `min(3vw, 20px)` }}
+              style={{ fontSize: `min(3vw, 15px)` }}
               placeholder="Describe your event here..."
             ></textarea>
           </div>
         </div>
 
         {/* Right Column */}
-        <div className="pl-8 flex-shrink-0 w-[40%] flex flex-col items-start">
+        <div className="pl-8 pr-2 flex-shrink-0 w-[40%] flex flex-col items-start">
           {/* Checkbox for selecting days of the week */}
           <label className={`flex items-center mt-4 ${textColor}`}>
             <input
@@ -355,13 +352,13 @@ export default function CreateEvent() {
               className="mr-2 w-5 h-5 rounded-md focus:outline-none
                 bg-transparent"
             />
-            <span style={{ fontSize: `min(3vw, 20px)` }}>
+            <span style={{ fontSize: `min(3vw, 15px)` }}>
               Select from days of the week
             </span>
           </label>
 
           {/* Invite URL input */}
-          <div className="w-full mt-[50vh]">
+          <div className="w-full mt-[49vh]">
             <label
               className={`block font-semibold ${textColor}`}
               style={{ fontSize: `min(3vw, 20px)` }}
@@ -372,7 +369,7 @@ export default function CreateEvent() {
               type="text"
               className={`w-full px-0 py-2 text-lg bg-transparent text-left border-b-2 focus:outline-none
                 ${textColor} ${borderColor} ${placeholderColor}`}
-              style={{ fontSize: `min(3vw, 20px)` }}
+              style={{ fontSize: `min(3vw, 15px)` }}
             />
           </div>
 
@@ -381,7 +378,7 @@ export default function CreateEvent() {
             onClick={() => navigate('/confirmCreated')}
             className={`w-full p-3 mt-4 font-semibold bg-[#FF5C5C]
               rounded-lg text-[#F5F5F5] focus:outline-none`}
-            style={{ fontSize: `min(3vw, 20px)` }}
+            style={{ fontSize: `min(3vw, 15px)` }}
           >
             Create Event
           </button>

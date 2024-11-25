@@ -5,7 +5,7 @@ export default function Calendar({ onDateSelect }) {
   const { isDarkMode } = useTheme();
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  const bgColor = isDarkMode ? 'bg-gray-700' : 'bg-[#F5F5F5]';
+  const bgColor = isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]';
   const textColor = isDarkMode ? 'text-[#F5F5F5]' : 'text-[#3E505B]';
 
   // Define the maximum date (3 months from now)
