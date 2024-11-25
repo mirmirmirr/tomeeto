@@ -78,33 +78,61 @@ export default function Dashboard() {
             {notification}
           </div>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[...mockIndividualEvents, ...mockUserEvents].map((event) => (
-            <div key={event.id} className="p-4 border rounded-lg shadow-md">
-              <div className="text-lg font-bold">{event.title}</div>
-              <div className="text-sm text-gray-500">{event.code}</div>
-              <div className="mt-2 flex space-x-2">
-                <button
-                  onClick={() => handleViewBookingLink(event)}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md"
-                >
-                  View Booking
-                </button>
-                <button
-                  onClick={() => handleCopyLink(event)}
-                  className="px-4 py-2 bg-green-500 text-white rounded-md"
-                >
-                  Copy Link
-                </button>
-                <button
-                  onClick={() => handleEditEvent(event)}
-                  className="px-4 py-2 bg-yellow-500 text-white rounded-md"
-                >
-                  Edit
-                </button>
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">My Events</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {mockUserEvents.map((event) => (
+              <div key={event.id} className="p-4 border rounded-lg shadow-md">
+                <div className="text-lg font-bold">{event.title}</div>
+                <div className="text-sm text-gray-500">{event.code}</div>
+                <div className="mt-2 flex space-x-2">
+                  <button
+                    onClick={() => handleViewBookingLink(event)}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                  >
+                    View Booking
+                  </button>
+                  <button
+                    onClick={() => handleCopyLink(event)}
+                    className="px-4 py-2 bg-green-500 text-white rounded-md"
+                  >
+                    Copy Link
+                  </button>
+                  <button
+                    onClick={() => handleEditEvent(event)}
+                    className="px-4 py-2 bg-yellow-500 text-white rounded-md"
+                  >
+                    Edit
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Other Events</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {mockIndividualEvents.map((event) => (
+              <div key={event.id} className="p-4 border rounded-lg shadow-md">
+                <div className="text-lg font-bold">{event.title}</div>
+                <div className="text-sm text-gray-500">{event.code}</div>
+                <div className="mt-2 flex space-x-2">
+                  <button
+                    onClick={() => handleViewBookingLink(event)}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                  >
+                    View Booking
+                  </button>
+                  <button
+                    onClick={() => handleCopyLink(event)}
+                    className="px-4 py-2 bg-green-500 text-white rounded-md"
+                  >
+                    Copy Link
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
