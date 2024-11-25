@@ -180,7 +180,7 @@ export default function TimeSelector() {
       {/* Dropdown Menu */}
       {timeDropdownVisible && (
         <div
-          className={`absolute z-10 mt-2 w-full max-h-[150px] rounded-md 
+          className={`absolute z-10 mt-2 w-full max-h-[120px] rounded-md 
           ${bgColor} ${textColor} shadow-lg overflow-y-auto`}
           style={{
             scrollbarWidth: 'none', // Hides scrollbar for Firefox

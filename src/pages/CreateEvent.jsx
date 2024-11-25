@@ -163,8 +163,8 @@ export default function CreateEvent() {
                               setSelectedStartDay(day);
                               setStartDayDropdownVisible(false);
                             }}
-                            className="p-2 cursor-pointer hover:bg-red-600\
-                              rounded-md text-center text-[#F5F5F5]"
+                            className={`p-2 cursor-pointer rounded-md text-center
+                            ${textColor}`}
                           >
                             {day}
                           </li>
@@ -210,8 +210,8 @@ export default function CreateEvent() {
                               setSelectedEndDay(day);
                               setEndDayDropdownVisible(false);
                             }}
-                            className="p-2 cursor-pointer hover:bg-red-600
-                              rounded-md text-center text-[#F5F5F5]"
+                            className={`p-2 cursor-pointer rounded-md text-center
+                              ${textColor}`}
                           >
                             {day}
                           </li>
