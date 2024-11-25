@@ -64,3 +64,9 @@ class Availability:
             availabilities.append(Availability(user, nickname, availability))
 
         return availabilities
+
+    def to_json(self) -> dict:
+        return {
+            "nickname": self.nickname,
+            "availability": [[int(time) for time in day] for day in self.availability],
+        }
