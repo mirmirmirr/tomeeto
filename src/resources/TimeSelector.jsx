@@ -166,13 +166,13 @@ export default function TimeSelector() {
   };
 
   return (
-    <div className="relative w-[120px]">
+    <div className="relative">
       {/* Time Display Button */}
       <button
         onClick={toggleDropdown}
-        className="p-3 w-full rounded-md bg-[#FF5C5C] text-white text-lg
-          font-semibold focus:outline-none"
-        style={{ fontSize: `min(3vw, 15px)` }}
+        className={`lg:p-3 w-[120px] lg:rounded-md lg:bg-[#FF5C5C] ${textColor} text-lg
+         focus:outline-none`}
+        style={{ fontSize: `max(1vw, 20px)` }}
       >
         {selectedTime}
       </button>
@@ -180,8 +180,8 @@ export default function TimeSelector() {
       {/* Dropdown Menu */}
       {timeDropdownVisible && (
         <div
-          className={`absolute z-10 mt-2 w-full max-h-[120px] rounded-md 
-          ${bgColor} ${textColor} shadow-lg overflow-y-auto`}
+          className={`text-center lg:absolute z-10 lg:mt-2 w-[90vw] ml-[-55vw] lg:ml-[0px] lg:w-full max-h-[120px] rounded-md 
+            lg:bg-[#FF5C5C] lg:shadow-lg overflow-y-auto ${textColor}`}
           style={{
             scrollbarWidth: 'none', // Hides scrollbar for Firefox
             msOverflowStyle: 'none', // Hides scrollbar for Internet Explorer
