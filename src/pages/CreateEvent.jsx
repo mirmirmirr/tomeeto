@@ -180,7 +180,7 @@ export default function CreateEvent() {
                   </div>
                   {startDayDropdownVisible && (
                     <div
-                      className="lg:absolute lg:w-[25%] self-bottom lg:mt-[60px] lg:z-10 rounded-md lg:shadow-md lg:bg-[#FF5C5C] max-h-[120px] overflow-y-auto"
+                      className="lg:absolute lg:w-[25%] self-bottom lg:mt-[62px] lg:z-10 rounded-md lg:shadow-md lg:bg-[#FF5C5C] max-h-[120px] overflow-y-auto"
                       style={{
                         scrollbarWidth: 'none', // Hides scrollbar for Firefox
                         msOverflowStyle: 'none', // Hides scrollbar for Internet Explorer
@@ -194,7 +194,7 @@ export default function CreateEvent() {
                               setSelectedStartDay(day);
                               setStartDayDropdownVisible(false);
                             }}
-                            className={`p-2 cursor-pointer hover:bg-red-600\
+                            className={`p-2 cursor-pointer hover:bg-red-600
                               rounded-md text-center ${textColor}`}
                           >
                             {day}
@@ -238,7 +238,7 @@ export default function CreateEvent() {
                   </div>
                   {endDayDropdownVisible && (
                     <div
-                      className="lg:absolute lg:w-[25%] self-bottom lg:mt-[60px] lg:z-10 rounded-md lg:shadow-md lg:bg-[#FF5C5C] max-h-[120px] overflow-y-auto"
+                      className="lg:absolute lg:w-[25%] self-bottom lg:mt-[62px] lg:z-10 rounded-md lg:shadow-md lg:bg-[#FF5C5C] max-h-[120px] overflow-y-auto"
                       style={{
                         scrollbarWidth: 'none', // Hides scrollbar for Firefox
                         msOverflowStyle: 'none', // Hides scrollbar for Internet Explorer
@@ -289,7 +289,7 @@ export default function CreateEvent() {
                     />
                   </div>
                   {showStartCalendar && (
-                    <div className="lg:absolute self-bottom lg:mt-[60px] lg:z-10 rounded-md shadow-md">
+                    <div className="lg:absolute self-bottom lg:mt-[62px] lg:z-10 rounded-md shadow-md">
                       <Calendar onDateSelect={handleStartDateSelect} />
                     </div>
                   )}
@@ -326,7 +326,7 @@ export default function CreateEvent() {
                     />
                   </div>
                   {showEndCalendar && (
-                    <div className="lg:absolute self-bottom lg:mt-[60px] lg:z-10 rounded-md shadow-md">
+                    <div className="lg:absolute self-bottom lg:mt-[62px] lg:z-10 rounded-md shadow-md">
                       <Calendar onDateSelect={handleEndDateSelect} />
                     </div>
                   )}
