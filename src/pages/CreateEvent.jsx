@@ -15,10 +15,10 @@ export default function CreateEvent() {
   const [selectedEndDay, setSelectedEndDay] = useState('End Day');
   const [startDayDropdownVisible, setStartDayDropdownVisible] = useState(false);
   const [endDayDropdownVisible, setEndDayDropdownVisible] = useState(false);
-  const [eventName, setEventName] = useState("");
-  const [eventDescription, setEventDescription] = useState("");
-  const [startTime, setStartTime] = useState("07:00");
-  const [endTime, setEndTime] = useState("19:00");
+  const [eventName, setEventName] = useState('');
+  const [eventDescription, setEventDescription] = useState('');
+  const [startTime, setStartTime] = useState('07:00');
+  const [endTime, setEndTime] = useState('19:00');
   const [startCalendarDay, setCalendarStart] = useState(today);
   const [endCalendarDay, setCalendarEnd] = useState(today);
 
@@ -31,15 +31,15 @@ export default function CreateEvent() {
     : 'placeholder-[#3E505B]';
 
   const handleCalendarStartChange = (event) => {
-    setCalendarStart(event.target.value); 
+    setCalendarStart(event.target.value);
   };
 
   const handleCalendarEndChange = (event) => {
-    setCalendarEnd(event.target.value); 
+    setCalendarEnd(event.target.value);
   };
 
   const handleInputChange = (event) => {
-    setEventName(event.target.value); 
+    setEventName(event.target.value);
   };
 
   const handleDescriptionChange = (event) => {
@@ -108,51 +108,52 @@ export default function CreateEvent() {
     }
   }, [selectDaysOfWeek]);
 
-
   const get_event_data = async () => {
     const data = {
-      'email': 'test@rpi.edu',
-      'password': 'password',
-      'title': eventName,
-      'description': eventDescription,
-      'duration': parseInt(selectedInterval),
-      'start_time': startTime,
-      'end_time': endTime,
-
+      email: 'test@rpi.edu',
+      password: 'password',
+      title: eventName,
+      description: eventDescription,
+      duration: parseInt(selectedInterval),
+      start_time: startTime,
+      end_time: endTime,
     };
 
     if (selectDaysOfWeek) {
-      data.event_type = "generic_week";
+      data.event_type = 'generic_week';
       data.start_day = selectedStartDay.toLowerCase();
       data.end_day = selectedEndDay.toLowerCase();
     } else {
-      data.event_type = "date_range";
-      const startDate = startCalendarDay.split("-");
-      const endDate = endCalendarDay.split("-");
-      data.start_date = (startDate[1] + "/" + startDate[2] + "/" + startDate[0]);
-      data.end_date = (endDate[1] + "/" + endDate[2] + "/" + endDate[0]);
+      data.event_type = 'date_range';
+      const startDate = startCalendarDay.split('-');
+      const endDate = endCalendarDay.split('-');
+      data.start_date = startDate[1] + '/' + startDate[2] + '/' + startDate[0];
+      data.end_date = endDate[1] + '/' + endDate[2] + '/' + endDate[0];
     }
 
-    console.log("works");
+    console.log('works');
 
     try {
-      const response = await fetch("http://tomeeto.cs.rpi.edu:8000/create_event", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        'http://tomeeto.cs.rpi.edu:8000/create_event',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (response.ok) {
-        navigate('/confirmCreated')
+        navigate('/confirmCreated');
       } else {
         console.error('Failed to create event:', response.statusText);
       }
     } catch (error) {
       console.error('Error:', error);
     }
-  }
+  };
 
   // Get current date for default date selection
 
