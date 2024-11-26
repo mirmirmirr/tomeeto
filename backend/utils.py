@@ -254,6 +254,10 @@ def new_availability(availability: Availability, code: str) -> str:
     return availability.to_sql_insert(DB_CURSOR, DB_CONN, code)
 
 
+def update_avail(availability: Availability, code: str) -> str:
+    return availability.to_sql_update(DB_CURSOR, DB_CONN, code)
+
+
 def get_all_dates(start_date, end_date, generic=False):
     start = datetime.strptime(start_date, "%m/%d/%Y")
     end = datetime.strptime(end_date, "%m/%d/%Y")
