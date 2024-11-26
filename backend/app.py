@@ -13,6 +13,7 @@ from utils import (
     new_event,
     check_code_event,
     new_availability,
+    get_event,
 )
 from event import Event
 from availability import Availability
@@ -133,3 +134,20 @@ async def add_availability(request: Request):
         return {"message": "Database error"}
 
     return {"message": "Availability added"}
+
+
+@app.get("/event_details")
+async def event_details(request: Request):
+    body: dict = await request.json()
+    user_id = check_login(body)
+    if user_id < 0:
+        return {"message": "Login failed"}
+    else:
+        body["account_id"] = user_id
+
+    if "event_code" not in body:
+        return {"message": "Missing field: event_code"}
+    if not check_code_event(body["event_code"]):
+        return {"message": "Invalid event code"}
+
+    return get_event(body["event_code"]).to_json()

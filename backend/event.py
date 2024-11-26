@@ -78,8 +78,8 @@ class Event(ABC):
         self.creator: User = creator
         self.title: str = title
         self.description: str = description
-        self.start_time: time = start_time
-        self.end_time: time = end_time
+        self.start_time: time = (datetime.min + start_time).time()
+        self.end_time: time = (datetime.min + end_time).time()
         self.duration: Duration = duration
         self.availabilities: List[Availability] = availabilities
 
@@ -148,9 +148,17 @@ class Event(ABC):
             )
 
     @staticmethod
-    def from_sql(cursor: MySQLCursorDict, id: int) -> "Event":
-        query = "SELECT * FROM user_event WHERE user_event_id = %s"
-        cursor.execute(query, (id,))
+    def from_sql(cursor: MySQLCursorDict, code: str) -> "Event":
+        query = """
+            SELECT
+                *
+            FROM
+                user_event
+                INNER JOIN url_code USING (user_event_id)
+            WHERE
+                url_code = %s
+        """
+        cursor.execute(query, (code,))
         result = cursor.fetchone()
         if result is None:
             return None
@@ -286,8 +294,8 @@ class GenericWeekEvent(Event):
             "end_time": self.end_time.strftime("%H:%M"),
             "duration": self.duration.value,
             "event_type": "generic_week",
-            "start_day": Weekday(self.start_weekday).name,
-            "end_day": Weekday(self.end_weekday).name,
+            "start_day": Weekday(self.start_weekday).name.title(),
+            "end_day": Weekday(self.end_weekday).name.title(),
         }
 
     def to_sql_insert(
