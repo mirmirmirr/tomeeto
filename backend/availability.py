@@ -177,3 +177,32 @@ class Availability:
             print(e)
             return False
         return True
+
+    def to_sql_update(
+        self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
+    ) -> bool:
+        # This is a very hacky solution but I can't complain
+        # TODO: Make sure it doesn't just delete the data if it's not valid
+        delete_query_1 = """
+            DELETE FROM user_event_availability
+            WHERE
+                user_account_id = %s
+                AND user_event_id = (
+                    SELECT user_event_id
+                    FROM url_code
+                    WHERE url_code = %s
+                )
+        """
+        delete_query_2 = """
+            DELETE FROM user_event_participant
+            WHERE
+                user_account_id = %s
+                AND user_event_id = (
+                    SELECT user_event_id
+                    FROM url_code
+                    WHERE url_code = %s
+                )
+        """
+        cursor.execute(delete_query_1, (self.user.id, code))
+        cursor.execute(delete_query_2, (self.user.id, code))
+        return self.to_sql_insert(cursor, conn, code)
