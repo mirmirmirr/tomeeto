@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 
@@ -18,35 +18,43 @@ export default function Result() {
   const [isDisabled] = useState(true);
   const daysPerPage = 7; // Number of days per page
 
-  const weekdays = [
-    'SUN',
-    'MON',
-    'TUE',
-    'WED',
-    'THU',
-    'FRI',
-    'SAT',
-    'SUN',
-    'MON',
-    'TUE',
-    'WED',
-  ];
+  const [eventDetails, setEventDetails] = useState(null);
+  const [allDays, setAllDays] = useState([]);
+  const [weekdays, setWeekdays] = useState([]);
+  const [scheduleData, setResults] = useState([]);
+  const [totalDays, setTotalDays] = useState(0);
+  const [hours, setHours] = useState([]);
+  const [availability, setAvailability] = useState([]);
 
-  const allDays = [
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-    '15',
-    '16',
-  ];
-  const totalDays = allDays.length; // Total number of days
-  const hours = Array.from({ length: 15 }, (_, i) => 7 + i);
+  // const weekdays = [
+  //   'SUN',
+  //   'MON',
+  //   'TUE',
+  //   'WED',
+  //   'THU',
+  //   'FRI',
+  //   'SAT',
+  //   'SUN',
+  //   'MON',
+  //   'TUE',
+  //   'WED',
+  // ];
+
+  // const allDays = [
+  //   '6',
+  //   '7',
+  //   '8',
+  //   '9',
+  //   '10',
+  //   '11',
+  //   '12',
+  //   '13',
+  //   '14',
+  //   '15',
+  //   '16',
+  // ];
+  // const totalDays = allDays.length; // Total number of days
+  // const hours = Array.from({ length: 15 }, (_, i) => 7 + i);
 
   const displayedDays = allDays.slice(
     currentPage * daysPerPage,
@@ -59,48 +67,155 @@ export default function Result() {
   );
 
   var receivedData = {};
-  var scheduleData = [];
 
-  const fetch_data = async () => {
-    console.log('Ran');
-    const data = {
-      event_code: 'some event code',
-    };
+  useEffect(() => {
+    if (eventCode) {
+      const credentials = {
+        email: 'testing@gmail.com',
+        password: '123',
+        event_code: eventCode,
+      };
+  
+      // First, fetch event details
+      fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      })
+        .then(response => response.json())
+        .then(eventDetailsData => {
+          console.log('Event details:', eventDetailsData);
+  
+          // Update the state based on event details
+          setEventDetails(eventDetailsData);
+          updateEventData(eventDetailsData);
+  
+          // Next, fetch results using the same credentials
+          return fetch('http://tomeeto.cs.rpi.edu:8000/get_results', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
+          });
+        })
+        .then(response => response.json())
+        .then(resultsData => {
+          console.log('Results data:', resultsData);
+  
+          // Handle results data (e.g., update state with availabilities and nicknames)
+          if (resultsData.availabilities) {
+            const scheduleData = Object.entries(resultsData.availabilities).map(
+              ([name, availability]) => ({
+                name,
+                availability,
+              })
+            );
+            setResults(scheduleData); // Update state for results
 
-    try {
-      const response = await fetch(
-        'http://tomeeto.cs.rpi.edu:8000/get_results',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        }
-      );
+//                       const scheduleData = [];
+// for (const [key, value] of Object.entries(data.availabilities)) {
+//   console.log(key, value);
+//   const myDictionary = {};
+//   myDictionary.name = key;
+//   myDictionary.availability = value;
+//   scheduleData.push(myDictionary);
+// }
+// setResults(scheduleData);
+          }
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Time Set Successfully', result);
-        receivedData = result.availabilities;
-
-        // process the data
-        for (const [key, value] of Object.entries(receivedData)) {
-          console.log(key, value);
-          const myDictionary = {};
-          myDictionary.name = key;
-          myDictionary.availability = value;
-          scheduleData.push(myDictionary);
-        }
-      } else {
-        console.error('Failed get results:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error:', error);
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
     }
+  }, [eventCode]);  
+
+  const updateEventData = (data) => {
+
+    const { start_date, start_time, end_date, end_time, duration, event_type } = data;
+    
+    const startDate = new Date(start_date + ' ' + start_time);
+    const endDate = new Date(end_date + ' ' + end_time);
+    console.log(startDate);
+    console.log(endDate);
+
+    const daysArray = [];
+    const weekdaysArray = [];
+    let currentDate = startDate;
+  
+    while (currentDate <= endDate) {
+      // Add the day of the month to `daysArray`
+      daysArray.push(currentDate.getDate().toString());
+  
+      // Add the short weekday name to `weekdaysArray`
+      weekdaysArray.push(currentDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase());
+  
+      // Move to the next day
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+  
+    // Update states with generated arrays
+    setAllDays(daysArray); // e.g., ['6', '7', '8', '9', ...]
+    setWeekdays(weekdaysArray); // e.g., ['SUN', 'MON', 'TUE', ...]
+    console.log(daysArray)
+    console.log(weekdaysArray)
+    
+    const startHour = parseInt(start_time.split(':')[0]);
+    const endHour = parseInt(end_time.split(':')[0]);
+    const generatedHours = Array.from({ length: endHour - startHour }, (_, i) => startHour + i);
+    setHours(generatedHours);
+    console.log(generatedHours);
+
+    const availabilityArray = Array(generatedHours.length).fill(Array(daysArray.length).fill(0));
+    setAvailability(availabilityArray);
+
+    setResults(scheduleData);
+    console.log("shcEULD", scheduleData);
   };
 
-  // fetch_data()
+  // const fetch_data = async () => {
+  //   console.log('Ran');
+  //   const data = {
+  //     event_code: 'some event code',
+  //   };
+
+  //   try {
+  //     const response = await fetch(
+  //       'http://tomeeto.cs.rpi.edu:8000/get_results',
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify(data),
+  //       }
+  //     );
+
+  //     if (response.ok) {
+  //       const result = await response.json();
+  //       console.log('Time Set Successfully', result);
+  //       receivedData = result.availabilities;
+
+  //       // process the data
+  //       for (const [key, value] of Object.entries(receivedData)) {
+  //         console.log(key, value);
+  //         const myDictionary = {};
+  //         myDictionary.name = key;
+  //         myDictionary.availability = value;
+  //         scheduleData.push(myDictionary);
+  //       }
+  //     } else {
+  //       console.error('Failed get results:', response.statusText);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //   }
+  // };
+
+  // const scheduleData = 
   //   {
   //     name: 'Alice',
   //     availability: [

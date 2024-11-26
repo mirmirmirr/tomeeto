@@ -87,7 +87,7 @@ export default function Availability() {
     setHours(generatedHours);
     console.log(generatedHours);
 
-    const availabilityArray = Array(generatedHours.length).fill(Array(daysArray.length).fill(0));
+    const availabilityArray = Array(daysArray.length).fill(Array(generatedHours.length).fill(0));
     setAvailability(availabilityArray);
   };
 
@@ -331,24 +331,24 @@ export default function Availability() {
                       className={`border ${isDarkMode ? 'border-white' : 'border-black'} text-[10pt]`} // Add text size class here
                       style={{
                         backgroundColor: isInDragArea(
-                          row,
-                          currentPage * daysPerPage + column
+                          column,
+                          currentPage * daysPerPage + row
                         )
                           ? 'rgba(72, 187, 120, 0.5)' // Highlight drag area
-                          : availability[row][
-                                currentPage * daysPerPage + column
+                          : availability[column][
+                                currentPage * daysPerPage + row
                               ]
                             ? 'rgba(72, 187, 120, 1)' // Filled cell
                             : 'transparent', // Empty cell
                         userSelect: 'none', // Disable text selection
                       }}
                       onMouseDown={() =>
-                        handleMouseDown(row, currentPage * daysPerPage + column)
+                        handleMouseDown(column, currentPage * daysPerPage + row)
                       }
                       onMouseEnter={() =>
                         handleMouseEnter(
-                          row,
-                          currentPage * daysPerPage + column
+                          column,
+                          currentPage * daysPerPage + row
                         )
                       }
                     ></td>
