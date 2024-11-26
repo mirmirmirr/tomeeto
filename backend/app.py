@@ -138,7 +138,7 @@ async def add_availability(request: Request):
     return {"message": "Availability added"}
 
 
-@app.get("/event_details")
+@app.post("/event_details")
 async def event_details(request: Request):
     body: dict = await request.json()
     user_id = check_login(body)
@@ -155,7 +155,7 @@ async def event_details(request: Request):
     return get_event(body["event_code"]).to_json()
 
 
-@app.get("/dashboard_events")
+@app.post("/dashboard_events")
 async def dashboard_events(request: Request):
     body: dict = await request.json()
     user_id = check_login(body)
