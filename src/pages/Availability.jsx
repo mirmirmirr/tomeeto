@@ -36,34 +36,32 @@ export default function Availability() {
         event_code: eventCode,
       };
 
-      fetch('http://tomeeto.cs.rpi.edu:8000/event_details', 
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        }
-      )
-        .then(response => response.json())
-        .then(data => {
+      fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
           // Assuming the data from /event_details contains 'days' and 'start_time'
           console.log('Event details:', data);
-          
+
           // Update the state based on the event details
           setEventDetails(data);
           updateEventData(data); // Call function to update days and hours
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error fetching event details:', error);
         });
     }
   }, [eventCode]);
 
   const updateEventData = (data) => {
+    const { start_date, start_time, end_date, end_time, duration, event_type } =
+      data;
 
-    const { start_date, start_time, end_date, end_time, duration, event_type } = data;
-    
     const startDate = new Date(start_date + ' ' + start_time);
     const endDate = new Date(end_date + ' ' + end_time);
     console.log(startDate);
@@ -72,22 +70,33 @@ export default function Availability() {
     const daysArray = [];
     let currentDate = startDate;
     while (currentDate <= endDate) {
-      console.log("here");
-      daysArray.push(currentDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
+      console.log('here');
+      daysArray.push(
+        currentDate.toLocaleDateString('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+        })
+      );
       console.log(daysArray);
       currentDate.setDate(currentDate.getDate() + 1);
       console.log(currentDate);
     }
-    
+
     setAllDays(daysArray);
-    
+
     const startHour = parseInt(start_time.split(':')[0]);
     const endHour = parseInt(end_time.split(':')[0]);
-    const generatedHours = Array.from({ length: endHour - startHour }, (_, i) => startHour + i);
+    const generatedHours = Array.from(
+      { length: endHour - startHour },
+      (_, i) => startHour + i
+    );
     setHours(generatedHours);
     console.log(generatedHours);
 
-    const availabilityArray = Array(daysArray.length).fill(Array(generatedHours.length).fill(0));
+    const availabilityArray = Array(daysArray.length).fill(
+      Array(generatedHours.length).fill(0)
+    );
     setAvailability(availabilityArray);
   };
 

@@ -75,7 +75,7 @@ export default function Result() {
         password: '123',
         event_code: eventCode,
       };
-  
+
       // First, fetch event details
       fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
         method: 'POST',
@@ -84,14 +84,14 @@ export default function Result() {
         },
         body: JSON.stringify(credentials),
       })
-        .then(response => response.json())
-        .then(eventDetailsData => {
+        .then((response) => response.json())
+        .then((eventDetailsData) => {
           console.log('Event details:', eventDetailsData);
-  
+
           // Update the state based on event details
           setEventDetails(eventDetailsData);
           updateEventData(eventDetailsData);
-  
+
           // Next, fetch results using the same credentials
           return fetch('http://tomeeto.cs.rpi.edu:8000/get_results', {
             method: 'POST',
@@ -101,10 +101,10 @@ export default function Result() {
             body: JSON.stringify(credentials),
           });
         })
-        .then(response => response.json())
-        .then(resultsData => {
+        .then((response) => response.json())
+        .then((resultsData) => {
           console.log('Results data:', resultsData);
-  
+
           // Handle results data (e.g., update state with availabilities and nicknames)
           if (resultsData.availabilities) {
             const scheduleData = Object.entries(resultsData.availabilities).map(
@@ -115,28 +115,27 @@ export default function Result() {
             );
             setResults(scheduleData); // Update state for results
 
-//                       const scheduleData = [];
-// for (const [key, value] of Object.entries(data.availabilities)) {
-//   console.log(key, value);
-//   const myDictionary = {};
-//   myDictionary.name = key;
-//   myDictionary.availability = value;
-//   scheduleData.push(myDictionary);
-// }
-// setResults(scheduleData);
+            //                       const scheduleData = [];
+            // for (const [key, value] of Object.entries(data.availabilities)) {
+            //   console.log(key, value);
+            //   const myDictionary = {};
+            //   myDictionary.name = key;
+            //   myDictionary.availability = value;
+            //   scheduleData.push(myDictionary);
+            // }
+            // setResults(scheduleData);
           }
-
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error fetching data:', error);
         });
     }
-  }, [eventCode]);  
+  }, [eventCode]);
 
   const updateEventData = (data) => {
+    const { start_date, start_time, end_date, end_time, duration, event_type } =
+      data;
 
-    const { start_date, start_time, end_date, end_time, duration, event_type } = data;
-    
     const startDate = new Date(start_date + ' ' + start_time);
     const endDate = new Date(end_date + ' ' + end_time);
     console.log(startDate);
@@ -145,35 +144,44 @@ export default function Result() {
     const daysArray = [];
     const weekdaysArray = [];
     let currentDate = startDate;
-  
+
     while (currentDate <= endDate) {
       // Add the day of the month to `daysArray`
       daysArray.push(currentDate.getDate().toString());
-  
+
       // Add the short weekday name to `weekdaysArray`
-      weekdaysArray.push(currentDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase());
-  
+      weekdaysArray.push(
+        currentDate
+          .toLocaleDateString('en-US', { weekday: 'short' })
+          .toUpperCase()
+      );
+
       // Move to the next day
       currentDate.setDate(currentDate.getDate() + 1);
     }
-  
+
     // Update states with generated arrays
     setAllDays(daysArray); // e.g., ['6', '7', '8', '9', ...]
     setWeekdays(weekdaysArray); // e.g., ['SUN', 'MON', 'TUE', ...]
-    console.log(daysArray)
-    console.log(weekdaysArray)
-    
+    console.log(daysArray);
+    console.log(weekdaysArray);
+
     const startHour = parseInt(start_time.split(':')[0]);
     const endHour = parseInt(end_time.split(':')[0]);
-    const generatedHours = Array.from({ length: endHour - startHour }, (_, i) => startHour + i);
+    const generatedHours = Array.from(
+      { length: endHour - startHour },
+      (_, i) => startHour + i
+    );
     setHours(generatedHours);
     console.log(generatedHours);
 
-    const availabilityArray = Array(generatedHours.length).fill(Array(daysArray.length).fill(0));
+    const availabilityArray = Array(generatedHours.length).fill(
+      Array(daysArray.length).fill(0)
+    );
     setAvailability(availabilityArray);
 
     setResults(scheduleData);
-    console.log("shcEULD", scheduleData);
+    console.log('shcEULD', scheduleData);
   };
 
   // const fetch_data = async () => {
@@ -215,7 +223,7 @@ export default function Result() {
   //   }
   // };
 
-  // const scheduleData = 
+  // const scheduleData =
   //   {
   //     name: 'Alice',
   //     availability: [
