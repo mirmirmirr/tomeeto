@@ -67,7 +67,8 @@ export default function Availability() {
         // session management with dashboard
         navigate('/results', {
           state: { eventCode, eventName },
-        });      } else {
+        });
+      } else {
         console.error('Failed to record time:', response.statusText);
       }
     } catch (error) {
@@ -156,7 +157,7 @@ export default function Availability() {
     );
   };
 
-  const send_availability = async() => {
+  const send_availability = async () => {
     const data = {
       email: 'testing@gmail.com',
       password: '123',
@@ -168,7 +169,7 @@ export default function Availability() {
     console.log('works');
 
     try {
-      const response = await fetch (
+      const response = await fetch(
         'http://tomeeto.cs.rpi.edu:8000/add_availability',
         {
           method: 'POST',
@@ -181,13 +182,12 @@ export default function Availability() {
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log("Response Data:", responseData);
+        console.log('Response Data:', responseData);
 
         navigate('/results', {
           state: { eventCode: responseData.event_code, eventName: data.title },
         });
       }
-
     } catch (error) {
       console.error('Error:', error);
     }
