@@ -65,8 +65,9 @@ export default function Availability() {
         console.log('Time Set Successfully', result);
 
         // session management with dashboard
-        navigate('/results');
-      } else {
+        navigate('/results', {
+          state: { eventCode, eventName },
+        });      } else {
         console.error('Failed to record time:', response.statusText);
       }
     } catch (error) {
@@ -155,6 +156,43 @@ export default function Availability() {
     );
   };
 
+  const send_availability = async() => {
+    const data = {
+      email: 'testing@gmail.com',
+      password: '123',
+      event_code: eventCode,
+      nickname: name,
+      availability: availability,
+    };
+
+    console.log('works');
+
+    try {
+      const response = await fetch (
+        'http://tomeeto.cs.rpi.edu:8000/add_availability',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log("Response Data:", responseData);
+
+        navigate('/results', {
+          state: { eventCode: responseData.event_code, eventName: data.title },
+        });
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   return (
     <div
       className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
@@ -193,9 +231,7 @@ export default function Availability() {
           </div>
           <div className="hidden lg:block">
             <button
-              onClick={() =>
-                navigate('/results', { state: { eventCode, eventName } })
-              }
+              onClick={send_availability}
               className="w-32 p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500"
             >
               Submit
