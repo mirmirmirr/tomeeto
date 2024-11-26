@@ -10,6 +10,8 @@ export default function Landing() {
   const { isDarkMode, toggleTheme } = useTheme();
   const { isSmallScreen, isLargeScreen } = useScreenSize();
 
+  document.cookie = 'code=' + code;
+
   const handelFocus = () => {
     setIsFocused;
   };
@@ -36,6 +38,11 @@ export default function Landing() {
           id="event-code"
           value={code}
           onChange={(e) => setCode(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              navigate('/availability', { state: { code: e.target.value } });
+            }
+          }}
           placeholder="or enter code here"
           className={`w-[50vw] min-w-[300px] mt-[2vh] px-3 py-2 text-[20px] bg-transparent text-center border-b-2 rounded-none lg:text-[2vw] focus:outline-none ${
             isDarkMode

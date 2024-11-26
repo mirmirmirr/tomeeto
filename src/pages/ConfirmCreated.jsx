@@ -9,6 +9,7 @@ export default function ConfirmCreated() {
   const { eventCode, eventName } = location.state || {};
   console.log('here');
   console.log(eventName);
+  document.cookie = 'code=' + eventCode;
 
   const { isDarkMode, toggleTheme } = useTheme();
 

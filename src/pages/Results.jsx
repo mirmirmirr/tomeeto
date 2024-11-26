@@ -67,7 +67,7 @@ export default function Result() {
   );
 
   var receivedData = {};
-  
+
   useEffect(() => {
     if (eventCode) {
       const credentials = {
@@ -123,30 +123,33 @@ export default function Result() {
   }, [eventCode]);
 
   const updateEventData = async (data) => {
-    const { start_date, start_time, end_date, end_time, duration, event_type } = data;
-  
+    const { start_date, start_time, end_date, end_time, duration, event_type } =
+      data;
+
     // Parse start and end dates
     const startDate = new Date(`${start_date} ${start_time}`);
     const endDate = new Date(`${end_date} ${end_time}`);
     console.log('Start Date:', startDate);
     console.log('End Date:', endDate);
-  
+
     // Generate days and weekdays arrays
     const daysArray = [];
     const weekdaysArray = [];
     let currentDate = new Date(startDate); // Use a new instance to avoid mutating startDate
-  
+
     while (currentDate <= endDate) {
       daysArray.push(currentDate.getDate().toString()); // Day of the month
       weekdaysArray.push(
-        currentDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()
+        currentDate
+          .toLocaleDateString('en-US', { weekday: 'short' })
+          .toUpperCase()
       );
       currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
     }
-  
+
     console.log('Days Array:', daysArray);
     console.log('Weekdays Array:', weekdaysArray);
-  
+
     // Generate hours array
     const startHour = parseInt(start_time.split(':')[0], 10);
     const endHour = parseInt(end_time.split(':')[0], 10);
@@ -154,42 +157,45 @@ export default function Result() {
       { length: endHour - startHour },
       (_, i) => startHour + i
     );
-  
+
     console.log('Generated Hours:', generatedHours);
-  
+
     // Initialize availability matrix
     const availabilityArray = Array(generatedHours.length).fill(
       Array(daysArray.length).fill(0)
     );
     console.log('Initial Availability Array:', availabilityArray);
-  
+
     // Update states
     setAllDays(daysArray); // e.g., ['6', '7', '8', '9', ...]
     setWeekdays(weekdaysArray); // e.g., ['SUN', 'MON', 'TUE', ...]
     setHours(generatedHours);
     setAvailability(availabilityArray);
-  
+
     // Fetch results data
     const credentials = {
       email: 'testing@gmail.com',
       password: '123',
       event_code: eventCode,
     };
-  
+
     try {
-      const response = await fetch('http://tomeeto.cs.rpi.edu:8000/get_results', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials),
-      });
-  
+      const response = await fetch(
+        'http://tomeeto.cs.rpi.edu:8000/get_results',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(credentials),
+        }
+      );
+
       if (!response.ok) {
         throw new Error(`Error fetching results: ${response.statusText}`);
       }
-  
+
       const resultsData = await response.json();
       console.log('Results data:', resultsData);
-  
+
       // Process and update results
       if (resultsData) {
         var scheduleData = [];
@@ -197,14 +203,13 @@ export default function Result() {
           console.log(key, value);
           const myDictionary = {};
           myDictionary.name = key;
-        
+
           // Transform value to an array of single-element arrays
-          myDictionary.availability = value.map(v => [v]);
-        
+          myDictionary.availability = value.map((v) => [v]);
+
           scheduleData.push(myDictionary);
         }
-        
-  
+
         console.log('Processed Schedule Data:', scheduleData);
         setResults(scheduleData);
       } else {
@@ -214,9 +219,8 @@ export default function Result() {
       console.error('Error fetching results:', error.message);
     }
   };
-  
 
-  console.log("resultssss", scheduleData);
+  console.log('resultssss', scheduleData);
 
   // const fetch_data = async () => {
   //   console.log('Ran');
@@ -364,8 +368,9 @@ export default function Result() {
                 const isAvailable =
                   hoveredCell.row !== null &&
                   hoveredCell.column !== null &&
-                  attendee.availability[0][hoveredCell.column][hoveredCell.row] ==
-                    1;
+                  attendee.availability[0][hoveredCell.column][
+                    hoveredCell.row
+                  ] == 1;
                 const opacityStyle = isAvailable
                   ? 'opacity-100'
                   : 'opacity-50 line-through';
@@ -550,7 +555,8 @@ export default function Result() {
               const isAvailable =
                 hoveredCell.row !== null &&
                 hoveredCell.column !== null &&
-                attendee.availability[0][hoveredCell.column][hoveredCell.row] == 1;
+                attendee.availability[0][hoveredCell.column][hoveredCell.row] ==
+                  1;
               const opacityStyle = isAvailable
                 ? 'opacity-100'
                 : 'opacity-50 line-through';

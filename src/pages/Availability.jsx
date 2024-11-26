@@ -6,10 +6,25 @@ import Header from '../resources/Header';
 export default function Availability() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { eventCode, eventName } = location.state || {};
+  // const { eventCode } = location.state || {};
 
-  console.log('Event Code:', eventCode);
-  console.log('Event Name:', eventName);
+  function getCookieValue(cookieName) {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+      const [name, value] = cookie.split('=');
+      if (name === cookieName) {
+        return value;
+      }
+    }
+    return null;
+  }
+
+  // Example usage:
+  let x = document.cookie;
+  console.log(x);
+
+  const eventCode = getCookieValue('code');
+  console.log('Code cookie:', eventCode);
 
   const { isDarkMode, toggleTheme } = useTheme();
 
@@ -27,6 +42,7 @@ export default function Availability() {
   const [totalDays, setTotalDays] = useState(0);
   const [hours, setHours] = useState([]);
   const [availability, setAvailability] = useState([]);
+  const [eventName, setEventName] = useState([]);
 
   useEffect(() => {
     if (eventCode) {
@@ -59,8 +75,16 @@ export default function Availability() {
   }, [eventCode]);
 
   const updateEventData = (data) => {
-    const { start_date, start_time, end_date, end_time, duration, event_type } =
-      data;
+    const {
+      start_date,
+      start_time,
+      end_date,
+      end_time,
+      duration,
+      event_type,
+      title,
+    } = data;
+    setEventName(title);
 
     const startDate = new Date(start_date + ' ' + start_time);
     const endDate = new Date(end_date + ' ' + end_time);
@@ -99,22 +123,6 @@ export default function Availability() {
     );
     setAvailability(availabilityArray);
   };
-
-  // const allDays = [
-  //   'SUN 6',
-  //   'MON 7',
-  //   'TUE 8',
-  //   'WED 9',
-  //   'THU 10',
-  //   'FRI 11',
-  //   'SAT 12',
-  //   'SUN 13',
-  //   'MON 14',
-  //   'TUE 15',
-  //   'WED 16',
-  // ];
-  // const totalDays = allDays.length; // Total number of days
-  // const hours = Array.from({ length: 15 }, (_, i) => 7 + i);
 
   const displayedDays = allDays.slice(
     currentPage * daysPerPage,
