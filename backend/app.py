@@ -153,7 +153,7 @@ async def event_details(request: Request):
     if not check_code_event(body["event_code"]):
         return {"message": "Invalid event code"}
 
-    return get_event(body["event_code"]).to_json()
+    return get_event(body["event_code"])
 
 
 @app.post("/dashboard_events")

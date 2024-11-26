@@ -9,8 +9,10 @@ import bcrypt
 
 import random
 import string
+from datetime import datetime, timedelta
+from collections import defaultdict
 
-from event import Event
+from event import Event, Weekday
 from availability import Availability
 from user import User
 
@@ -252,8 +254,62 @@ def new_availability(availability: Availability, code: str) -> str:
     return availability.to_sql_insert(DB_CURSOR, DB_CONN, code)
 
 
-def get_event(code: str) -> Event:
-    return Event.from_sql(DB_CURSOR, code)
+def get_all_dates(start_date, end_date, generic=False):
+    start = datetime.strptime(start_date, "%m/%d/%Y")
+    end = datetime.strptime(end_date, "%m/%d/%Y")
+    delta = timedelta(days=1)
+    all_dates = []
+
+    while start <= end:
+        all_dates.append(start.strftime("%m/%d/%Y"))
+        start += delta
+
+    grouped_dates = defaultdict(lambda: {"all_dates": [], "weekdayName": []})
+
+    for date_str in all_dates:
+        date_obj = datetime.strptime(date_str, "%m/%d/%Y")
+        month_year = date_obj.strftime("%B %Y")
+        grouped_dates[month_year]["all_dates"].append(date_str)
+        grouped_dates[month_year]["weekdayName"].append(date_obj.strftime("%A"))
+
+    if generic:
+        result = [
+            {
+                "weekdayName": data["weekdayName"],
+            }
+            for month_year, data in grouped_dates.items()
+        ]
+    else:
+        result = [
+            {
+                "month": month_year,
+                "all_dates": data["all_dates"],
+                "weekdayName": data["weekdayName"],
+            }
+            for month_year, data in grouped_dates.items()
+        ]
+
+    return result
+
+
+def weekday_to_date_str(weekday: int) -> str:
+    return f"01/0{Weekday[weekday.upper()].value}/2023"
+
+
+def get_event(code: str) -> dict:
+    event = Event.from_sql(DB_CURSOR, code)
+    event_data = event.to_json()
+    if event_data["event_type"] == "generic_week":
+        event_data["all_dates"] = get_all_dates(
+            weekday_to_date_str(event_data["start_day"]),
+            weekday_to_date_str(event_data["end_day"]),
+            generic=True,
+        )
+    else:
+        event_data["all_dates"] = get_all_dates(
+            event_data["start_date"], event_data["end_date"]
+        )
+    return event_data
 
 
 def dashboard_data(user: User) -> dict:
