@@ -14,9 +14,11 @@ from utils import (
     check_code_event,
     new_availability,
     get_event,
+    dashboard_data,
 )
 from event import Event
 from availability import Availability
+from user import User
 
 app = FastAPI()
 
@@ -151,3 +153,17 @@ async def event_details(request: Request):
         return {"message": "Invalid event code"}
 
     return get_event(body["event_code"]).to_json()
+
+
+@app.get("/dashboard_events")
+async def dashboard_events(request: Request):
+    body: dict = await request.json()
+    user_id = check_login(body)
+    if user_id < 0:
+        return {"message": "Login failed"}
+    else:
+        body["account_id"] = user_id
+
+    current_user = User.from_json(body)
+
+    return dashboard_data(current_user)
