@@ -78,8 +78,8 @@ class Event(ABC):
         self.creator: User = creator
         self.title: str = title
         self.description: str = description
-        self.start_time: time = (datetime.min + start_time).time()
-        self.end_time: time = (datetime.min + end_time).time()
+        self.start_time: time = start_time
+        self.end_time: time = end_time
         self.duration: Duration = duration
         self.availabilities: List[Availability] = availabilities
 
@@ -167,8 +167,8 @@ class Event(ABC):
                 User(result["user_account_id"]),
                 result["title"],
                 result["details"],
-                result["start_time"],
-                result["end_time"],
+                (datetime.min + result["start_time"]).time(),
+                (datetime.min + result["end_time"]).time(),
                 Duration(result["duration"]),
                 [],
                 result["start_date"],
@@ -179,8 +179,8 @@ class Event(ABC):
                 User(result["user_account_id"]),
                 result["title"],
                 result["details"],
-                result["start_time"],
-                result["end_time"],
+                (datetime.min + result["start_time"]).time(),
+                (datetime.min + result["end_time"]).time(),
                 Duration(result["duration"]),
                 [],
                 date_to_weekday(result["start_date"]),
