@@ -18,6 +18,10 @@ export default function CreateEvent() {
   const [selectedEndDay, setSelectedEndDay] = useState('End Day');
   const [startDayDropdownVisible, setStartDayDropdownVisible] = useState(false);
   const [endDayDropdownVisible, setEndDayDropdownVisible] = useState(false);
+  const [showStartCalendar, setShowStartCalendar] = useState(false);
+  const [showEndCalendar, setShowEndCalendar] = useState(false);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const [eventName, setEventName] = useState('');
   const [eventDescription, setEventDescription] = useState('');
   const [startTime, setStartTime] = useState('07:00');
@@ -136,8 +140,8 @@ export default function CreateEvent() {
 
   const get_event_data = async () => {
     const data = {
-      email: 'test@rpi.edu',
-      password: 'password',
+      email: 'testing@gmail.com',
+      password: '123',
       title: eventName,
       description: eventDescription,
       duration: parseInt(selectedInterval),
