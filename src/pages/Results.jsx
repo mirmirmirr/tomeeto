@@ -53,6 +53,11 @@ export default function Result() {
     (currentPage + 1) * daysPerPage
   );
 
+  const displayedWeekDays = weekdays.slice(
+    currentPage * daysPerPage,
+    (currentPage + 1) * daysPerPage
+  );
+
   var receivedData = {};
   var scheduleData = [];
 
