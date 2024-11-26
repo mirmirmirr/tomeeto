@@ -12,8 +12,10 @@ from utils import (
     new_code,
     new_event,
     check_code_event,
+    new_availability,
 )
 from event import Event
+from availability import Availability
 
 app = FastAPI()
 
@@ -120,5 +122,14 @@ async def add_availability(request: Request):
             return {"message": "Invalid data"}
     if not check_code_event(body["event_code"]):
         return {"message": "Invalid event code"}
+    
+    availability = Availability.from_json(body)
+    if availability is None:
+        return {"message": "Invalid availability data"}
+    result = new_availability(availability, body["event_code"])
+    if result is not bool:
+        return {"message": result}
+    elif not result:
+        return {"message": "Database error"}
 
-    return {"message": "Nothing went wrong yet"}
+    return {"message": "Availability added"}

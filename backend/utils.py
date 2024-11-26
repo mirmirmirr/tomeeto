@@ -9,6 +9,7 @@ import random
 import string
 
 from event import Event
+from availability import Availability
 
 # MySQL Connector stuff
 import mysql.connector as MySQL
@@ -242,3 +243,6 @@ def check_code_event(code: str) -> bool:
     except MySQL.Error as e:
         print(e)
         return False
+    
+def new_availability(availability: Availability, code: str) -> str:
+    return availability.to_sql_insert(DB_CURSOR, DB_CONN, code)
