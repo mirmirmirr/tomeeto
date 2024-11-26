@@ -176,7 +176,11 @@ export default function CreateEvent() {
       );
 
       if (response.ok) {
-        navigate('/confirmCreated');
+        
+        const responseData = await response.json();
+        console.log('Response Data:', responseData);
+
+        navigate('/confirmCreated', { state: { eventCode: responseData.event_code } });
       } else {
         console.error('Failed to create event:', response.statusText);
       }

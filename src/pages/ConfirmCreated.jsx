@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
 
 export default function ConfirmCreated() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { eventCode } = location.state || {};
 
   const { isDarkMode, toggleTheme } = useTheme();
-  const eventCode = 'tomeetoplanningBETA';
 
   const [copySuccess, setCopySuccess] = useState(false);
 
@@ -94,7 +95,7 @@ export default function ConfirmCreated() {
 
           <div className="flex flex-col lg:flex-row">
             <button
-              onClick={() => navigate('/availability')}
+              onClick={() => navigate('/availability', { state: { eventCode: responseData.event_code } })}
               className={`lg:hidden w-[60vw] lg:w-[13vw] m-[10px] bg-transparent border-2 text-responsive py-2 font-semibold rounded-lg ${textColor} ${borderColor} hover:bg-red-500 hover:text-white hover:border-transparent`}
             >
               Add Availability
@@ -106,7 +107,7 @@ export default function ConfirmCreated() {
               Edit Event
             </button>
             <button
-              onClick={() => navigate('/results')}
+              onClick={() => navigate('/results', { state: { eventCode: responseData.event_code } })}
               className={`w-[60vw] lg:w-[13vw] m-[10px] text-responsive py-2 font-semibold rounded-lg ${buttonText} ${buttonBG}  hover:bg-red-500 hover:text-white hover:border-transparent`}
             >
               Results
