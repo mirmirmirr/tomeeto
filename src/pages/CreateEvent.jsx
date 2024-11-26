@@ -6,7 +6,14 @@ import Calendar from '../resources/Calendar';
 import TimeSelector from '../resources/TimeSelector';
 
 export default function CreateEvent() {
-  const today = new Date().toISOString().split('T')[0];
+  const tempToday = new Date();
+  const today =
+    tempToday.getMonth() +
+    1 +
+    '/' +
+    tempToday.getDate() +
+    '/' +
+    tempToday.getFullYear();
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
 
@@ -114,14 +121,18 @@ export default function CreateEvent() {
   const handleStartDateSelect = (date) => {
     setStartDate(date);
     setShowStartCalendar(false);
-    setCalendarStart(date.toLocaleDateString());
+    const formattedDate =
+      date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+    setCalendarStart(formattedDate);
   };
 
   // Handles end date selection
   const handleEndDateSelect = (date) => {
     setEndDate(date);
     setShowEndCalendar(false);
-    setCalendarEnd(date.toLocaleDateString());
+    const formattedDate =
+      date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+    setCalendarEnd(formattedDate);
   };
 
   // Handles time interval selection
@@ -157,26 +168,22 @@ export default function CreateEvent() {
       data.end_day = selectedEndDay.toLowerCase();
     } else {
       data.event_type = 'date_range';
-      const startDate = startCalendarDay.split('-');
-      const endDate = endCalendarDay.split('-');
-      data.start_date = startDate[1] + '/' + startDate[2] + '/' + startDate[0];
-      data.end_date = endDate[1] + '/' + endDate[2] + '/' + endDate[0];
+      data.start_date = startCalendarDay;
+      data.end_date = endCalendarDay;
+      console.log(data.start_date);
+      console.log(data.end_date);
     }
-
 
     console.log('works');
 
     try {
-      const response = await fetch(
-        'http://tomeeto.cs.rpi.edu:8000/create_event',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch('http://tomeeto.cs.rpi.edu:8000/create_event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
       if (response.ok) {
         const responseData = await response.json();
@@ -560,8 +567,9 @@ export default function CreateEvent() {
           {/* Create Event button */}
           <button
             onClick={get_event_data}
-            className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center ${textColor
-              }`}
+            className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center ${
+              textColor
+            }`}
             style={{ fontSize: `max(1vw, 20px)` }}
           >
             Create Event
