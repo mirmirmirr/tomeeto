@@ -171,7 +171,7 @@ async def dashboard_events(request: Request):
 
 
 @app.post("/get_results")
-async def dashboard_events(request: Request):
+async def get_results(request: Request):
     body: dict = await request.json()
     user_id = check_login(body)
     if user_id < 0:
@@ -184,4 +184,4 @@ async def dashboard_events(request: Request):
     if not check_code_event(body["event_code"]):
         return {"message": "Invalid event code"}
 
-    return get_results(body["event_code"])
+    return get_event_results(body["event_code"])

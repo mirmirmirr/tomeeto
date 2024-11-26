@@ -316,7 +316,7 @@ def dashboard_data(user: User) -> dict:
     return user.get_events(DB_CURSOR)
 
 
-def get_results(code: str) -> List[Availability]:
+def get_event_results(code: str) -> List[Availability]:
     avail_query = """
         SELECT
             user_account_id,
