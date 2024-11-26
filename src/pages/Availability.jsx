@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
@@ -128,8 +128,8 @@ export default function Availability() {
       >
         <div
           id="eventName"
-          className="pl-4"
-          style={{ fontSize: `min(3vw, 60px)` }}
+          className="w-[80vw] lg:w-[93vw]"
+          style={{ fontSize: `max(3vw, 35px)` }}
         >
           {eventTitle}
         </div>
@@ -139,7 +139,7 @@ export default function Availability() {
         ></div>
 
         <div className="flex w-[90vw] justify-between items-center mt-4">
-          <div className="pl-4" style={{ fontSize: `min(2vw, 20px)` }}>
+          <div className="pl-4" style={{ fontSize: `max(2vw, 20px)` }}>
             Hi,{' '}
             <input
               type="text"
@@ -151,12 +151,14 @@ export default function Availability() {
             <br />
             add your availability here
           </div>
-          <button
-            onClick={() => navigate('/results')}
-            className={`w-32 p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500`}
-          >
-            Submit
-          </button>
+          <div className="hidden lg:block">
+            <button
+              onClick={() => navigate('/results')}
+              className="w-32 p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500"
+            >
+              Submit
+            </button>
+          </div>
         </div>
 
         <div
@@ -190,7 +192,14 @@ export default function Availability() {
               <tr>
                 <th className="p-2" style={{ width: `min(10vw, 55px)` }}></th>
                 {displayedDays.map((day, index) => (
-                  <th key={index} className="p-2 font-[400]">
+                  <th
+                    key={index}
+                    className="p-2 font-[400]"
+                    style={{
+                      fontSize: `min(3vw, 15px)`,
+                      height: `calc(100% / (${hours.length}+2))`,
+                    }}
+                  >
                     {day}
                   </th>
                 ))}
@@ -203,13 +212,16 @@ export default function Availability() {
                   className="h-full"
                   style={{ height: `calc(100% / ${hours.length})` }}
                 >
-                  <td className="pr-2 text-right text-[10pt]">
+                  <td
+                    className="pr-2 text-right"
+                    style={{ fontSize: `min(3vw, 12px)` }}
+                  >
                     {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
                   </td>
                   {displayedDays.map((_, column) => (
                     <td
                       key={column}
-                      className={`border ${isDarkMode ? 'border-white' : 'border-black'}`}
+                      className={`border ${isDarkMode ? 'border-white' : 'border-black'} text-[10pt]`} // Add text size class here
                       style={{
                         backgroundColor: isInDragArea(
                           row,
@@ -260,6 +272,15 @@ export default function Availability() {
               </button>
             )}
           </div>
+        </div>
+
+        <div className="lg:hidden mt-4">
+          <button
+            onClick={() => navigate('/results')}
+            className="w-full p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500"
+          >
+            Submit
+          </button>
         </div>
       </div>
     </div>
