@@ -156,7 +156,7 @@ async def add_availability(request: Request):
     if availability is None:
         return {"message": "Invalid availability data"}
     result = new_availability(availability, body["event_code"])
-    if result is not bool:
+    if isinstance(result, str):
         return {"message": result}
     elif not result:
         return {"message": "Database error"}
@@ -184,7 +184,7 @@ async def update_availability(request: Request):
     if availability is None:
         return {"message": "Invalid availability data"}
     result = update_avail(availability, body["event_code"])
-    if result is not bool:
+    if isinstance(result, str):
         return {"message": result}
     elif not result:
         return {"message": "Database error"}
