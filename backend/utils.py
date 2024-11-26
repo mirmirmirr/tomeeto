@@ -247,3 +247,7 @@ def check_code_event(code: str) -> bool:
 
 def new_availability(availability: Availability, code: str) -> str:
     return availability.to_sql_insert(DB_CURSOR, DB_CONN, code)
+
+
+def get_event(code: str) -> Event:
+    return Event.from_sql(DB_CURSOR, code)
