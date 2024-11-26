@@ -12,7 +12,7 @@ export default function CreateEvent() {
 
   // State for handling dropdowns and selections
   const [intervalDropdownVisible, setIntervalDropdownVisible] = useState(false);
-  const [selectedInterval, setSelectedInterval] = useState('30 minutes');
+  const [selectedInterval, setSelectedInterval] = useState('60 minutes');
   const [selectDaysOfWeek, setSelectDaysOfWeek] = useState(false);
   const [selectedStartDay, setSelectedStartDay] = useState('Start Day');
   const [selectedEndDay, setSelectedEndDay] = useState('End Day');
@@ -433,7 +433,7 @@ export default function CreateEvent() {
           </div>
 
           {/* Time interval selection dropdown */}
-          <div className="relative pb-3">
+          {/* <div className="relative pb-3">
             <button
               onClick={toggleIntervalDropdown}
               className={`hidden lg:block w-[25%] p-3 lg:bg-[#FF5C5C]
@@ -486,7 +486,7 @@ export default function CreateEvent() {
                 </ul>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Event description input */}
           <label
