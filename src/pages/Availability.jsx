@@ -26,6 +26,7 @@ export default function Availability() {
   const [allDays, setAllDays] = useState([]);
   const [totalDays, setTotalDays] = useState(0);
   const [hours, setHours] = useState([]);
+  const [availability, setAvailability] = useState([]);
 
   useEffect(() => {
     if (eventCode) {
@@ -65,21 +66,29 @@ export default function Availability() {
     
     const startDate = new Date(start_date + ' ' + start_time);
     const endDate = new Date(end_date + ' ' + end_time);
+    console.log(startDate);
+    console.log(endDate);
 
     const daysArray = [];
     let currentDate = startDate;
     while (currentDate <= endDate) {
+      console.log("here");
       daysArray.push(currentDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
-      currentDate.setDate(currentDate.getDate() + 1); // Increment by one day
+      console.log(daysArray);
+      currentDate.setDate(currentDate.getDate() + 1);
+      console.log(currentDate);
     }
     
     setAllDays(daysArray);
-    setTotalDays(daysArray.length);
-
+    
     const startHour = parseInt(start_time.split(':')[0]);
     const endHour = parseInt(end_time.split(':')[0]);
     const generatedHours = Array.from({ length: endHour - startHour }, (_, i) => startHour + i);
     setHours(generatedHours);
+    console.log(generatedHours);
+
+    const availabilityArray = Array(generatedHours.length).fill(Array(daysArray.length).fill(0));
+    setAvailability(availabilityArray);
   };
 
   // const allDays = [
@@ -98,51 +107,9 @@ export default function Availability() {
   // const totalDays = allDays.length; // Total number of days
   // const hours = Array.from({ length: 15 }, (_, i) => 7 + i);
 
-  const submit_button = async () => {
-    console.log('Ran');
-    console.log(name);
-    console.log(availability);
-    const data = {
-      email: 'testing@gmail.com',
-      password: '123',
-      event_code: eventCode,
-      nickname: name,
-      availability: availability,
-    };
-
-    try {
-      const response = await fetch(
-        'http://tomeeto.cs.rpi.edu:8000/add_availability',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Time Set Successfully', result);
-
-        // session management with dashboard
-        navigate('/results', { state: { eventCode, eventName } });
-      } else {
-        console.error('Failed to record time:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
   const displayedDays = allDays.slice(
     currentPage * daysPerPage,
     (currentPage + 1) * daysPerPage
-  );
-
-  const [availability, setAvailability] = useState(
-    Array(hours.length).fill(Array(totalDays).fill(0))
   );
 
   useEffect(() => {
@@ -217,7 +184,10 @@ export default function Availability() {
     );
   };
 
-  const send_availability = async () => {
+  const submit_button = async () => {
+    console.log('Ran');
+    console.log(name);
+    console.log(availability);
     const data = {
       email: 'testing@gmail.com',
       password: '123',
@@ -225,8 +195,6 @@ export default function Availability() {
       nickname: name,
       availability: availability,
     };
-
-    console.log('works');
 
     try {
       const response = await fetch(
@@ -241,12 +209,13 @@ export default function Availability() {
       );
 
       if (response.ok) {
-        const responseData = await response.json();
-        console.log('Response Data:', responseData);
+        const result = await response.json();
+        console.log('Time Set Successfully', result);
 
-        navigate('/results', {
-          state: { eventCode: responseData.event_code, eventName: data.title },
-        });
+        // session management with dashboard
+        navigate('/results', { state: { eventCode, eventName } });
+      } else {
+        console.error('Failed to record time:', response.statusText);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -291,7 +260,7 @@ export default function Availability() {
           </div>
           <div className="hidden lg:block">
             <button
-              onClick={send_availability}
+              onClick={submit_button}
               className="w-32 p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500"
             >
               Submit
