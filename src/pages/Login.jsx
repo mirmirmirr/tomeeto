@@ -25,6 +25,9 @@ export default function Login() {
     showEmail: false,
   });
 
+  document.cookie = 'email=' + email;
+  document.cookie = 'password=' + passwordValues;
+
   const handleEmailChange = (prop) => (event) => {
     setEmailValue({
       ...email,

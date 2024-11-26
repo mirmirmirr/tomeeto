@@ -19,12 +19,14 @@ export default function Availability() {
     return null;
   }
 
-  // Example usage:
   let x = document.cookie;
   console.log(x);
 
   const eventCode = getCookieValue('code');
+  var userEmail = getCookieValue('email');
+  var userPW = getCookieValue('password');
   console.log('Code cookie:', eventCode);
+  console.log('email', userEmail);
 
   const { isDarkMode, toggleTheme } = useTheme();
 
@@ -205,14 +207,33 @@ export default function Availability() {
     console.log('Ran');
     console.log(name);
     console.log(availability);
-    const data = {
-      email: 'testing@gmail.com',
-      password: '123',
+
+    const credentials = {
       event_code: eventCode,
       nickname: name,
       availability: availability,
     };
 
+    if (userEmail == null && userPW == null) {
+      console.log('HEREEEE');
+
+      fetch('http://tomeeto.cs.rpi.edu:8000/create_guest', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          credentials.guest_id = data.guest_id;
+          credentials.guest_password = data.guest_password;
+          console.log(credentials.guest_id);
+        });
+    } else {
+      credentials.email = 'testing@gmail.com';
+      credentials.password = '123';
+    }
+    console.log(credentials);
     try {
       const response = await fetch(
         'http://tomeeto.cs.rpi.edu:8000/add_availability',
@@ -221,7 +242,7 @@ export default function Availability() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(credentials),
         }
       );
 
