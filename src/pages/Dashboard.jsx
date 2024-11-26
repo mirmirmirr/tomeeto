@@ -3,6 +3,7 @@ import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
 import { useNavigate } from 'react-router-dom';
 
+var id = 1;
 const mockIndividualEvents = [
   { id: 1, title: 'Meeting with Bob', code: 'EVT001' },
   { id: 2, title: 'Project Kickoff', code: 'EVT002' },
@@ -54,6 +55,59 @@ export default function Dashboard() {
       navigate(data.editUrl);
     } catch (error) {
       console.error('Error editing event:', error);
+    }
+  };
+
+  const get_all_events = async () => {
+    const data = {
+      email: 'some email',
+      password: 'some password',
+    };
+
+    try {
+      const response = await fetch(
+        'http://tomeeto.cs.rpi.edu:8000/get_events',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Events retrieved successfully', result);
+        createdEvents = result.created_events;
+        participatingEvents = result.participating_events;
+
+        // process the data
+        for (const [key, value] of Object.entries(createdEvents)) {
+          console.log(key, value);
+          const myDictionary = {};
+          myDictionary.id = id;
+          myDictionary.name = key;
+          myDictionary.availability = value;
+          mockIndividualEvents.push(myDictionary);
+          id += 1;
+        }
+
+        for (const [key, value] of Object.entries(participatingEvents)) {
+          console.log(key, value);
+          const myDictionary = {};
+          myDictionary.id = id;
+          myDictionary.name = key;
+          myDictionary.availability = value;
+          mockUserEventsEvents.push(myDictionary);
+          id += 1;
+          // aaa
+        }
+      } else {
+        console.error('Failed get results:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
     }
   };
 

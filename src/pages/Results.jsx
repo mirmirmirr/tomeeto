@@ -53,53 +53,90 @@ export default function Result() {
     (currentPage + 1) * daysPerPage
   );
 
-  const displayedWeekDays = weekdays.slice(
-    currentPage * daysPerPage,
-    (currentPage + 1) * daysPerPage
-  );
+  var receivedData = {};
+  var scheduleData = [];
 
-  const scheduleData = [
-    {
-      name: 'Alice',
-      availability: [
-        [0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 7 AM
-        [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 8 AM
-        [0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 9 AM
-        [0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0], // 10 AM
-        [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0], // 11 AM
-        [0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0], // 12 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 1 PM
-        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
-        [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
-        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
-        [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
-      ],
-    },
-    {
-      name: 'Bob',
-      availability: [
-        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 8 AM
-        [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 7 AM
-        [0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 9 AM
-        [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 10 AM
-        [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 11 AM
-        [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 12 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 1 PM
-        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
-        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
-        [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
-      ],
-    },
-  ];
+  const fetch_data = async () => {
+    console.log('Ran');
+    const data = {
+      event_code: 'some event code',
+    };
+
+    try {
+      const response = await fetch(
+        'http://tomeeto.cs.rpi.edu:8000/get_results',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Time Set Successfully', result);
+        receivedData = result.availabilities;
+
+        // process the data
+        for (const [key, value] of Object.entries(receivedData)) {
+          console.log(key, value);
+          const myDictionary = {};
+          myDictionary.name = key;
+          myDictionary.availability = value;
+          scheduleData.push(myDictionary);
+        }
+      } else {
+        console.error('Failed get results:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  // fetch_data()
+  //   {
+  //     name: 'Alice',
+  //     availability: [
+  //       [0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 7 AM
+  //       [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 8 AM
+  //       [0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 9 AM
+  //       [0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0], // 10 AM
+  //       [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0], // 11 AM
+  //       [0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0], // 12 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 1 PM
+  //       [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+  //       [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+  //       [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+  //       [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+  //     ],
+  //   },
+  //   {
+  //     name: 'Bob',
+  //     availability: [
+  //       [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 8 AM
+  //       [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 7 AM
+  //       [0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 9 AM
+  //       [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 10 AM
+  //       [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 11 AM
+  //       [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 12 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 1 PM
+  //       [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+  //       [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+  //       [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+  //     ],
+  //   },
+  // ];
 
   const availabilityCounts = hours.map((_, row) =>
     displayedDays.map((_, column) => {
