@@ -9,6 +9,7 @@ import random
 import string
 
 from event import Event
+from availability import Availability
 
 # MySQL Connector stuff
 import mysql.connector as MySQL
@@ -105,34 +106,47 @@ def check_login(json: dict) -> int:
     if "email" in json and "password" in json:
         email: str = json["email"]
         password: str = json["password"]
-        DB_CURSOR.execute(
-            "SELECT password_hash FROM user_account WHERE email = %s", (email,)
-        )
+        try:
+            DB_CURSOR.execute(
+                "SELECT password_hash FROM user_account WHERE email = %s", (email,)
+            )
+        except MySQL.Error as e:
+            print(e)
+            return -1
         query_result: dict = DB_CURSOR.fetchone()
         if query_result is None:
             return -1
         pw_hash: str = query_result["password_hash"]
         if bcrypt.checkpw(password.encode(), pw_hash.encode()):
-            DB_CURSOR.execute(
-                "SELECT user_account_id FROM user_account WHERE email = %s", (email,)
-            )
-            return DB_CURSOR.fetchone()["user_account_id"]
+            try:
+                DB_CURSOR.execute(
+                    "SELECT user_account_id FROM user_account WHERE email = %s",
+                    (email,),
+                )
+                return DB_CURSOR.fetchone()["user_account_id"]
+            except MySQL.Error as e:
+                print(e)
+                return -1
         else:
             return -1
     elif "guest_id" in json and "guest_password" in json:
-        DB_CURSOR.execute(
-            """
-            SELECT
-                password_hash
-            FROM
-                user_account
-            WHERE
-                user_account_id = %s
-                AND is_guest = TRUE
-            """,
-            (json["guest_id"],),
-        )
-        query_result: dict = DB_CURSOR.fetchone()
+        try:
+            DB_CURSOR.execute(
+                """
+                SELECT
+                    password_hash
+                FROM
+                    user_account
+                WHERE
+                    user_account_id = %s
+                    AND is_guest = TRUE
+                """,
+                (json["guest_id"],),
+            )
+            query_result: dict = DB_CURSOR.fetchone()
+        except MySQL.Error as e:
+            print(e)
+            return -1
         if query_result is None:
             return -1
         else:
@@ -192,7 +206,7 @@ def check_code_avail(code: str) -> bool:
         return False
 
 
-# Adds an event to the database and returns the url code
+# Generates a new url code
 def new_code(custom: str = "") -> str:
     if custom != "":
         if not check_code_avail(custom):
@@ -205,17 +219,31 @@ def new_code(custom: str = "") -> str:
     return new_code
 
 
+# Adds an event to the database
 def new_event(event: Event, code: str) -> bool:
-    query, values = event.to_sql()
+    return event.to_sql_insert(DB_CURSOR, DB_CONN, code)
+
+
+# Checks if a code refers to an existing event
+def check_code_event(code: str) -> bool:
     try:
-        DB_CURSOR.execute(query, values)
-        event_id = DB_CURSOR.lastrowid
+        clear_unlocked_codes()
         DB_CURSOR.execute(
-            f"INSERT INTO url_code (url_code, user_event_id, unlocked_at) VALUES (%s, %s, {TWO_WEEKS_SQL})",
-            (code, event_id),
+            """
+            SELECT
+                user_event_id
+            FROM
+                url_code
+            WHERE
+                url_code = %s
+            """,
+            (code,),
         )
-        DB_CONN.commit()
-        return True
+        return DB_CURSOR.fetchone() is not None
     except MySQL.Error as e:
         print(e)
         return False
+
+
+def new_availability(availability: Availability, code: str) -> str:
+    return availability.to_sql_insert(DB_CURSOR, DB_CONN, code)

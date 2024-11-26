@@ -25,9 +25,9 @@ CREATE TABLE IF NOT EXISTS user_event (
     details TEXT NOT NULL,
     date_type ENUM('Generic', 'Specific') NOT NULL,
     start_date DATE NOT NULL
-        COMMENT 'If event is generic, will be between 0000-01-01 and 0000-01-07',
+        COMMENT 'If event is generic, will be between 2023-01-01 and 2023-01-07',
     end_date DATE NOT NULL
-        COMMENT 'If event is generic, will be between 0000-01-01 and 0000-01-07',
+        COMMENT 'If event is generic, will be between 2023-01-01 and 2023-01-07',
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     duration INT NOT NULL,

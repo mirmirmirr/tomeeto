@@ -11,8 +11,11 @@ from utils import (
     check_code_avail,
     new_code,
     new_event,
+    check_code_event,
+    new_availability,
 )
 from event import Event
+from availability import Availability
 
 app = FastAPI()
 
@@ -107,5 +110,26 @@ async def create_event(request: Request):
 @app.post("/add_availability")
 async def add_availability(request: Request):
     body: dict = await request.json()
-    # (email and password) or (guest id and guest password), event code, nickname, 2d_array
-    return {"message": "u suck"}
+    user_id = check_login(body)
+    if user_id < 0:
+        return {"message": "Login failed"}
+    else:
+        body["account_id"] = user_id
+
+    required_fields = ["event_code", "nickname", "availability"]
+    for field in required_fields:
+        if field not in body:
+            return {"message": "Invalid data"}
+    if not check_code_event(body["event_code"]):
+        return {"message": "Invalid event code"}
+
+    availability = Availability.from_json(body)
+    if availability is None:
+        return {"message": "Invalid availability data"}
+    result = new_availability(availability, body["event_code"])
+    if result is not bool:
+        return {"message": result}
+    elif not result:
+        return {"message": "Database error"}
+
+    return {"message": "Availability added"}
