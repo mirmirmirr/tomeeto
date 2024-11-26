@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation} from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 
 import Header from '../resources/Header';

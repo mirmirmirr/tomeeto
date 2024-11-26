@@ -7,7 +7,7 @@ export default function ConfirmCreated() {
   const navigate = useNavigate();
   const location = useLocation();
   const { eventCode, eventName } = location.state || {};
-  console.log("here");
+  console.log('here');
   console.log(eventName);
 
   const { isDarkMode, toggleTheme } = useTheme();
@@ -87,7 +87,9 @@ export default function ConfirmCreated() {
                 copy link
               </button>
               <button
-                onClick={() => navigate('/availability', { state: { eventCode, eventName } })}
+                onClick={() =>
+                  navigate('/availability', { state: { eventCode, eventName } })
+                }
                 className={`hidden lg:block absolute text-[0.8vw] right-0 bottom-[20px] py-1 px-4 cursor-pointer rounded-lg opacity-0 group-hover:opacity-100 transition-opacity ${buttonText} ${buttonBG}`}
               >
                 fill availability
@@ -97,7 +99,9 @@ export default function ConfirmCreated() {
 
           <div className="flex flex-col lg:flex-row">
             <button
-              onClick={() => navigate('/availability', { state: { eventCode, eventName } })}
+              onClick={() =>
+                navigate('/availability', { state: { eventCode, eventName } })
+              }
               className={`lg:hidden w-[60vw] lg:w-[13vw] m-[10px] bg-transparent border-2 text-responsive py-2 font-semibold rounded-lg ${textColor} ${borderColor} hover:bg-red-500 hover:text-white hover:border-transparent`}
             >
               Add Availability
@@ -109,7 +113,9 @@ export default function ConfirmCreated() {
               Edit Event
             </button>
             <button
-              onClick={() => navigate('/results', { state: { eventCode, eventName } })}
+              onClick={() =>
+                navigate('/results', { state: { eventCode, eventName } })
+              }
               className={`w-[60vw] lg:w-[13vw] m-[10px] text-responsive py-2 font-semibold rounded-lg ${buttonText} ${buttonBG}  hover:bg-red-500 hover:text-white hover:border-transparent`}
             >
               Results
