@@ -5,6 +5,12 @@ from enum import Enum
 from user import User
 from availability import Availability
 
+import mysql.connector as MySQL
+from mysql.connector import MySQLConnection
+from mysql.connector.cursor import MySQLCursorDict
+
+TWO_WEEKS_SQL: str = "DATE_ADD(NOW(), INTERVAL 14 DAY)"
+
 
 class Duration(Enum):
     QUARTER = 15
@@ -20,6 +26,42 @@ class Weekday(Enum):
     THURSDAY = 5
     FRIDAY = 6
     SATURDAY = 7
+
+
+def date_to_weekday(date: date) -> Weekday:
+    return Weekday(date.day)
+
+
+def insert_code(cursor: MySQLCursorDict, code: str, event_id: int) -> None:
+    query = f"""
+        INSERT INTO
+            url_code (
+                url_code,
+                user_event_id,
+                unlocked_at
+            )
+        VALUES (%s, %s, {TWO_WEEKS_SQL})
+    """
+    # Intentionally not catching errors here so it propagates to the calling function
+    cursor.execute(query, (code, event_id))
+
+
+def insert_event(
+    cursor: MySQLCursorDict,
+    conn: MySQLConnection,
+    event_query: str,
+    event_values: tuple,
+    code: str,
+) -> bool:
+    try:
+        cursor.execute(event_query, event_values)
+        event_id = cursor.lastrowid
+        insert_code(cursor, code, event_id)
+        conn.commit()
+        return True
+    except MySQL.Error as e:
+        print(e)
+        return False
 
 
 class Event(ABC):
@@ -67,9 +109,16 @@ class Event(ABC):
 
         creator: User = User(json["account_id"])
 
+        start_time = datetime.strptime(json["start_time"], "%H:%M").time()
+        end_time = datetime.strptime(json["end_time"], "%H:%M").time()
+        if end_time < start_time:
+            return None
+
         if json["event_type"] == "date_range":
             start_date = datetime.strptime(json["start_date"], "%m/%d/%Y").date()
             end_date = datetime.strptime(json["end_date"], "%m/%d/%Y").date()
+            if end_date < start_date:
+                return None
             return DateEvent(
                 creator,
                 json["title"],
@@ -82,6 +131,10 @@ class Event(ABC):
                 end_date,
             )
         else:
+            start_weekday = Weekday[json["start_day"].upper()]
+            end_weekday = Weekday[json["end_day"].upper()]
+            if end_weekday.value < start_weekday.value:
+                return None
             return GenericWeekEvent(
                 creator,
                 json["title"],
@@ -95,15 +148,45 @@ class Event(ABC):
             )
 
     @staticmethod
-    def from_sql(sql: dict) -> "Event":
-        pass
+    def from_sql(cursor: MySQLCursorDict, id: int) -> "Event":
+        query = "SELECT * FROM user_event WHERE user_event_id = %s"
+        cursor.execute(query, (id,))
+        result = cursor.fetchone()
+        if result is None:
+            return None
+        if result["date_type"] == "Specific":
+            return DateEvent(
+                User(result["user_account_id"]),
+                result["title"],
+                result["details"],
+                result["start_time"],
+                result["end_time"],
+                Duration(result["duration"]),
+                [],
+                result["start_date"],
+                result["end_date"],
+            )
+        else:
+            return GenericWeekEvent(
+                User(result["user_account_id"]),
+                result["title"],
+                result["details"],
+                result["start_time"],
+                result["end_time"],
+                Duration(result["duration"]),
+                [],
+                date_to_weekday(result["start_date"]),
+                date_to_weekday(result["end_date"]),
+            )
 
     @abstractmethod
     def to_json(self) -> dict:
         pass
 
     @abstractmethod
-    def to_sql(self) -> tuple[str, List]:
+    def to_sql_insert(
+        self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
+    ) -> tuple[str, List]:
         pass
 
 
@@ -127,11 +210,36 @@ class DateEvent(Event):
         self.end_date: date = end_date
 
     def to_json(self) -> dict:
-        pass
+        return {
+            "title": self.title,
+            "description": self.description,
+            "start_time": self.start_time.strftime("%H:%M"),
+            "end_time": self.end_time.strftime("%H:%M"),
+            "duration": self.duration.value,
+            "event_type": "date_range",
+            "start_date": self.start_date.strftime("%m/%d/%Y"),
+            "end_date": self.end_date.strftime("%m/%d/%Y"),
+        }
 
-    def to_sql(self) -> tuple[str, List]:
-        query = "INSERT INTO user_event (user_account_id, title, details, date_type, start_date, end_date, start_time, end_time, duration) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        values = [
+    def to_sql_insert(
+        self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
+    ) -> bool:
+        query = """
+            INSERT INTO
+                user_event (
+                    user_account_id,
+                    title,
+                    details,
+                    date_type,
+                    start_date,
+                    end_date,
+                    start_time,
+                    end_time,
+                    duration
+                )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        values = (
             self.creator.id,
             self.title,
             self.description,
@@ -141,8 +249,8 @@ class DateEvent(Event):
             self.start_time.isoformat(),
             self.end_time.isoformat(),
             self.duration.value,
-        ]
-        return query, values
+        )
+        return insert_event(cursor, conn, query, values, code)
 
 
 class GenericWeekEvent(Event):
@@ -155,29 +263,60 @@ class GenericWeekEvent(Event):
         end_time: time,
         duration: Duration,
         availabilities: List[Availability],
-        start_weekday: str,
-        end_weekday: str,
+        start_weekday: str | int,
+        end_weekday: str | int,
     ) -> None:
         super().__init__(
             creator, title, description, start_time, end_time, duration, availabilities
         )
-        self.start_weekday: int = Weekday[start_weekday.upper()].value
-        self.end_weekday: int = Weekday[end_weekday.upper()].value
+        if isinstance(start_weekday, str):
+            self.start_weekday: int = Weekday[start_weekday.upper()].value
+        else:
+            self.start_weekday: int = start_weekday
+        if isinstance(end_weekday, str):
+            self.end_weekday: int = Weekday[end_weekday.upper()].value
+        else:
+            self.end_weekday: int = end_weekday
 
     def to_json(self) -> dict:
-        pass
+        return {
+            "title": self.title,
+            "description": self.description,
+            "start_time": self.start_time.strftime("%H:%M"),
+            "end_time": self.end_time.strftime("%H:%M"),
+            "duration": self.duration.value,
+            "event_type": "generic_week",
+            "start_day": Weekday(self.start_weekday).name,
+            "end_day": Weekday(self.end_weekday).name,
+        }
 
-    def to_sql(self) -> tuple[str, List]:
-        query = "INSERT INTO user_event (user_account_id, title, details, date_type, start_date, end_date, start_time, end_time, duration) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        values = [
+    def to_sql_insert(
+        self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
+    ) -> bool:
+        query = """
+            INSERT INTO
+                user_event (
+                    user_account_id,
+                    title,
+                    details,
+                    date_type,
+                    start_date,
+                    end_date,
+                    start_time,
+                    end_time,
+                    duration
+                )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        values = (
             self.creator.id,
             self.title,
             self.description,
             "Generic",
-            "0000-01-0" + str(self.start_weekday),
-            "0000-01-0" + str(self.end_weekday),
+            "2023-01-0" + str(self.start_weekday),
+            "2023-01-0" + str(self.end_weekday),
             self.start_time.isoformat(),
             self.end_time.isoformat(),
             self.duration.value,
-        ]
-        return query, values
+        )
+        return insert_event(cursor, conn, query, values, code)
