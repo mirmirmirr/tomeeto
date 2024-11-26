@@ -12,7 +12,7 @@ export default function CreateEvent() {
 
   // State for handling dropdowns and selections
   const [intervalDropdownVisible, setIntervalDropdownVisible] = useState(false);
-  const [selectedInterval, setSelectedInterval] = useState('');
+  const [selectedInterval, setSelectedInterval] = useState('30 minutes');
   const [selectDaysOfWeek, setSelectDaysOfWeek] = useState(false);
   const [selectedStartDay, setSelectedStartDay] = useState('Start Day');
   const [selectedEndDay, setSelectedEndDay] = useState('End Day');
