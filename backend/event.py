@@ -197,6 +197,12 @@ class Event(ABC):
     ) -> tuple[str, List]:
         pass
 
+    @abstractmethod
+    def to_sql_update(
+        self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
+    ) -> tuple[str, List]:
+        pass
+
 
 class DateEvent(Event):
     def __init__(
@@ -259,6 +265,64 @@ class DateEvent(Event):
             self.duration.value,
         )
         return insert_event(cursor, conn, query, values, code)
+
+    def to_sql_update(
+        self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
+    ) -> bool:
+        try:
+            event_query = """
+                SELECT
+                    user_event_id
+                FROM
+                    url_code
+                    INNER JOIN user_event USING (user_event_id)
+                WHERE
+                    url_code = %s
+                    AND user_account_id = %s
+            """
+            cursor.execute(event_query, (code, self.creator.id))
+            event_id = cursor.fetchone()
+            update_query = """
+                UPDATE user_event
+                SET
+                    title = %s,
+                    details = %s,
+                    date_type = %s,
+                    start_date = %s,
+                    end_date = %s,
+                    start_time = %s,
+                    end_time = %s,
+                    duration = %s
+                WHERE
+                    user_event_id = %s
+            """
+            values = (
+                self.title,
+                self.description,
+                "Specific",
+                self.start_date.isoformat(),
+                self.end_date.isoformat(),
+                self.start_time.isoformat(),
+                self.end_time.isoformat(),
+                self.duration.value,
+                event_id,
+            )
+            cursor.execute(update_query, values)
+            delete_query_1 = """
+                DELETE FROM user_event_participant
+                WHERE user_event_id = %s
+            """
+            delete_query_2 = """
+                DELETE FROM user_event_availability
+                WHERE user_event_id = %s
+            """
+            cursor.execute(delete_query_1, (event_id,))
+            cursor.execute(delete_query_2, (event_id,))
+            conn.commit()
+        except MySQL.Error as e:
+            print(e)
+            return False
+        return True
 
 
 class GenericWeekEvent(Event):
@@ -328,3 +392,61 @@ class GenericWeekEvent(Event):
             self.duration.value,
         )
         return insert_event(cursor, conn, query, values, code)
+
+    def to_sql_update(
+        self, cursor: MySQLCursorDict, conn: MySQLConnection, code: str
+    ) -> bool:
+        try:
+            event_query = """
+                SELECT
+                    user_event_id
+                FROM
+                    url_code
+                    INNER JOIN user_event USING (user_event_id)
+                WHERE
+                    url_code = %s
+                    AND user_account_id = %s
+            """
+            cursor.execute(event_query, (code, self.creator.id))
+            event_id = cursor.fetchone()
+            update_query = """
+                UPDATE user_event
+                SET
+                    title = %s,
+                    details = %s,
+                    date_type = %s,
+                    start_date = %s,
+                    end_date = %s,
+                    start_time = %s,
+                    end_time = %s,
+                    duration = %s
+                WHERE
+                    user_event_id = %s
+            """
+            values = (
+                self.title,
+                self.description,
+                "Generic",
+                "2023-01-0" + str(self.start_weekday),
+                "2023-01-0" + str(self.end_weekday),
+                self.start_time.isoformat(),
+                self.end_time.isoformat(),
+                self.duration.value,
+                event_id,
+            )
+            cursor.execute(update_query, values)
+            delete_query_1 = """
+                DELETE FROM user_event_participant
+                WHERE user_event_id = %s
+            """
+            delete_query_2 = """
+                DELETE FROM user_event_availability
+                WHERE user_event_id = %s
+            """
+            cursor.execute(delete_query_1, (event_id,))
+            cursor.execute(delete_query_2, (event_id,))
+            conn.commit()
+        except MySQL.Error as e:
+            print(e)
+            return False
+        return True
