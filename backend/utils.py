@@ -10,6 +10,7 @@ import string
 
 from event import Event
 from availability import Availability
+from user import User
 
 # MySQL Connector stuff
 import mysql.connector as MySQL
@@ -251,3 +252,7 @@ def new_availability(availability: Availability, code: str) -> str:
 
 def get_event(code: str) -> Event:
     return Event.from_sql(DB_CURSOR, code)
+
+
+def dashboard_data(user: User) -> dict:
+    return user.get_events(DB_CURSOR)
