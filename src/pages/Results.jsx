@@ -1,11 +1,16 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 
 import Header from '../resources/Header';
 
 export default function Result() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { eventCode, eventName } = location.state || {};
+
+  console.log('Event Code:', eventCode);
+  console.log('Event Name:', eventName);
 
   const { isDarkMode, toggleTheme } = useTheme();
   const [hoveredCell, setHoveredCell] = useState({ row: null, column: null });
@@ -13,36 +18,43 @@ export default function Result() {
   const [isDisabled] = useState(true);
   const daysPerPage = 7; // Number of days per page
 
-  const eventTitle = 'tomeeto planning';
-  const weekdays = [
-    'SUN',
-    'MON',
-    'TUE',
-    'WED',
-    'THU',
-    'FRI',
-    'SAT',
-    'SUN',
-    'MON',
-    'TUE',
-    'WED',
-  ];
+  const [eventDetails, setEventDetails] = useState(null);
+  const [allDays, setAllDays] = useState([]);
+  const [weekdays, setWeekdays] = useState([]);
+  const [scheduleData, setResults] = useState([]);
+  const [totalDays, setTotalDays] = useState(0);
+  const [hours, setHours] = useState([]);
+  const [availability, setAvailability] = useState([]);
 
-  const allDays = [
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-    '15',
-    '16',
-  ];
-  const totalDays = allDays.length; // Total number of days
-  const hours = Array.from({ length: 15 }, (_, i) => 7 + i);
+  // const weekdays = [
+  //   'SUN',
+  //   'MON',
+  //   'TUE',
+  //   'WED',
+  //   'THU',
+  //   'FRI',
+  //   'SAT',
+  //   'SUN',
+  //   'MON',
+  //   'TUE',
+  //   'WED',
+  // ];
+
+  // const allDays = [
+  //   '6',
+  //   '7',
+  //   '8',
+  //   '9',
+  //   '10',
+  //   '11',
+  //   '12',
+  //   '13',
+  //   '14',
+  //   '15',
+  //   '16',
+  // ];
+  // const totalDays = allDays.length; // Total number of days
+  // const hours = Array.from({ length: 15 }, (_, i) => 7 + i);
 
   const displayedDays = allDays.slice(
     currentPage * daysPerPage,
@@ -54,53 +66,248 @@ export default function Result() {
     (currentPage + 1) * daysPerPage
   );
 
-  const scheduleData = [
-    {
-      name: 'Alice',
-      availability: [
-        [0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 7 AM
-        [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 8 AM
-        [0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 9 AM
-        [0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0], // 10 AM
-        [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0], // 11 AM
-        [0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0], // 12 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 1 PM
-        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
-        [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
-        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
-        [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
-      ],
-    },
-    {
-      name: 'Bob',
-      availability: [
-        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 8 AM
-        [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 7 AM
-        [0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 9 AM
-        [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 10 AM
-        [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 11 AM
-        [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 12 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 1 PM
-        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
-        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
-        [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
-      ],
-    },
-  ];
+  var receivedData = {};
+
+  useEffect(() => {
+    if (eventCode) {
+      const credentials = {
+        email: 'testing@gmail.com',
+        password: '123',
+        event_code: eventCode,
+      };
+
+      // First, fetch event details
+      fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      })
+        .then((response) => response.json())
+        .then((eventDetailsData) => {
+          console.log('Event details:', eventDetailsData);
+
+          // Update the state based on event details
+          setEventDetails(eventDetailsData);
+          updateEventData(eventDetailsData);
+
+          // Next, fetch results using the same credentials
+          return fetch('http://tomeeto.cs.rpi.edu:8000/get_results', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
+          });
+        })
+        .then((response) => response.json())
+        .then((resultsData) => {
+          console.log('Results data:', resultsData);
+
+          // Handle results data (e.g., update state with availabilities and nicknames)
+          if (resultsData.availabilities) {
+            scheduleData = Object.entries(resultsData.availabilities).map(
+              ([name, availability]) => ({
+                name,
+                availability,
+              })
+            );
+            setResults(scheduleData); // Update state for results
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error);
+        });
+    }
+  }, [eventCode]);
+
+  const updateEventData = async (data) => {
+    const { start_date, start_time, end_date, end_time, duration, event_type } =
+      data;
+
+    // Parse start and end dates
+    const startDate = new Date(`${start_date} ${start_time}`);
+    const endDate = new Date(`${end_date} ${end_time}`);
+    console.log('Start Date:', startDate);
+    console.log('End Date:', endDate);
+
+    // Generate days and weekdays arrays
+    const daysArray = [];
+    const weekdaysArray = [];
+    let currentDate = new Date(startDate); // Use a new instance to avoid mutating startDate
+
+    while (currentDate <= endDate) {
+      daysArray.push(currentDate.getDate().toString()); // Day of the month
+      weekdaysArray.push(
+        currentDate
+          .toLocaleDateString('en-US', { weekday: 'short' })
+          .toUpperCase()
+      );
+      currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+    }
+
+    console.log('Days Array:', daysArray);
+    console.log('Weekdays Array:', weekdaysArray);
+
+    // Generate hours array
+    const startHour = parseInt(start_time.split(':')[0], 10);
+    const endHour = parseInt(end_time.split(':')[0], 10);
+    const generatedHours = Array.from(
+      { length: endHour - startHour },
+      (_, i) => startHour + i
+    );
+
+    console.log('Generated Hours:', generatedHours);
+
+    // Initialize availability matrix
+    const availabilityArray = Array(generatedHours.length).fill(
+      Array(daysArray.length).fill(0)
+    );
+    console.log('Initial Availability Array:', availabilityArray);
+
+    // Update states
+    setAllDays(daysArray); // e.g., ['6', '7', '8', '9', ...]
+    setWeekdays(weekdaysArray); // e.g., ['SUN', 'MON', 'TUE', ...]
+    setHours(generatedHours);
+    setAvailability(availabilityArray);
+
+    // Fetch results data
+    const credentials = {
+      email: 'testing@gmail.com',
+      password: '123',
+      event_code: eventCode,
+    };
+
+    try {
+      const response = await fetch(
+        'http://tomeeto.cs.rpi.edu:8000/get_results',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(credentials),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error fetching results: ${response.statusText}`);
+      }
+
+      const resultsData = await response.json();
+      console.log('Results data:', resultsData);
+
+      // Process and update results
+      if (resultsData) {
+        var scheduleData = [];
+        for (const [key, value] of Object.entries(resultsData)) {
+          console.log(key, value);
+          const myDictionary = {};
+          myDictionary.name = key;
+
+          // Transform value to an array of single-element arrays
+          myDictionary.availability = value.map((v) => [v]);
+
+          scheduleData.push(myDictionary);
+        }
+
+        console.log('Processed Schedule Data:', scheduleData);
+        setResults(scheduleData);
+      } else {
+        console.warn('No availabilities found in results data');
+      }
+    } catch (error) {
+      console.error('Error fetching results:', error.message);
+    }
+  };
+
+  console.log('resultssss', scheduleData);
+
+  // const fetch_data = async () => {
+  //   console.log('Ran');
+  //   const data = {
+  //     event_code: 'some event code',
+  //   };
+
+  //   try {
+  //     const response = await fetch(
+  //       'http://tomeeto.cs.rpi.edu:8000/get_results',
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify(data),
+  //       }
+  //     );
+
+  //     if (response.ok) {
+  //       const result = await response.json();
+  //       console.log('Time Set Successfully', result);
+  //       receivedData = result.availabilities;
+
+  //       // process the data
+  //       for (const [key, value] of Object.entries(receivedData)) {
+  //         console.log(key, value);
+  //         const myDictionary = {};
+  //         myDictionary.name = key;
+  //         myDictionary.availability = value;
+  //         scheduleData.push(myDictionary);
+  //       }
+  //     } else {
+  //       console.error('Failed get results:', response.statusText);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //   }
+  // };
+
+  // const scheduleData =
+  //   {
+  //     name: 'Alice',
+  //     availability: [
+  //       [0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 7 AM
+  //       [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 8 AM
+  //       [0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 9 AM
+  //       [0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0], // 10 AM
+  //       [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0], // 11 AM
+  //       [0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0], // 12 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 1 PM
+  //       [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+  //       [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+  //       [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+  //       [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+  //     ],
+  //   },
+  //   {
+  //     name: 'Bob',
+  //     availability: [
+  //       [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 8 AM
+  //       [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 7 AM
+  //       [0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 9 AM
+  //       [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 10 AM
+  //       [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 11 AM
+  //       [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 12 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 1 PM
+  //       [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+  //       [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], // 2 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 3 PM
+  //       [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0], // 4 PM
+  //       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], // 5 PM
+  //     ],
+  //   },
+  // ];
 
   const availabilityCounts = hours.map((_, row) =>
     displayedDays.map((_, column) => {
       const count = scheduleData.filter(
-        (attendee) => attendee.availability[row][column] == 1
+        (attendee) => attendee.availability[0][column][row] == 1
       ).length;
       return count / scheduleData.length;
     })
@@ -110,7 +317,7 @@ export default function Result() {
     hoveredCell.row !== null && hoveredCell.column !== null
       ? scheduleData.filter(
           (attendee) =>
-            attendee.availability[hoveredCell.row][hoveredCell.column] == 1
+            attendee.availability[0][hoveredCell.column][hoveredCell.row] == 1
         ).length
       : 0;
 
@@ -141,7 +348,7 @@ export default function Result() {
           className="w-[80vw] lg:w-[93vw]"
           style={{ fontSize: `max(3vw, 35px)` }}
         >
-          {eventTitle}
+          {eventName}
         </div>
 
         <div
@@ -161,8 +368,9 @@ export default function Result() {
                 const isAvailable =
                   hoveredCell.row !== null &&
                   hoveredCell.column !== null &&
-                  attendee.availability[hoveredCell.row][hoveredCell.column] ==
-                    1;
+                  attendee.availability[0][hoveredCell.column][
+                    hoveredCell.row
+                  ] == 1;
                 const opacityStyle = isAvailable
                   ? 'opacity-100'
                   : 'opacity-50 line-through';
@@ -347,7 +555,8 @@ export default function Result() {
               const isAvailable =
                 hoveredCell.row !== null &&
                 hoveredCell.column !== null &&
-                attendee.availability[hoveredCell.row][hoveredCell.column] == 1;
+                attendee.availability[0][hoveredCell.column][hoveredCell.row] ==
+                  1;
               const opacityStyle = isAvailable
                 ? 'opacity-100'
                 : 'opacity-50 line-through';

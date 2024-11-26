@@ -1,19 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
 import { useNavigate } from 'react-router-dom';
 
-const mockIndividualEvents = [
-  { id: 1, title: 'Meeting with Bob', code: 'EVT001' },
-  { id: 2, title: 'Project Kickoff', code: 'EVT002' },
-];
+var id = 1;
+// const mockIndividualEvents = [
+//   { id: 1, title: 'Meeting with Bob', code: 'EVT001' },
+//   { id: 2, title: 'Project Kickoff', code: 'EVT002' },
+// ];
 
-const mockUserEvents = [
-  { id: 3, title: 'Lunch with Sarah', code: 'EVT003' },
-  { id: 4, title: 'Client Presentation', code: 'EVT004' },
-];
+// const mockUserEvents = [
+//   { id: 3, title: 'Lunch with Sarah', code: 'EVT003' },
+//   { id: 4, title: 'Client Presentation', code: 'EVT004' },
+// ];
 
 export default function Dashboard() {
+  const [mockIndividualEvents, setArrayOne] = useState([]); // First array of objects
+  const [mockUserEvents, setArrayTwo] = useState([]); // Second array of objects
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [notification, setNotification] = useState('');
@@ -56,6 +59,68 @@ export default function Dashboard() {
       console.error('Error editing event:', error);
     }
   };
+
+  const get_all_events = async () => {
+    const data = {
+      email: 'testing@gmail.com',
+      password: '123',
+    };
+
+    try {
+      const response = await fetch(
+        'http://tomeeto.cs.rpi.edu:8000/dashboard_events',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Events retrieved successfully', result);
+        console.log(result);
+        const createdEvents = result.my_events;
+        const participatingEvents = result.other_events;
+
+        // process the data
+        var alpha = [];
+        for (const [key, value] of Object.entries(createdEvents)) {
+          const myDictionary = {};
+          myDictionary.id = id;
+          myDictionary.title = value;
+          myDictionary.code = key;
+          alpha.push(myDictionary);
+          id += 1;
+        }
+
+        setArrayOne(alpha);
+        // console.log(mockIndividualEvents);
+        id = 1;
+        var beta = [];
+        for (const [key, value] of Object.entries(participatingEvents)) {
+          console.log(key, value);
+          const myDictionary = {};
+          myDictionary.id = id;
+          myDictionary.code = key;
+          myDictionary.title = value;
+          beta.push(myDictionary);
+          id += 1;
+        }
+        setArrayTwo(beta);
+      } else {
+        console.error('Failed get results:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    get_all_events();
+  }, []);
 
   return (
     <div

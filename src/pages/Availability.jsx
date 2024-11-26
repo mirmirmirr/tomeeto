@@ -1,10 +1,30 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
 
 export default function Availability() {
   const navigate = useNavigate();
+  const location = useLocation();
+  // const { eventCode } = location.state || {};
+
+  function getCookieValue(cookieName) {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+      const [name, value] = cookie.split('=');
+      if (name === cookieName) {
+        return value;
+      }
+    }
+    return null;
+  }
+
+  // Example usage:
+  let x = document.cookie;
+  console.log(x);
+
+  const eventCode = getCookieValue('code');
+  console.log('Code cookie:', eventCode);
 
   const { isDarkMode, toggleTheme } = useTheme();
 
@@ -17,30 +37,96 @@ export default function Availability() {
   const [isDisabled] = useState(true);
   const daysPerPage = 7;
 
-  const eventTitle = 'tomeeto planning';
-  const allDays = [
-    'SUN 6',
-    'MON 7',
-    'TUE 8',
-    'WED 9',
-    'THU 10',
-    'FRI 11',
-    'SAT 12',
-    'SUN 13',
-    'MON 14',
-    'TUE 15',
-    'WED 16',
-  ];
-  const totalDays = allDays.length; // Total number of days
-  const hours = Array.from({ length: 15 }, (_, i) => 7 + i);
+  const [eventDetails, setEventDetails] = useState(null);
+  const [allDays, setAllDays] = useState([]);
+  const [totalDays, setTotalDays] = useState(0);
+  const [hours, setHours] = useState([]);
+  const [availability, setAvailability] = useState([]);
+  const [eventName, setEventName] = useState([]);
+
+  useEffect(() => {
+    if (eventCode) {
+      const data = {
+        email: 'testing@gmail.com',
+        password: '123',
+        event_code: eventCode,
+      };
+
+      fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Assuming the data from /event_details contains 'days' and 'start_time'
+          console.log('Event details:', data);
+
+          // Update the state based on the event details
+          setEventDetails(data);
+          updateEventData(data); // Call function to update days and hours
+        })
+        .catch((error) => {
+          console.error('Error fetching event details:', error);
+        });
+    }
+  }, [eventCode]);
+
+  const updateEventData = (data) => {
+    const {
+      start_date,
+      start_time,
+      end_date,
+      end_time,
+      duration,
+      event_type,
+      title,
+    } = data;
+    setEventName(title);
+
+    const startDate = new Date(start_date + ' ' + start_time);
+    const endDate = new Date(end_date + ' ' + end_time);
+    console.log(startDate);
+    console.log(endDate);
+
+    const daysArray = [];
+    let currentDate = startDate;
+    while (currentDate <= endDate) {
+      console.log('here');
+      daysArray.push(
+        currentDate.toLocaleDateString('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+        })
+      );
+      console.log(daysArray);
+      currentDate.setDate(currentDate.getDate() + 1);
+      console.log(currentDate);
+    }
+
+    setAllDays(daysArray);
+
+    const startHour = parseInt(start_time.split(':')[0]);
+    const endHour = parseInt(end_time.split(':')[0]);
+    const generatedHours = Array.from(
+      { length: endHour - startHour },
+      (_, i) => startHour + i
+    );
+    setHours(generatedHours);
+    console.log(generatedHours);
+
+    const availabilityArray = Array(daysArray.length).fill(
+      Array(generatedHours.length).fill(0)
+    );
+    setAvailability(availabilityArray);
+  };
 
   const displayedDays = allDays.slice(
     currentPage * daysPerPage,
     (currentPage + 1) * daysPerPage
-  );
-
-  const [availability, setAvailability] = useState(
-    Array(hours.length).fill(Array(totalDays).fill(0))
   );
 
   useEffect(() => {
@@ -115,6 +201,44 @@ export default function Availability() {
     );
   };
 
+  const submit_button = async () => {
+    console.log('Ran');
+    console.log(name);
+    console.log(availability);
+    const data = {
+      email: 'testing@gmail.com',
+      password: '123',
+      event_code: eventCode,
+      nickname: name,
+      availability: availability,
+    };
+
+    try {
+      const response = await fetch(
+        'http://tomeeto.cs.rpi.edu:8000/add_availability',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Time Set Successfully', result);
+
+        // session management with dashboard
+        navigate('/results', { state: { eventCode, eventName } });
+      } else {
+        console.error('Failed to record time:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   return (
     <div
       className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
@@ -128,10 +252,10 @@ export default function Availability() {
       >
         <div
           id="eventName"
-          className="w-[80vw] lg:w-[93vw]"
+          className="w-[80vw] lg:w-[93vw] lg:ml-4"
           style={{ fontSize: `max(3vw, 35px)` }}
         >
-          {eventTitle}
+          {eventName}
         </div>
 
         <div
@@ -153,7 +277,7 @@ export default function Availability() {
           </div>
           <div className="hidden lg:block">
             <button
-              onClick={() => navigate('/results')}
+              onClick={submit_button}
               className="w-32 p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500"
             >
               Submit
@@ -224,24 +348,24 @@ export default function Availability() {
                       className={`border ${isDarkMode ? 'border-white' : 'border-black'} text-[10pt]`} // Add text size class here
                       style={{
                         backgroundColor: isInDragArea(
-                          row,
-                          currentPage * daysPerPage + column
+                          column,
+                          currentPage * daysPerPage + row
                         )
                           ? 'rgba(72, 187, 120, 0.5)' // Highlight drag area
-                          : availability[row][
-                                currentPage * daysPerPage + column
+                          : availability[column][
+                                currentPage * daysPerPage + row
                               ]
                             ? 'rgba(72, 187, 120, 1)' // Filled cell
                             : 'transparent', // Empty cell
                         userSelect: 'none', // Disable text selection
                       }}
                       onMouseDown={() =>
-                        handleMouseDown(row, currentPage * daysPerPage + column)
+                        handleMouseDown(column, currentPage * daysPerPage + row)
                       }
                       onMouseEnter={() =>
                         handleMouseEnter(
-                          row,
-                          currentPage * daysPerPage + column
+                          column,
+                          currentPage * daysPerPage + row
                         )
                       }
                     ></td>
@@ -276,7 +400,7 @@ export default function Availability() {
 
         <div className="lg:hidden mt-4">
           <button
-            onClick={() => navigate('/results')}
+            onClick={submit_button}
             className="w-full p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500"
           >
             Submit
