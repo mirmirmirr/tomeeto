@@ -1,38 +1,60 @@
+import { useState } from 'react';
 import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
+import { useNavigate } from 'react-router-dom';
 
 const mockIndividualEvents = [
-  { id: 1, title: 'Meeting with Bob', date: '2023-10-01', time: '10:00 AM' },
-  { id: 2, title: 'Project Kickoff', date: '2023-10-02', time: '02:00 PM' },
+  { id: 1, title: 'Meeting with Bob', code: 'EVT001' },
+  { id: 2, title: 'Project Kickoff', code: 'EVT002' },
 ];
 
 const mockUserEvents = [
-  { id: 3, title: 'Lunch with Sarah', date: '2023-10-03', time: '12:00 PM' },
-  { id: 4, title: 'Client Presentation', date: '2023-10-04', time: '03:00 PM' },
+  { id: 3, title: 'Lunch with Sarah', code: 'EVT003' },
+  { id: 4, title: 'Client Presentation', code: 'EVT004' },
 ];
 
 export default function Dashboard() {
   const { isDarkMode, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const [notification, setNotification] = useState('');
 
-  const formatDate = (dateString) => {
-    const options = { year: '2-digit', month: '2-digit', day: '2-digit' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+  const handleCopyLink = async (event) => {
+    try {
+      const response = await fetch(
+        `http://tomeeto.cs.rpi.edu:8000/events/${event.id}/link`
+      );
+      const data = await response.json();
+      navigator.clipboard.writeText(data.link).then(() => {
+        setNotification('Link copied to clipboard');
+        setTimeout(() => setNotification(''), 3000);
+      });
+    } catch (error) {
+      console.error('Error copying link:', error);
+    }
   };
 
-  const handleCopyLink = (event) => {
-    const bookingLink = `https://booking.example.com/event/${event.id}`;
-    navigator.clipboard.writeText(bookingLink).then(() => {
-      alert('Link copied to clipboard');
-    });
+  const handleViewBookingLink = async (event) => {
+    try {
+      const response = await fetch(
+        `http://tomeeto.cs.rpi.edu:8000/events/${event.id}/redirect`
+      );
+      const data = await response.json();
+      navigate(data.redirectUrl);
+    } catch (error) {
+      console.error('Error viewing booking link:', error);
+    }
   };
 
-  const handleViewBookingLink = (event) => {
-    const bookingLink = `https://booking.example.com/event/${event.id}`;
-    window.open(bookingLink, '_blank');
-  };
-
-  const handleEditEvent = (event) => {
-    alert(`Edit event: ${event.title}`);
+  const handleEditEvent = async (event) => {
+    try {
+      const response = await fetch(
+        `http://tomeeto.cs.rpi.edu:8000/events/${event.id}/edit`
+      );
+      const data = await response.json();
+      navigate(data.editUrl);
+    } catch (error) {
+      console.error('Error editing event:', error);
+    }
   };
 
   return (
@@ -44,75 +66,68 @@ export default function Dashboard() {
         <div
           id="dashboardTitle"
           className="pl-4 mb-4 mt-8"
-          style={{ fontSize: `min(3vw, 60px)` }}
+          style={{ fontSize: `min(6vh, 60px)` }}
         >
           Your Events
         </div>
         <div
           className={`w-full border-t-2 mb-4 opacity-25 ${isDarkMode ? 'border-gray-300' : 'border-gray-500'}`}
         ></div>
-
-        <div className="mt-4 pl-4">
-          <h2 className="text-2xl font-bold mb-4">All Events</h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {mockIndividualEvents.map((event) => (
-              <div
-                key={event.id}
-                className={`p-4 rounded-md shadow-md border ${isDarkMode ? 'bg-[#4E5D6C] border-gray-600' : 'bg-white border-gray-300'}`}
-              >
+        {notification && (
+          <div className="fixed bottom-0 left-0 w-full bg-red-500 text-white text-center py-2">
+            {notification}
+          </div>
+        )}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">My Events</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {mockUserEvents.map((event) => (
+              <div key={event.id} className="p-4 border rounded-lg shadow-md">
                 <div className="text-lg font-bold">{event.title}</div>
-                <div className="text-sm">
-                  {formatDate(event.date)} at {event.time}
-                </div>
-                <div className="mt-4 flex space-x-2">
+                <div className="text-sm text-gray-500">{event.code}</div>
+                <div className="mt-2 flex space-x-2">
+                  <button
+                    onClick={() => handleViewBookingLink(event)}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                  >
+                    View Booking
+                  </button>
                   <button
                     onClick={() => handleCopyLink(event)}
-                    className="px-2 py-1 bg-green-500 text-white rounded-md"
+                    className="px-4 py-2 bg-green-500 text-white rounded-md"
                   >
                     Copy Link
                   </button>
                   <button
-                    onClick={() => handleViewBookingLink(event)}
-                    className="px-2 py-1 bg-red-500 text-white rounded-md"
+                    onClick={() => handleEditEvent(event)}
+                    className="px-4 py-2 bg-yellow-500 text-white rounded-md"
                   >
-                    View Booking
+                    Edit
                   </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
-
-        <div className="mt-4 pl-4">
-          <h2 className="text-2xl font-bold mb-4">Events Created by You</h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {mockUserEvents.map((event) => (
-              <div
-                key={event.id}
-                className={`p-4 rounded-md shadow-md border ${isDarkMode ? 'bg-[#4E5D6C] border-gray-600' : 'bg-white border-gray-300'}`}
-              >
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Other Events</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {mockIndividualEvents.map((event) => (
+              <div key={event.id} className="p-4 border rounded-lg shadow-md">
                 <div className="text-lg font-bold">{event.title}</div>
-                <div className="text-sm">
-                  {formatDate(event.date)} at {event.time}
-                </div>
-                <div className="mt-4 flex space-x-2">
-                  <button
-                    onClick={() => handleCopyLink(event)}
-                    className="px-2 py-1 bg-green-500 text-white rounded-md"
-                  >
-                    Copy Link
-                  </button>
+                <div className="text-sm text-gray-500">{event.code}</div>
+                <div className="mt-2 flex space-x-2">
                   <button
                     onClick={() => handleViewBookingLink(event)}
-                    className="px-2 py-1 bg-red-500 text-white rounded-md"
+                    className="px-4 py-2 bg-blue-500 text-white rounded-md"
                   >
                     View Booking
                   </button>
                   <button
-                    onClick={() => handleEditEvent(event)}
-                    className="px-2 py-1 bg-yellow-500 text-white rounded-md"
+                    onClick={() => handleCopyLink(event)}
+                    className="px-4 py-2 bg-green-500 text-white rounded-md"
                   >
-                    Edit
+                    Copy Link
                   </button>
                 </div>
               </div>
