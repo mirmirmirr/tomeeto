@@ -15,7 +15,8 @@ from utils import (
     new_availability,
     get_event,
     dashboard_data,
-    get_results,
+    get_event_results,
+    update_avail,
 )
 from event import Event
 from availability import Availability
@@ -137,6 +138,34 @@ async def add_availability(request: Request):
         return {"message": "Database error"}
 
     return {"message": "Availability added"}
+
+
+@app.post("/update_availability")
+async def update_availability(request: Request):
+    body: dict = await request.json()
+    user_id = check_login(body)
+    if user_id < 0:
+        return {"message": "Login failed"}
+    else:
+        body["account_id"] = user_id
+
+    required_fields = ["event_code", "nickname", "availability"]
+    for field in required_fields:
+        if field not in body:
+            return {"message": "Invalid data"}
+    if not check_code_event(body["event_code"]):
+        return {"message": "Invalid event code"}
+
+    availability = Availability.from_json(body)
+    if availability is None:
+        return {"message": "Invalid availability data"}
+    result = update_avail(availability, body["event_code"])
+    if result is not bool:
+        return {"message": result}
+    elif not result:
+        return {"message": "Database error"}
+
+    return {"message": "Availability updated"}
 
 
 @app.post("/event_details")
