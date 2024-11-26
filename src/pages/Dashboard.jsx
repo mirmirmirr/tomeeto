@@ -4,15 +4,6 @@ import Header from '../resources/Header';
 import { useNavigate } from 'react-router-dom';
 
 var id = 1;
-// const mockIndividualEvents = [
-//   { id: 1, title: 'Meeting with Bob', code: 'EVT001' },
-//   { id: 2, title: 'Project Kickoff', code: 'EVT002' },
-// ];
-
-// const mockUserEvents = [
-//   { id: 3, title: 'Lunch with Sarah', code: 'EVT003' },
-//   { id: 4, title: 'Client Presentation', code: 'EVT004' },
-// ];
 
 export default function Dashboard() {
   const [mockIndividualEvents, setArrayOne] = useState([]); // First array of objects
@@ -113,18 +104,33 @@ export default function Dashboard() {
     get_all_events();
   }, []);
 
+  const handleLogout = () => {
+    // Clear cookies
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const eqPos = cookie.indexOf('=');
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+    }
+    navigate('/');
+  };
+
   return (
     <div
       className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B] text-white' : 'bg-[#F5F5F5] text-black'}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div className="container mx-auto p-4">
-        <div
-          id="dashboardTitle"
-          className="pl-4 mb-4 mt-8"
-          style={{ fontSize: `min(6vh, 60px)` }}
-        >
-          Your Events
+        <div className="flex justify-between items-center pl-4 mb-4 mt-8">
+          <div id="dashboardTitle" style={{ fontSize: `min(6vh, 60px)` }}>
+            Your Events
+          </div>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-500 text-white rounded-md shadow-md transition duration-300 hover:bg-red-600"
+          >
+            Sign Out
+          </button>
         </div>
         <div
           className={`w-full border-t-2 mb-4 opacity-25 ${isDarkMode ? 'border-gray-300' : 'border-gray-500'}`}

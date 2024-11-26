@@ -12,6 +12,20 @@ export default function Header({ isDarkMode, toggleTheme }) {
   const menuRef = useRef(null);
   const hamburgerRef = useRef(null);
 
+  const clearCookies = () => {
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const eqPos = cookie.indexOf('=');
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+    }
+  };
+
+  const handleLogout = () => {
+    clearCookies();
+    navigate('/landing');
+  };
+
   // Update screen size state on window resize
   useEffect(() => {
     const handleResize = () => {
@@ -103,6 +117,12 @@ export default function Header({ isDarkMode, toggleTheme }) {
               onClick={() => navigate('/signup')}
             >
               Signup
+            </li>
+            <li
+              className="px-4 py-2 cursor-pointer hover:underline"
+              onClick={(handleLogout, () => navigate('/'))}
+            >
+              Log Out
             </li>
           </ul>
         </div>
