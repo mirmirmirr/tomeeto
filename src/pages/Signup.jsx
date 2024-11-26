@@ -11,11 +11,11 @@ import lightHidden from '../assets/hidden_light.png';
 
 export default function Signup() {
   function deleteAllCookies() {
-    document.cookie.split(';').forEach(cookie => {
-        const eqPos = cookie.indexOf('=');
-        const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
-        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    });  
+    document.cookie.split(';').forEach((cookie) => {
+      const eqPos = cookie.indexOf('=');
+      const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
+      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    });
   }
 
   function setCookie(email, password) {
@@ -23,8 +23,8 @@ export default function Signup() {
     const passwordCookie = `password=${encodeURIComponent(password)}; path=/;`;
     document.cookie = emailCookie;
     document.cookie = passwordCookie;
-    console.log("Cookies have been set.");
-}
+    console.log('Cookies have been set.');
+  }
 
   const navigate = useNavigate();
   // document.cookie = "username=John Doe";
