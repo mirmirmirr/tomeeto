@@ -409,7 +409,7 @@ export default function CreateEvent() {
 
         {/* Right Column */}
         <div
-          className={`hidden lg:block pl-8 fixed bottom-[10vw] right-4 flex-shrink-0 lg:w-[40%] flex lg:flex-col items-start ${bgColor}`}
+          className={`hidden lg:block pl-8 fixed bottom-[10vw] right-4 flex-shrink-0 lg:w-[40%] flex lg:flex-col items-start`}
         >
           {/* Invite URL input */}
           <div className="w-full">
