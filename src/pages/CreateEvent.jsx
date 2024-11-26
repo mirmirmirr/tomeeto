@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
-import Calendar from '../assets/Calendar';
-import TimeSelector from '../assets/TimeSelector';
+import Calendar from '../resources/Calendar';
+import TimeSelector from '../resources/TimeSelector';
 
 export default function CreateEvent() {
   const navigate = useNavigate();
@@ -119,40 +119,72 @@ export default function CreateEvent() {
   ];
 
   return (
-    <div className={`relative flex flex-col min-h-screen p-6 ${bgColor}`}>
+    <div className={`relative flex flex-col min-h-screen p-4 ${bgColor}`}>
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-      <div className="flex w-full mt-[4vh] p-4">
-        {/* Left Column */}
-        <div className="pl-4 flex-shrink-0 w-[60%]">
+
+      <div className="flex flex-col lg:flex-row mt-[5vh]">
+        {/* Event Information */}
+        <div className="pl-[25px] flex-shrink-0 lg:w-[60%]">
           {/* Input for event name */}
-          <div className="flex items-center pb-5">
+          <div className="flex flex-col lg:flex-row mb-5 lg:w-[80vw]">
             <input
               type="text"
               placeholder="Add Event Name"
-              className={`flex-grow px-0 py-2 text-2xl bg-transparent text-left
-                border-b-2 focus:outline-none ${textColor} ${borderColor}
-                ${placeholderColor}`}
-              style={{ fontSize: `min(3vw, 20px)` }}
+              className={`flex-grow bg-transparent w-[80vw] lg:w-[55vw] rounded-none
+                border-b-2 focus:outline-none ${textColor} 
+                ${borderColor} ${placeholderColor}`}
+              style={{ fontSize: `max(3vw, 35px)` }}
             />
+
+            {/* checkbox for selecting days of the week */}
+            <label className={`flex items-center mt-4 ${textColor}`}>
+              <input
+                type="checkbox"
+                checked={selectDaysOfWeek}
+                onChange={handleSelectDaysOfWeekChange}
+                className="mr-2 w-5 h-5 rounded-md focus:outline-none
+                bg-transparent"
+              />
+              <span style={{ fontSize: `max(1.5vw, 20px)` }}>
+                Select from days of the week
+              </span>
+            </label>
           </div>
 
           {/* Date and Time Selection */}
-          <div className="relative flex items-center gap-4 pb-4">
+          <div className="relative flex flex-col lg:flex-row items-center gap-4 pb-4">
             {selectDaysOfWeek ? (
               <>
                 {/* Dropdown for start day */}
-                <div className="relative w-[25%]">
-                  <button
-                    onClick={toggleStartDayDropdown}
-                    className="p-3 w-full text-lg font-semibold bg-[#FF5C5C]
-                      rounded-lg text-[#F5F5F5] focus:outline-none"
+                <div className="flex flex-col w-full lg:w-[40%] gap-2">
+                  <div
+                    className="flex w-full lg:gap-4"
+                    style={{ fontSize: `max(1vw, 20px)` }}
                   >
-                    {selectedStartDay}
-                  </button>
+                    <div
+                      className="lg:w-[70%] mr-auto h-full lg:rounded-lg lg:bg-[#FF5C5C] text-[#F5F5F5]
+                  focus:outline-none"
+                    >
+                      <button
+                        onClick={toggleStartDayDropdown}
+                        className="h-full w-full lg:p-3 lg:text-center text-left"
+                      >
+                        {selectedStartDay}
+                      </button>
+                    </div>
+                    <TimeSelector
+                      defaultTime={startTime}
+                      onTimeSelect={setStartTime}
+                      className="h-full w-[30%]"
+                    />
+                  </div>
                   {startDayDropdownVisible && (
                     <div
-                      className="absolute z-10 mt-1 w-full bg-[#FF5C5C]
-                        rounded-md shadow-lg"
+                      className={`lg:absolute lg:w-[25%] self-bottom lg:mt-[62px] lg:z-10 rounded-md lg:shadow-md ${bgColor} max-h-[120px] overflow-y-auto`}
+                      style={{
+                        scrollbarWidth: 'none', // Hides scrollbar for Firefox
+                        msOverflowStyle: 'none', // Hides scrollbar for Internet Explorer
+                      }}
                     >
                       <ul className="flex flex-col">
                         {daysOfWeek.map((day) => (
@@ -162,8 +194,7 @@ export default function CreateEvent() {
                               setSelectedStartDay(day);
                               setStartDayDropdownVisible(false);
                             }}
-                            className="p-2 cursor-pointer hover:bg-red-600\
-                              rounded-md text-center text-[#F5F5F5]"
+                            className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                           >
                             {day}
                           </li>
@@ -173,27 +204,44 @@ export default function CreateEvent() {
                   )}
                 </div>
 
-                <TimeSelector
-                  defaultTime={startTime}
-                  onTimeSelect={setStartTime}
-                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white"
-                />
-
-                <span className={`${textColor} text-lg`}>to</span>
+                <span
+                  className={`${textColor} lg:block hidden`}
+                  style={{ fontSize: `min(3vw, 20px)` }}
+                >
+                  to
+                </span>
 
                 {/* Dropdown for end day */}
-                <div className="relative w-[25%]">
-                  <button
-                    onClick={toggleEndDayDropdown}
-                    className="p-3 w-full text-lg font-semibold bg-[#FF5C5C]
-                      rounded-lg text-[#F5F5F5] focus:outline-none"
+
+                <div className="flex flex-col w-full lg:w-[40%] gap-2">
+                  <div
+                    className="flex w-full lg:gap-4"
+                    style={{ fontSize: `max(1vw, 20px)` }}
                   >
-                    {selectedEndDay}
-                  </button>
+                    <div
+                      className="lg:w-[70%] mr-auto h-full lg:rounded-lg lg:bg-[#FF5C5C] text-[#F5F5F5]
+                  focus:outline-none"
+                    >
+                      <button
+                        onClick={toggleEndDayDropdown}
+                        className="h-full w-full lg:p-3 lg:text-center text-left"
+                      >
+                        {selectedEndDay}
+                      </button>
+                    </div>
+                    <TimeSelector
+                      defaultTime={endTime}
+                      onTimeSelect={setEndTime}
+                      className="h-full w-[30%]"
+                    />
+                  </div>
                   {endDayDropdownVisible && (
                     <div
-                      className="absolute z-10 mt-1 w-full bg-[#FF5C5C]
-                      rounded-md shadow-lg"
+                      className={`lg:absolute lg:w-[25%] self-bottom lg:mt-[62px] lg:z-10 rounded-md lg:shadow-md ${bgColor} max-h-[120px] overflow-y-auto`}
+                      style={{
+                        scrollbarWidth: 'none', // Hides scrollbar for Firefox
+                        msOverflowStyle: 'none', // Hides scrollbar for Internet Explorer
+                      }}
                     >
                       <ul className="flex flex-col">
                         {daysOfWeek.map((day) => (
@@ -203,8 +251,7 @@ export default function CreateEvent() {
                               setSelectedEndDay(day);
                               setEndDayDropdownVisible(false);
                             }}
-                            className="p-2 cursor-pointer hover:bg-red-600
-                              rounded-md text-center text-[#F5F5F5]"
+                            className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                           >
                             {day}
                           </li>
@@ -213,64 +260,75 @@ export default function CreateEvent() {
                     </div>
                   )}
                 </div>
-
-                <TimeSelector
-                  defaultTime={endTime}
-                  onTimeSelect={setEndTime}
-                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white"
-                />
               </>
             ) : (
               <>
                 {/* Start Date Selector */}
-                <div
-                  className="w-[25%] rounded-lg bg-[#FF5C5C] text-lg
-                      text-white text-center font-semibold focus:outline-none"
-                >
-                  <button
-                    onClick={toggleStartCalendar}
-                    className="h-full w-full p-3"
+                <div className="flex flex-col w-full lg:w-[40%] gap-2">
+                  <div
+                    className="flex w-full lg:gap-4"
+                    style={{ fontSize: `max(1vw, 20px)` }}
                   >
-                    {startDate.toLocaleDateString()}
-                  </button>
+                    <div
+                      className="lg:w-[70%] mr-auto h-full lg:rounded-lg lg:bg-[#FF5C5C] text-[#F5F5F5]
+                  focus:outline-none"
+                    >
+                      <button
+                        onClick={toggleStartCalendar}
+                        className="h-full w-full lg:p-3 lg:text-center text-left"
+                      >
+                        {startDate.toLocaleDateString()}
+                      </button>
+                    </div>
+                    <TimeSelector
+                      defaultTime={startTime}
+                      onTimeSelect={setStartTime}
+                      className="h-full w-[30%]"
+                    />
+                  </div>
                   {showStartCalendar && (
-                    <div className="absolute self-bottom pt-2 z-10 rounded-md shadow-md">
+                    <div className="lg:absolute self-bottom lg:mt-[62px] lg:z-10 rounded-md shadow-md">
                       <Calendar onDateSelect={handleStartDateSelect} />
                     </div>
                   )}
                 </div>
 
-                <TimeSelector
-                  defaultTime={startTime}
-                  onTimeSelect={setStartTime}
-                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white"
-                />
-
-                <span className={`${textColor} text-lg`}>to</span>
+                <span
+                  className={`${textColor} lg:block hidden`}
+                  style={{ fontSize: `max(1vw, 20px)` }}
+                >
+                  to
+                </span>
 
                 {/* End Date Selector */}
-                <div
-                  className="w-[25%] rounded-lg bg-[#FF5C5C] text-lg
-                      text-white text-center font-semibold focus:outline-none"
-                >
-                  <button
-                    onClick={toggleEndCalendar}
-                    className="h-full w-full p-3"
+                <div className="flex flex-col w-full lg:w-[40%] gap-2">
+                  <div
+                    className="flex w-full lg:gap-4"
+                    style={{ fontSize: `max(1vw, 20px)` }}
                   >
-                    {endDate.toLocaleDateString()}
-                  </button>
+                    <div
+                      className="lg:w-[70%] mr-auto h-full lg:rounded-lg lg:bg-[#FF5C5C] text-[#F5F5F5]
+                  focus:outline-none"
+                    >
+                      <button
+                        onClick={toggleEndCalendar}
+                        className="h-full w-full lg:p-3 lg:text-center text-left"
+                      >
+                        {endDate.toLocaleDateString()}
+                      </button>
+                    </div>
+                    <TimeSelector
+                      defaultTime={endTime}
+                      onTimeSelect={setEndTime}
+                      className="h-full w-[30%]"
+                    />
+                  </div>
                   {showEndCalendar && (
-                    <div className="absolute self-bottom pt-2 z-10 rounded-md shadow-md">
+                    <div className="lg:absolute self-bottom lg:mt-[62px] lg:z-10 rounded-md shadow-md">
                       <Calendar onDateSelect={handleEndDateSelect} />
                     </div>
                   )}
                 </div>
-
-                <TimeSelector
-                  defaultTime={endTime}
-                  onTimeSelect={setEndTime}
-                  className="p-3 text-lg rounded-lg bg-[#FF5C5C] text-white"
-                />
               </>
             )}
           </div>
@@ -279,35 +337,50 @@ export default function CreateEvent() {
           <div className="relative pb-3">
             <button
               onClick={toggleIntervalDropdown}
-              className={`w-[25%] p-3 text-lg font-semibold bg-[#FF5C5C]
+              className={`hidden lg:block w-[25%] p-3 lg:bg-[#FF5C5C]
                 rounded-lg text-[#F5F5F5] focus:outline-none`}
+              style={{ fontSize: `min(3vw, 20px)` }}
             >
               {selectedInterval || 'Time Interval'}
             </button>
+
+            <div
+              className="flex flex-row w-full"
+              style={{ fontSize: `max(1vw, 20px)` }}
+            >
+              <button
+                onClick={toggleIntervalDropdown}
+                className={`text-left lg:hidden mr-auto
+                  rounded-lg text-[#F5F5F5] focus:outline-none`}
+              >
+                Time Interval{' '}
+              </button>
+              <div className={`lg:hidden mr-[20px] ${textColor}`}>
+                {selectedInterval || '30 minutes'}
+              </div>
+            </div>
+
             {intervalDropdownVisible && (
               <div
-                className="absolute z-10 mt-1 w-[25%] bg-[#FF5C5C]
-                rounded-md shadow-lg"
+                className={`lg:absolute lg:z-10 mt-2 lg:w-[25%] ${bgColor}
+                rounded-md lg:shadow-lg`}
               >
                 <ul className="flex flex-col">
                   <li
                     onClick={() => handleSelectInterval('15 minutes')}
-                    className="p-2 cursor-pointer hover:bg-red-600 rounded-md
-                    text-center text-[#F5F5F5]"
+                    className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                   >
                     15 minutes
                   </li>
                   <li
                     onClick={() => handleSelectInterval('30 minutes')}
-                    className="p-2 cursor-pointer hover:bg-red-600 rounded-md
-                    text-center text-[#F5F5F5]"
+                    className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                   >
                     30 minutes
                   </li>
                   <li
                     onClick={() => handleSelectInterval('60 minutes')}
-                    className="p-2 cursor-pointer hover:bg-red-600 rounded-md
-                    text-center text-[#F5F5F5]"
+                    className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                   >
                     60 minutes
                   </li>
@@ -317,50 +390,76 @@ export default function CreateEvent() {
           </div>
 
           {/* Event description input */}
-          <label className={`block text-lg font-semibold ${textColor} mb-2`}>
+          <label
+            className={`block font-semibold ${textColor} mb-2`}
+            style={{ fontSize: `max(1vw, 20px)` }}
+          >
             Event Description
           </label>
           <div className={`border-2 ${borderColor} rounded-lg p-2 mb-4`}>
             <textarea
               rows="9"
-              className={`w-full p-3 text-lg rounded-lg ${bgColor} ${textColor}
+              className={`w-full p-3 rounded-lg ${bgColor} ${textColor}
                 focus:outline-none resize-none`}
+              style={{ fontSize: `max(1vw, 20px)` }}
               placeholder="Describe your event here..."
             ></textarea>
           </div>
         </div>
 
         {/* Right Column */}
-        <div className="pl-8 flex-shrink-0 w-[40%] flex flex-col items-start">
-          {/* Checkbox for selecting days of the week */}
-          <label className={`flex items-center mb-4 ${textColor}`}>
-            <input
-              type="checkbox"
-              checked={selectDaysOfWeek}
-              onChange={handleSelectDaysOfWeekChange}
-              className="mr-2 w-5 h-5 rounded-md focus:outline-none
-                bg-transparent"
-            />
-            <span>Select from days of the week</span>
-          </label>
-
+        <div
+          className={`hidden lg:block pl-8 fixed bottom-[10vw] right-4 flex-shrink-0 lg:w-[40%] flex lg:flex-col items-start`}
+        >
           {/* Invite URL input */}
-          <div className="w-full mt-[50vh]">
-            <label className={`block text-lg font-semibold ${textColor}`}>
-              Invite URL
+          <div className="w-full">
+            <label
+              className={`block font-semibold ${textColor}`}
+              style={{ fontSize: `max(1vw, 20px)` }}
+            >
+              Invite Code:
             </label>
             <input
               type="text"
               className={`w-full px-0 py-2 text-lg bg-transparent text-left border-b-2 focus:outline-none
                 ${textColor} ${borderColor} ${placeholderColor}`}
+              style={{ fontSize: `max(1vw, 20px)` }}
             />
           </div>
 
           {/* Create Event button */}
           <button
             onClick={() => navigate('/confirmCreated')}
-            className={`w-full p-3 mt-4 text-lg font-semibold bg-[#FF5C5C]
+            className={`w-full p-3 mt-4 bg-[#FF5C5C]
               rounded-lg text-[#F5F5F5] focus:outline-none`}
+            style={{ fontSize: `min(3vw, 20px)` }}
+          >
+            Create Event
+          </button>
+        </div>
+
+        <div
+          className={`lg:hidden fixed bottom-0 left-0 flex-shrink-0 flex flex-col ${bgColor}`}
+        >
+          {/* Invite URL input */}
+          <div className="flex flex-row w-full m-4 gap-4">
+            <label className={`font-semibold ${textColor} text-[20px]`}>
+              Invite Code:
+            </label>
+            <input
+              type="text"
+              className={`w-[55vw] text-lg bg-transparent text-left border-b-2 focus:outline-none rounded-none
+                ${textColor} ${borderColor} ${placeholderColor} text-[20px]`}
+            />
+          </div>
+
+          {/* Create Event button */}
+          <button
+            onClick={() => navigate('/confirmCreated')}
+            className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center ${
+              textColor
+            }`}
+            style={{ fontSize: `max(1vw, 20px)` }}
           >
             Create Event
           </button>

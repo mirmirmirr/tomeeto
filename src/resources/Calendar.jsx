@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useTheme } from '../resources/ThemeContext';
+import { useState } from 'react';
+import { useTheme } from './ThemeContext';
 
 export default function Calendar({ onDateSelect }) {
   const { isDarkMode } = useTheme();
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  const bgColor = isDarkMode ? 'bg-gray-700' : 'bg-[#F5F5F5]';
+  const bgColor = isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]';
   const textColor = isDarkMode ? 'text-[#F5F5F5]' : 'text-[#3E505B]';
 
   // Define the maximum date (3 months from now)
@@ -66,7 +66,9 @@ export default function Calendar({ onDateSelect }) {
   }
 
   return (
-    <div className={`${bgColor} ${textColor} p-2 shadow-md border-0`}>
+    <div
+      className={`${bgColor} ${textColor} p-2 rounded-md shadow-md border-0`}
+    >
       {/* Calendar Header */}
       <div className="flex justify-between items-center mb-2">
         {/* Previous Month Button */}

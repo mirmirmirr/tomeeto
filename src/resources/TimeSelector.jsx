@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTheme } from '../resources/ThemeContext';
+import { useTheme } from './ThemeContext';
 
 export default function TimeSelector() {
   const { isDarkMode } = useTheme();
@@ -166,12 +166,13 @@ export default function TimeSelector() {
   };
 
   return (
-    <div className="relative w-[120px]">
+    <div className="relative">
       {/* Time Display Button */}
       <button
         onClick={toggleDropdown}
-        className="p-2 w-full rounded-md bg-[#FF5C5C] text-white text-lg
-          font-semibold focus:outline-none"
+        className={`lg:p-3 w-[120px] lg:rounded-md lg:bg-[#FF5C5C] text-[#F5F5F5] text-lg
+         focus:outline-none`}
+        style={{ fontSize: `max(1vw, 20px)` }}
       >
         {selectedTime}
       </button>
@@ -179,8 +180,8 @@ export default function TimeSelector() {
       {/* Dropdown Menu */}
       {timeDropdownVisible && (
         <div
-          className={`absolute z-10 mt-2 w-full max-h-[150px] rounded-md 
-            bg-[#FF5C5C] text-white shadow-lg overflow-y-auto`}
+          className={`text-center lg:absolute z-10 lg:mt-2 w-[90vw] ml-[-55vw] lg:ml-[0px] lg:w-full max-h-[120px] rounded-md 
+            ${bgColor} lg:shadow-lg overflow-y-auto ${textColor}`}
           style={{
             scrollbarWidth: 'none', // Hides scrollbar for Firefox
             msOverflowStyle: 'none', // Hides scrollbar for Internet Explorer
