@@ -1,11 +1,16 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 
 import Header from '../resources/Header';
 
 export default function Result() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { eventCode, eventName } = location.state || {};
+
+  console.log('Event Code:', eventCode);
+  console.log('Event Name:', eventName);
 
   const { isDarkMode, toggleTheme } = useTheme();
   const [hoveredCell, setHoveredCell] = useState({ row: null, column: null });
@@ -13,7 +18,6 @@ export default function Result() {
   const [isDisabled] = useState(true);
   const daysPerPage = 7; // Number of days per page
 
-  const eventTitle = 'tomeeto planning';
   const weekdays = [
     'SUN',
     'MON',
@@ -141,7 +145,7 @@ export default function Result() {
           className="w-[80vw] lg:w-[93vw]"
           style={{ fontSize: `max(3vw, 35px)` }}
         >
-          {eventTitle}
+          {eventName}
         </div>
 
         <div

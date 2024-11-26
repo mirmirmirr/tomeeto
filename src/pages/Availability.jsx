@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
 
 export default function Availability() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { eventCode, eventName } = location.state || {};
 
+  console.log('Event Code:', eventCode);
+  console.log('Event Name:', eventName);
+  
   const { isDarkMode, toggleTheme } = useTheme();
 
   const [isDragging, setIsDragging] = useState(false);
@@ -17,7 +22,6 @@ export default function Availability() {
   const [isDisabled] = useState(true);
   const daysPerPage = 7;
 
-  const eventTitle = 'tomeeto planning';
   const allDays = [
     'SUN 6',
     'MON 7',
@@ -128,10 +132,10 @@ export default function Availability() {
       >
         <div
           id="eventName"
-          className="w-[80vw] lg:w-[93vw]"
+          className="w-[80vw] lg:w-[93vw] lg:ml-4"
           style={{ fontSize: `max(3vw, 35px)` }}
         >
-          {eventTitle}
+          {eventName}
         </div>
 
         <div
@@ -153,7 +157,7 @@ export default function Availability() {
           </div>
           <div className="hidden lg:block">
             <button
-              onClick={() => navigate('/results')}
+              onClick={() => navigate('/results', { state: { eventCode, eventName } })}
               className="w-32 p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500"
             >
               Submit
