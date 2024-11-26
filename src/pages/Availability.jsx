@@ -208,31 +208,33 @@ export default function Availability() {
     console.log(name);
     console.log(availability);
 
-    const credentials = {
+    var credentials = {
       event_code: eventCode,
       nickname: name,
       availability: availability,
+      guest_password: "PTTLb06gln",
+      guest_id: 33,
     };
 
-    if (userEmail == null && userPW == null) {
-      console.log('HEREEEE');
+    // if (userEmail == null && userPW == null) {
+    //   console.log('HEREEEE');
 
-      fetch('http://tomeeto.cs.rpi.edu:8000/create_guest', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          credentials.guest_id = data.guest_id;
-          credentials.guest_password = data.guest_password;
-          console.log(credentials.guest_id);
-        });
-    } else {
-      credentials.email = 'testing@gmail.com';
-      credentials.password = '123';
-    }
+    //   fetch('http://tomeeto.cs.rpi.edu:8000/create_guest', {
+    //     method: 'GET',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //   })
+    //     .then((response) => response.json())
+    //     .then((data) => {
+    //       credentials.guest_id = data.guest_id;
+    //       credentials.guest_password = data.guest_password;
+    //       console.log(credentials.guest_id);
+    //     });
+    // } else {
+    //   credentials.email = 'testing@gmail.com';
+    //   credentials.password = '123';
+    // }
     console.log(credentials);
     try {
       const response = await fetch(
@@ -245,7 +247,7 @@ export default function Availability() {
           body: JSON.stringify(credentials),
         }
       );
-
+      console.log(credentials);
       if (response.ok) {
         const result = await response.json();
         console.log('Time Set Successfully', result);
