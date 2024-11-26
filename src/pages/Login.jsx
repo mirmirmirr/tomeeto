@@ -9,6 +9,17 @@ import lightEye from '../assets/eye_light.png';
 import darkHidden from '../assets/hidden_dark.png';
 import lightHidden from '../assets/hidden_light.png';
 
+function deleteAllCookies() {
+  document.cookie.split(';').forEach((cookie) => {
+    const eqPos = cookie.indexOf('=');
+    const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  });
+}
+
+
+// Once we have signout button, clear all the cookies.
+
 export default function Login() {
   const navigate = useNavigate();
 
@@ -49,15 +60,43 @@ export default function Login() {
     });
   };
 
+  // const myCookie = document.cookie.split('; ').find(row => row.startsWith('email=')).split('=')[1];
+  // console.log(myCookie); // Outputs: 123
+
   // if cookies exist, login the user already
+  console.log("getting cookies");
+  const cookies = document.cookie; // Get all cookies as a single string
+  const cookieObj = {};
+
+  cookies.split(';').forEach(cookie => {
+    const [key, value] = cookie.split('=').map(part => part.trim());
+    if (key && value) {
+      try {
+        // Parse JSON if it's valid JSON, otherwise use as-is
+        cookieObj[key] = JSON.parse(decodeURIComponent(value));
+      } catch {
+        cookieObj[key] = decodeURIComponent(value); // Handle plain strings
+      }
+    }
+  });
+
+  console.log(cookieObj);
+
+  // const all_existing_cookies = getCookiesAsObject();
+  // console.log(all_existing_cookies);
+  
 
   const login_user = async () => {
-    console.log(passwordValues.password);
-    console.log(email.email);
-    const data = {
-      email: email.email,
-      password: passwordValues.password,
-    };
+    var data = {};
+    if (cookieObj["login_email"] !== null && cookieObj["login_password"] !== null) {
+      data["email"] = cookieObj["login_email"];
+      data["password"] = cookieObj["login_password"];
+    } else {
+      data["email"] = email.email;
+      data["password"] = passwordValues.password;
+    }
+    
+    // console.log(data);
 
     try {
       const response = await fetch('http://tomeeto.cs.rpi.edu:8000/login', {
@@ -83,6 +122,12 @@ export default function Login() {
       console.error('Error:', error);
     }
   };
+
+
+  if (cookieObj["login_email"] !== null && cookieObj["login_password"] !== null) {
+    console.log("We have login");
+    login_user();
+  }
 
   return (
     <div

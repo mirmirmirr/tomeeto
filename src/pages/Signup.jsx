@@ -9,26 +9,25 @@ import lightEye from '../assets/eye_light.png';
 import darkHidden from '../assets/hidden_dark.png';
 import lightHidden from '../assets/hidden_light.png';
 
+function deleteAllCookies() {
+  document.cookie.split(';').forEach((cookie) => {
+    const eqPos = cookie.indexOf('=');
+    const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  });
+}
+
+function setCookie(email, password) {
+  const emailCookie = `login_email=${encodeURIComponent(JSON.stringify(email))}; path=/;`;
+  const passwordCookie = `login_password=${encodeURIComponent(JSON.stringify(password))}; path=/;`;
+  document.cookie = emailCookie;
+  document.cookie = passwordCookie;
+  console.log('Cookies have been set.');
+}
+
 export default function Signup() {
-  function deleteAllCookies() {
-    document.cookie.split(';').forEach((cookie) => {
-      const eqPos = cookie.indexOf('=');
-      const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
-      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    });
-  }
-
-  function setCookie(email, password) {
-    const emailCookie = `email=${encodeURIComponent(email)}; path=/;`;
-    const passwordCookie = `password=${encodeURIComponent(password)}; path=/;`;
-    document.cookie = emailCookie;
-    document.cookie = passwordCookie;
-    console.log('Cookies have been set.');
-  }
-
   const navigate = useNavigate();
   // document.cookie = "username=John Doe";
-  deleteAllCookies();
   console.log(document.cookie);
 
   const { isDarkMode, toggleTheme } = useTheme();
@@ -68,6 +67,7 @@ export default function Signup() {
   };
 
   const signupClick = async () => {
+    deleteAllCookies();
     console.log(passwordValues.password);
     console.log(email.email);
     const data = {
@@ -85,11 +85,16 @@ export default function Signup() {
       });
 
       if (response.ok) {
+        deleteAllCookies();
         const result = await response.json();
-        console.log('Login successful:', result);
-        setCookie(email.email, passwordValues.password);
-        // this shpould be dashboard whenever gavin finishes
-        navigate('/dashboard');
+        if (result.message.localeCompare("User created" === 0)) {
+          console.log('Login successful:', result);
+          setCookie(email.email, passwordValues.password);
+          // this shpould be dashboard whenever gavin finishes
+          navigate('/dashboard');
+        } else {
+          console.error('Failed to signup:', response.statusText);
+        }
       } else {
         console.error('Failed to log in:', response.statusText);
       }
