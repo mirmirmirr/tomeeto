@@ -281,7 +281,7 @@ class DateEvent(Event):
                     AND user_account_id = %s
             """
             cursor.execute(event_query, (code, self.creator.id))
-            event_id = cursor.fetchone()
+            event_id = cursor.fetchone()["user_event_id"]
             update_query = """
                 UPDATE user_event
                 SET
@@ -408,7 +408,7 @@ class GenericWeekEvent(Event):
                     AND user_account_id = %s
             """
             cursor.execute(event_query, (code, self.creator.id))
-            event_id = cursor.fetchone()
+            event_id = cursor.fetchone()["user_event_id"]
             update_query = """
                 UPDATE user_event
                 SET

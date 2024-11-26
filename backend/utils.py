@@ -229,6 +229,11 @@ def new_event(event: Event, code: str) -> bool:
     return event.to_sql_insert(DB_CURSOR, DB_CONN, code)
 
 
+# Updates an event in the database
+def fix_event(event: Event, code: str) -> bool:
+    return event.to_sql_update(DB_CURSOR, DB_CONN, code)
+
+
 # Checks if a code refers to an existing event
 def check_code_event(code: str) -> bool:
     try:
