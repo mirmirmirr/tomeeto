@@ -23,11 +23,7 @@ export default function Dashboard() {
 
   const handleCopyLink = async (event) => {
     try {
-      const response = await fetch(
-        `http://tomeeto.cs.rpi.edu:8000/events/${event.id}/link`
-      );
-      const data = await response.json();
-      navigator.clipboard.writeText(data.link).then(() => {
+      navigator.clipboard.writeText(event.code).then(() => {
         setNotification('Link copied to clipboard');
         setTimeout(() => setNotification(''), 3000);
       });
@@ -38,11 +34,7 @@ export default function Dashboard() {
 
   const handleViewBookingLink = async (event) => {
     try {
-      const response = await fetch(
-        `http://tomeeto.cs.rpi.edu:8000/events/${event.id}/redirect`
-      );
-      const data = await response.json();
-      navigate(data.redirectUrl);
+      navigate('/results', { state: { eventCode: event.code, eventName: event.title } });
     } catch (error) {
       console.error('Error viewing booking link:', error);
     }
@@ -50,9 +42,6 @@ export default function Dashboard() {
 
   const handleEditEvent = async (event) => {
     try {
-      const response = await fetch(
-        `http://tomeeto.cs.rpi.edu:8000/events/${event.id}/edit`
-      );
       const data = await response.json();
       navigate(data.editUrl);
     } catch (error) {
