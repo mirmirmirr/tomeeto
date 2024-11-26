@@ -18,6 +18,12 @@ class Availability:
     @staticmethod
     def from_json(json: dict) -> "Availability":
         user = User(json["account_id"])
+
+        required_fields = ["nickname", "availability"]
+        for field in required_fields:
+            if field not in json:
+                return None
+
         return Availability(
             user,
             json["nickname"],
@@ -95,13 +101,13 @@ class Availability:
                         user_event_participant
                     WHERE
                         user_account_id = %s
+                        OR nickname = %s
                 )
         """
-        cursor.execute(event_query, (code, self.user.id))
+        cursor.execute(event_query, (code, self.user.id, self.nickname))
         result = cursor.fetchone()
         if result is None:
-            print("user already in event")
-            return False
+            return "User or nickname already in event or invalid code"
         event_id: int = result["user_event_id"]
         start_time: time = result["start_time"]
         end_time: time = result["end_time"]
@@ -111,21 +117,19 @@ class Availability:
         time_diff: timedelta = end_time - start_time
         date_diff: timedelta = end_date - start_date
         if date_diff.days + 1 != len(self.availability):
-            print(
-                "date range should be",
-                date_diff.days + 1,
-                "days but is",
-                len(self.availability),
+            return (
+                "Date range should be "
+                + str(date_diff.days + 1)
+                + " days but is "
+                + str(len(self.availability))
             )
-            return False
         if time_diff.seconds / 60 != len(self.availability[0]) * duration:
-            print(
-                "time range should be",
-                time_diff.seconds / 60,
-                "but is",
-                len(self.availability[0]) * duration,
+            return (
+                "Time range should be "
+                + str(time_diff.seconds / 60)
+                + " minutes but is "
+                + str(len(self.availability[0]) * duration)
             )
-            return False
         query = """
             INSERT INTO
                 user_event_availability (
