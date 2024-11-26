@@ -22,30 +22,92 @@ export default function Availability() {
   const [isDisabled] = useState(true);
   const daysPerPage = 7;
 
-  const allDays = [
-    'SUN 6',
-    'MON 7',
-    'TUE 8',
-    'WED 9',
-    'THU 10',
-    'FRI 11',
-    'SAT 12',
-    'SUN 13',
-    'MON 14',
-    'TUE 15',
-    'WED 16',
-  ];
-  const totalDays = allDays.length; // Total number of days
-  const hours = Array.from({ length: 15 }, (_, i) => 7 + i);
+  const [eventDetails, setEventDetails] = useState(null);
+  const [allDays, setAllDays] = useState([]);
+  const [totalDays, setTotalDays] = useState(0);
+  const [hours, setHours] = useState([]);
+
+  useEffect(() => {
+    if (eventCode) {
+      const data = {
+        email: 'testing@gmail.com',
+        password: '123',
+        event_code: eventCode,
+      };
+
+      fetch('http://tomeeto.cs.rpi.edu:8000/event_details', 
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      )
+        .then(response => response.json())
+        .then(data => {
+          // Assuming the data from /event_details contains 'days' and 'start_time'
+          console.log('Event details:', data);
+          
+          // Update the state based on the event details
+          setEventDetails(data);
+          updateEventData(data); // Call function to update days and hours
+        })
+        .catch(error => {
+          console.error('Error fetching event details:', error);
+        });
+    }
+  }, [eventCode]);
+
+  const updateEventData = (data) => {
+
+    const { start_date, start_time, end_date, end_time, duration, event_type } = data;
+    
+    const startDate = new Date(start_date + ' ' + start_time);
+    const endDate = new Date(end_date + ' ' + end_time);
+
+    const daysArray = [];
+    let currentDate = startDate;
+    while (currentDate <= endDate) {
+      daysArray.push(currentDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
+      currentDate.setDate(currentDate.getDate() + 1); // Increment by one day
+    }
+    
+    setAllDays(daysArray);
+    setTotalDays(daysArray.length);
+
+    const startHour = parseInt(start_time.split(':')[0]);
+    const endHour = parseInt(end_time.split(':')[0]);
+    const generatedHours = Array.from({ length: endHour - startHour }, (_, i) => startHour + i);
+    setHours(generatedHours);
+  };
+
+  // const allDays = [
+  //   'SUN 6',
+  //   'MON 7',
+  //   'TUE 8',
+  //   'WED 9',
+  //   'THU 10',
+  //   'FRI 11',
+  //   'SAT 12',
+  //   'SUN 13',
+  //   'MON 14',
+  //   'TUE 15',
+  //   'WED 16',
+  // ];
+  // const totalDays = allDays.length; // Total number of days
+  // const hours = Array.from({ length: 15 }, (_, i) => 7 + i);
 
   const submit_button = async () => {
     console.log('Ran');
     console.log(name);
     console.log(availability);
     const data = {
-      name: name,
+      email: 'testing@gmail.com',
+      password: '123',
+      event_code: eventCode,
+      nickname: name,
       availability: availability,
-      event_code: 'some event code',
     };
 
     try {
@@ -65,9 +127,7 @@ export default function Availability() {
         console.log('Time Set Successfully', result);
 
         // session management with dashboard
-        navigate('/results', {
-          state: { eventCode, eventName },
-        });
+        navigate('/results', { state: { eventCode, eventName } });
       } else {
         console.error('Failed to record time:', response.statusText);
       }
@@ -354,7 +414,7 @@ export default function Availability() {
 
         <div className="lg:hidden mt-4">
           <button
-            onClick={() => navigate('/results')}
+            onClick={submit_button}
             className="w-full p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500"
           >
             Submit
