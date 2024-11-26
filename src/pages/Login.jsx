@@ -47,7 +47,6 @@ export default function Login() {
   };
 
   // if cookies exist, login the user already
-  
 
   const login_user = async () => {
     console.log(passwordValues.password);
