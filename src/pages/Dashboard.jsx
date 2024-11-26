@@ -34,7 +34,9 @@ export default function Dashboard() {
 
   const handleViewBookingLink = async (event) => {
     try {
-      navigate('/results', { state: { eventCode: event.code, eventName: event.title } });
+      navigate('/results', {
+        state: { eventCode: event.code, eventName: event.title },
+      });
     } catch (error) {
       console.error('Error viewing booking link:', error);
     }
