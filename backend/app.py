@@ -15,6 +15,7 @@ from utils import (
     new_availability,
     get_event,
     dashboard_data,
+    get_results,
 )
 from event import Event
 from availability import Availability
@@ -167,3 +168,20 @@ async def dashboard_events(request: Request):
     current_user = User.from_json(body)
 
     return dashboard_data(current_user)
+
+
+@app.post("/get_results")
+async def dashboard_events(request: Request):
+    body: dict = await request.json()
+    user_id = check_login(body)
+    if user_id < 0:
+        return {"message": "Login failed"}
+    else:
+        body["account_id"] = user_id
+
+    if "event_code" not in body:
+        return {"message": "Missing field: event_code"}
+    if not check_code_event(body["event_code"]):
+        return {"message": "Invalid event code"}
+
+    return get_results(body["event_code"])

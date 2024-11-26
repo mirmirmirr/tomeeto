@@ -1,3 +1,5 @@
+from typing import List
+
 from threading import Thread, Event as ThreadEvent
 import signal
 
@@ -256,3 +258,80 @@ def get_event(code: str) -> Event:
 
 def dashboard_data(user: User) -> dict:
     return user.get_events(DB_CURSOR)
+
+
+def get_results(code: str) -> List[Availability]:
+    avail_query = """
+        SELECT
+            user_account_id,
+            nickname,
+            date_column,
+            time_row,
+            is_available
+        FROM
+            user_event_availability
+            INNER JOIN user_event_participant USING (user_event_id, user_account_id)
+            INNER JOIN url_code USING (user_event_id)
+        WHERE
+            url_code = %s
+        ORDER BY
+            nickname,
+            date_column,
+            time_row
+    """
+    DB_CURSOR.execute(avail_query, (code,))
+
+    availabilities: List[Availability] = []
+    # Keep track of the current state
+    current_id = None
+    current_name = None
+    current_date = None
+    # Temp variables for the current day and name
+    current_availability = []
+    current_day = []
+    for i, row in enumerate(DB_CURSOR.fetchall()):
+        # If the name changed, add the user to the list
+        if row["nickname"] != current_name:
+            current_availability.append(current_day)
+            current_day = []
+            # But don't add if its the first user because there's nothing to add
+            if i != 0:
+                availabilities.append(
+                    Availability(
+                        User(current_id),
+                        current_name,
+                        [[bool(time) for time in day] for day in current_availability],
+                    )
+                )
+            current_availability = []
+            # Set the state
+            current_id = row["user_account_id"]
+            current_name = row["nickname"]
+            current_date = row["date_column"]
+        # If the date changed, add the day to the list
+        elif row["date_column"] != current_date:
+            current_availability.append(current_day)
+            # Make sure to reset the current day after adding to the list
+            current_day = []
+            current_date = row["date_column"]
+        # After each iteration, add the availability to the current day
+        current_day.append(row["is_available"])
+
+    # Add the last day since there's no more users to check
+    current_availability.append(current_day)
+    # Then add the last user
+    availabilities.append(
+        Availability(
+            User(current_id),
+            current_name,
+            [[bool(time) for time in day] for day in current_availability],
+        )
+    )
+
+    # Finally convert the availabilities to the desired JSON format
+    avail_json = {}
+    for avail in availabilities:
+        if avail.nickname not in avail_json:
+            avail_json[avail.nickname] = avail.to_json()["availability"]
+
+    return avail_json
