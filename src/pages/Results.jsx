@@ -93,28 +93,28 @@ export default function Result() {
           updateEventData(eventDetailsData);
 
           // Next, fetch results using the same credentials
-          return fetch('http://tomeeto.cs.rpi.edu:8000/get_results', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(credentials),
-          });
-        })
-        .then((response) => response.json())
-        .then((resultsData) => {
-          console.log('Results data:', resultsData);
+          //   return fetch('http://tomeeto.cs.rpi.edu:8000/get_results', {
+          //     method: 'POST',
+          //     headers: {
+          //       'Content-Type': 'application/json',
+          //     },
+          //     body: JSON.stringify(credentials),
+          //   });
+          // })
+          // .then((response) => response.json())
+          // .then((resultsData) => {
+          //   console.log('Results data:', resultsData);
 
-          // Handle results data (e.g., update state with availabilities and nicknames)
-          if (resultsData.availabilities) {
-            scheduleData = Object.entries(resultsData.availabilities).map(
-              ([name, availability]) => ({
-                name,
-                availability,
-              })
-            );
-            setResults(scheduleData); // Update state for results
-          }
+          //   // Handle results data (e.g., update state with availabilities and nicknames)
+          //   if (resultsData.availabilities) {
+          //     scheduleData = Object.entries(resultsData.availabilities).map(
+          //       ([name, availability]) => ({
+          //         name,
+          //         availability,
+          //       })
+          //     );
+          //     setResults(scheduleData); // Update state for results
+          //   }
         })
         .catch((error) => {
           console.error('Error fetching data:', error);
