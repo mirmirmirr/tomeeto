@@ -157,8 +157,10 @@ export default function CreateEvent() {
       data.end_day = selectedEndDay.toLowerCase();
     } else {
       data.event_type = 'date_range';
-      data.start_date = startCalendarDay;
-      data.end_date = endCalendarDay;
+      const startDate = startCalendarDay.split('-');
+      const endDate = endCalendarDay.split('-');
+      data.start_date = startDate[1] + '/' + startDate[2] + '/' + startDate[0];
+      data.end_date = endDate[1] + '/' + endDate[2] + '/' + endDate[0];
     }
 
 
