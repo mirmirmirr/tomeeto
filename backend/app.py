@@ -122,7 +122,7 @@ async def add_availability(request: Request):
             return {"message": "Invalid data"}
     if not check_code_event(body["event_code"]):
         return {"message": "Invalid event code"}
-    
+
     availability = Availability.from_json(body)
     if availability is None:
         return {"message": "Invalid availability data"}
