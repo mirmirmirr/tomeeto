@@ -66,7 +66,7 @@ export default function Calendar({ onDateSelect }) {
   }
 
   return (
-    <div className={`${bgColor} ${textColor} p-2 shadow-md border-0`}>
+    <div className={`${bgColor} ${textColor} p-2 rounded-md shadow-md border-0`}>
       {/* Calendar Header */}
       <div className="flex justify-between items-center mb-2">
         {/* Previous Month Button */}

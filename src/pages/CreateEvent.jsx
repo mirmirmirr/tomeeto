@@ -162,8 +162,8 @@ export default function CreateEvent() {
                     style={{ fontSize: `max(1vw, 20px)` }}
                   >
                     <div
-                      className={`lg:w-[70%] mr-auto h-full lg:rounded-lg lg:bg-[#FF5C5C] ${textColor}
-                  focus:outline-none`}
+                      className="lg:w-[70%] mr-auto h-full lg:rounded-lg lg:bg-[#FF5C5C] text-[#F5F5F5]
+                  focus:outline-none"
                     >
                       <button
                         onClick={toggleStartDayDropdown}
@@ -180,7 +180,7 @@ export default function CreateEvent() {
                   </div>
                   {startDayDropdownVisible && (
                     <div
-                      className="lg:absolute lg:w-[25%] self-bottom lg:mt-[62px] lg:z-10 rounded-md lg:shadow-md lg:bg-[#FF5C5C] max-h-[120px] overflow-y-auto"
+                      className={`lg:absolute lg:w-[25%] self-bottom lg:mt-[62px] lg:z-10 rounded-md lg:shadow-md ${bgColor} max-h-[120px] overflow-y-auto`}
                       style={{
                         scrollbarWidth: 'none', // Hides scrollbar for Firefox
                         msOverflowStyle: 'none', // Hides scrollbar for Internet Explorer
@@ -194,8 +194,7 @@ export default function CreateEvent() {
                               setSelectedStartDay(day);
                               setStartDayDropdownVisible(false);
                             }}
-                            className={`p-2 cursor-pointer hover:bg-red-600
-                              rounded-md text-center ${textColor}`}
+                            className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                           >
                             {day}
                           </li>
@@ -220,8 +219,8 @@ export default function CreateEvent() {
                     style={{ fontSize: `max(1vw, 20px)` }}
                   >
                     <div
-                      className={`lg:w-[70%] mr-auto h-full lg:rounded-lg lg:bg-[#FF5C5C] ${textColor}
-                  focus:outline-none`}
+                      className="lg:w-[70%] mr-auto h-full lg:rounded-lg lg:bg-[#FF5C5C] text-[#F5F5F5]
+                  focus:outline-none"
                     >
                       <button
                         onClick={toggleEndDayDropdown}
@@ -238,7 +237,7 @@ export default function CreateEvent() {
                   </div>
                   {endDayDropdownVisible && (
                     <div
-                      className="lg:absolute lg:w-[25%] self-bottom lg:mt-[62px] lg:z-10 rounded-md lg:shadow-md lg:bg-[#FF5C5C] max-h-[120px] overflow-y-auto"
+                      className={`lg:absolute lg:w-[25%] self-bottom lg:mt-[62px] lg:z-10 rounded-md lg:shadow-md ${bgColor} max-h-[120px] overflow-y-auto`}
                       style={{
                         scrollbarWidth: 'none', // Hides scrollbar for Firefox
                         msOverflowStyle: 'none', // Hides scrollbar for Internet Explorer
@@ -252,8 +251,7 @@ export default function CreateEvent() {
                               setSelectedEndDay(day);
                               setEndDayDropdownVisible(false);
                             }}
-                            className={`p-2 cursor-pointer hover:bg-red-600\
-                              rounded-md text-center ${textColor}`}
+                            className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                           >
                             {day}
                           </li>
@@ -272,8 +270,8 @@ export default function CreateEvent() {
                     style={{ fontSize: `max(1vw, 20px)` }}
                   >
                     <div
-                      className={`lg:w-[70%] mr-auto h-full lg:rounded-lg lg:bg-[#FF5C5C] ${textColor}
-                  focus:outline-none`}
+                      className="lg:w-[70%] mr-auto h-full lg:rounded-lg lg:bg-[#FF5C5C] text-[#F5F5F5]
+                  focus:outline-none"
                     >
                       <button
                         onClick={toggleStartCalendar}
@@ -309,8 +307,8 @@ export default function CreateEvent() {
                     style={{ fontSize: `max(1vw, 20px)` }}
                   >
                     <div
-                      className={`lg:w-[70%] mr-auto h-full lg:rounded-lg lg:bg-[#FF5C5C] ${textColor}
-                 focus:outline-none"`}
+                      className="lg:w-[70%] mr-auto h-full lg:rounded-lg lg:bg-[#FF5C5C] text-[#F5F5F5]
+                  focus:outline-none"
                     >
                       <button
                         onClick={toggleEndCalendar}
@@ -340,7 +338,7 @@ export default function CreateEvent() {
             <button
               onClick={toggleIntervalDropdown}
               className={`hidden lg:block w-[25%] p-3 lg:bg-[#FF5C5C]
-                rounded-lg ${textColor} focus:outline-none`}
+                rounded-lg text-[#F5F5F5] focus:outline-none`}
               style={{ fontSize: `min(3vw, 20px)` }}
             >
               {selectedInterval || 'Time Interval'}
@@ -353,7 +351,7 @@ export default function CreateEvent() {
               <button
                 onClick={toggleIntervalDropdown}
                 className={`text-left lg:hidden mr-auto
-                  rounded-lg ${textColor} focus:outline-none`}
+                  rounded-lg text-[#F5F5F5] focus:outline-none`}
               >
                 Time Interval{' '}
               </button>
@@ -364,28 +362,25 @@ export default function CreateEvent() {
 
             {intervalDropdownVisible && (
               <div
-                className="lg:absolute lg:z-10 mt-1 lg:w-[25%] lg:bg-[#FF5C5C]
-                rounded-md lg:shadow-lg"
+                className={`lg:absolute lg:z-10 mt-2 lg:w-[25%] ${bgColor}
+                rounded-md lg:shadow-lg`}
               >
                 <ul className="flex flex-col">
                   <li
                     onClick={() => handleSelectInterval('15 minutes')}
-                    className={`p-2 cursor-pointer hover:lg:bg-red-600 rounded-md
-                    text-center`}
+                    className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                   >
                     15 minutes
                   </li>
                   <li
                     onClick={() => handleSelectInterval('30 minutes')}
-                    className={`p-2 cursor-pointer hover:lg:bg-red-600 rounded-md
-                    text-center`}
+                    className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                   >
                     30 minutes
                   </li>
                   <li
                     onClick={() => handleSelectInterval('60 minutes')}
-                    className={`p-2 cursor-pointer hover:lg:bg-red-600 rounded-md
-                    text-center`}
+                    className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
                   >
                     60 minutes
                   </li>
@@ -422,7 +417,7 @@ export default function CreateEvent() {
               className={`block font-semibold ${textColor}`}
               style={{ fontSize: `max(1vw, 20px)` }}
             >
-              Invite URL
+              Invite Code:
             </label>
             <input
               type="text"
@@ -449,7 +444,7 @@ export default function CreateEvent() {
           {/* Invite URL input */}
           <div className="flex flex-row w-full m-4 gap-4">
             <label className={`font-semibold ${textColor} text-[20px]`}>
-              INVITE CODE:
+              Invite Code:
             </label>
             <input
               type="text"
