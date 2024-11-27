@@ -8,6 +8,7 @@ import darkEye from '../assets/eye_dark.png';
 import lightEye from '../assets/eye_light.png';
 import darkHidden from '../assets/hidden_dark.png';
 import lightHidden from '../assets/hidden_light.png';
+import { parse } from 'postcss';
 
 function deleteAllCookies() {
   document.cookie.split(';').forEach((cookie) => {
@@ -72,9 +73,10 @@ export default function Login() {
     if (key && value) {
       try {
         // Parse JSON if it's valid JSON, otherwise use as-is
-        cookieObj[key] = JSON.parse(decodeURIComponent(value));
+        const parsedValue = JSON.parse(decodeURIComponent(value));
+        cookieObj[key] = String(parsedValue);
       } catch {
-        cookieObj[key] = decodeURIComponent(value); // Handle plain strings
+        cookieObj[key] = String(decodeURIComponent(value)); // Handle plain strings
       }
     }
   });
