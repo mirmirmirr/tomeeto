@@ -4,6 +4,16 @@ import lightLogo from '../assets/tomeeto-light.png';
 import Toggle from './Toggle';
 import { useState, useEffect, useRef } from 'react';
 
+function deleteAllCookies() {
+  document.cookie.split(';').forEach((cookie) => {
+    const eqPos = cookie.indexOf('=');
+    const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+    // Decode cookie name to handle encoded cookies
+    const decodedName = decodeURIComponent(name);
+    document.cookie = `${decodedName}=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+  });
+}
+
 export default function Header({ isDarkMode, toggleTheme }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,19 +21,6 @@ export default function Header({ isDarkMode, toggleTheme }) {
   const [isLargeScreen, setIsLargeScreen] = useState(false);
   const menuRef = useRef(null);
   const hamburgerRef = useRef(null);
-
-  function deleteAllCookies() {
-    document.cookie.split(';').forEach((cookie) => {
-      const eqPos = cookie.indexOf('=');
-      const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
-      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    });
-  }
-
-  const handleLogout = () => {
-    deleteAllCookies();
-    navigate('');
-  };
 
   // Update screen size state on window resize
   useEffect(() => {
@@ -37,6 +34,12 @@ export default function Header({ isDarkMode, toggleTheme }) {
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const handleLogout = () => {
+    // Clear cookies
+    deleteAllCookies();
+    navigate('/');
+  };
 
   // Hide menu when clicking outside
   useEffect(() => {
@@ -119,7 +122,7 @@ export default function Header({ isDarkMode, toggleTheme }) {
             </li>
             <li
               className="px-4 py-2 cursor-pointer hover:underline"
-              onClick={(deleteAllCookies, () => navigate('/'))}
+              onClick={handleLogout}
             >
               Log Out
             </li>

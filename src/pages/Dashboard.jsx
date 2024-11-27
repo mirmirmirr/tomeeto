@@ -8,8 +8,10 @@ var id = 1;
 function deleteAllCookies() {
   document.cookie.split(';').forEach((cookie) => {
     const eqPos = cookie.indexOf('=');
-    const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
-    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+    // Decode cookie name to handle encoded cookies
+    const decodedName = decodeURIComponent(name);
+    document.cookie = `${decodedName}=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
   });
 }
 
@@ -112,16 +114,11 @@ export default function Dashboard() {
     get_all_events();
   }, []);
 
-  // const handleLogout = () => {
-  //   // Clear cookies
-  //   const cookies = document.cookie.split(';');
-  //   for (const cookie of cookies) {
-  //     const eqPos = cookie.indexOf('=');
-  //     const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-  //     document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
-  //   }
-  //   navigate('/');
-  // };
+  const handleLogout = () => {
+    // Clear cookies
+    deleteAllCookies();
+    navigate('/');
+  };
 
   return (
     <div
@@ -134,7 +131,7 @@ export default function Dashboard() {
             Your Events
           </div>
           <button
-            onClick={(deleteAllCookies, () => navigate('/'))}
+            onClick={handleLogout}
             className="px-4 py-2 bg-red-500 text-white rounded-md shadow-md transition duration-300 hover:bg-red-600"
           >
             Sign Out

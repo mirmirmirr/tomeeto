@@ -10,7 +10,8 @@ export default function Landing() {
   const { isDarkMode, toggleTheme } = useTheme();
   const { isSmallScreen, isLargeScreen } = useScreenSize();
 
-  document.cookie = 'code=' + code;
+  // document.cookie = 'code=' + code;
+  console.log(document.cookie);
 
   const handelFocus = () => {
     setIsFocused;
