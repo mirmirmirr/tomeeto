@@ -17,7 +17,6 @@ function deleteAllCookies() {
   });
 }
 
-
 // Once we have signout button, clear all the cookies.
 
 export default function Login() {
@@ -36,8 +35,8 @@ export default function Login() {
     showEmail: false,
   });
 
-  document.cookie = 'email=' + email;
-  document.cookie = 'password=' + passwordValues;
+  // document.cookie = 'email=' + email;
+  // document.cookie = 'password=' + passwordValues;
 
   const handleEmailChange = (prop) => (event) => {
     setEmailValue({
