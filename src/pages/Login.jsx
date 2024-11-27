@@ -110,7 +110,7 @@ export default function Login() {
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Login successful:', result);
+        // console.log('Login successful:', result);
         if (result.message.localeCompare('Login successful') === 0) {
           navigate('/dashboard');
         }
@@ -123,7 +123,7 @@ export default function Login() {
   };
 
 
-  if (cookieObj["login_email"] !== null && cookieObj["login_password"] !== null) {
+  if (cookieObj["login_email"] && cookieObj["login_password"]) {
     console.log("We have login");
     login_user();
   }

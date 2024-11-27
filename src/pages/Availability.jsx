@@ -13,7 +13,11 @@ export default function Availability() {
     for (const cookie of cookies) {
       const [name, value] = cookie.split('=');
       if (name === cookieName) {
-        return value;
+        try {
+          return JSON.parse(decodeURIComponent(value));
+        } catch {
+          return decodeURIComponent(value);
+        }
       }
     }
     return null;
@@ -23,8 +27,8 @@ export default function Availability() {
   console.log(x);
 
   const eventCode = getCookieValue('code');
-  var userEmail = getCookieValue('email');
-  var userPW = getCookieValue('password');
+  var userEmail = getCookieValue('login_email');
+  var userPW = getCookieValue('login_password');
   console.log('Code cookie:', eventCode);
   console.log('email', userEmail);
 
@@ -46,14 +50,38 @@ export default function Availability() {
   const [availability, setAvailability] = useState([]);
   const [eventName, setEventName] = useState([]);
 
+
+  const check_user = async (dataToUse) => {
+    if (userEmail !== null && userPW !== null) {
+      dataToUse["email"] = userEmail;
+      dataToUse["password"] = userPW;
+    } else {
+      try {
+        const response = await fetch('http://tomeeto.cs.rpi.edu:8000/create_guest');
+        if (response.ok) {
+          const responseData = await response.json();
+          dataToUse["email"] = responseData.guest_id;
+          dataToUse["password"] = responseData.guest_password;
+        } else {
+          console.error('Failed to make guest:', response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+  }
+
   useEffect(() => {
     if (eventCode) {
       const data = {
-        email: 'testing@gmail.com',
-        password: '123',
+        // email: 'testing@gmail.com',
+        // password: '123',
         event_code: eventCode,
       };
 
+      check_user(data);
+      // console.log(data);
+      // return;
       fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
         method: 'POST',
         headers: {
@@ -230,8 +258,8 @@ export default function Availability() {
           console.log(credentials.guest_id);
         });
     } else {
-      credentials.email = 'testing@gmail.com';
-      credentials.password = '123';
+      credentials.email = userEmail;
+      credentials.password = userPW;
     }
     console.log(credentials);
     try {

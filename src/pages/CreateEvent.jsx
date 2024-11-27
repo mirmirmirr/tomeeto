@@ -151,16 +151,54 @@ export default function CreateEvent() {
     }
   }, [selectDaysOfWeek]);
 
+
   const get_event_data = async () => {
     const data = {
-      email: 'testing@gmail.com',
-      password: '123',
+      // email: 'testing@gmail.com',
+      // password: '123',
       title: eventName,
       description: eventDescription,
       duration: parseInt(selectedInterval),
       start_time: startTime,
       end_time: endTime,
     };
+
+    const cookies = document.cookie; // Get all cookies as a single string
+    const cookieObj = {};
+
+    cookies.split(';').forEach(cookie => {
+      const [key, value] = cookie.split('=').map(part => part.trim());
+      if (key && value) {
+        try {
+          // Parse JSON if it's valid JSON, otherwise use as-is
+          const parsedValue = JSON.parse(decodeURIComponent(value));
+          cookieObj[key] = String(parsedValue);
+        } catch {
+          cookieObj[key] = String(decodeURIComponent(value)); // Handle plain strings
+        }
+      }
+    });
+
+    if (cookieObj["login_email"] && cookieObj["login_password"]) {
+      data["email"] = cookieObj["login_email"];
+      data["password"] = cookieObj["login_password"];
+    } else {
+      try {
+        const response = await fetch('http://tomeeto.cs.rpi.edu:8000/create_guest');
+        if (response.ok) {
+          const responseData = await response.json();
+          data["email"] = responseData.guest_id;
+          data["password"] = responseData.guest_password;
+        } else {
+          console.error('Failed to make guest:', response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+
+    console.log('data sent:', data);
 
     if (selectDaysOfWeek) {
       data.event_type = 'generic_week';
