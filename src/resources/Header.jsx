@@ -22,7 +22,7 @@ export default function Header({ isDarkMode, toggleTheme }) {
 
   const handleLogout = () => {
     deleteAllCookies();
-    navigate('/landing');
+    navigate('');
   };
 
   // Update screen size state on window resize
@@ -119,7 +119,7 @@ export default function Header({ isDarkMode, toggleTheme }) {
             </li>
             <li
               className="px-4 py-2 cursor-pointer hover:underline"
-              onClick={(handleLogout, () => navigate('/'))}
+              onClick={(deleteAllCookies, () => navigate('/landing'))}
             >
               Log Out
             </li>
