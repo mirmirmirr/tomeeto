@@ -111,9 +111,7 @@ export default function Login() {
       if (response.ok) {
         const result = await response.json();
         console.log('Login successful:', result);
-        if (result.message.localeCompare('Login failed') == 0) {
-          alert('Login Failed');
-        } else {
+        if (result.message.localeCompare('Login successful') == 0) {
           navigate('/dashboard');
         }
       } else {
