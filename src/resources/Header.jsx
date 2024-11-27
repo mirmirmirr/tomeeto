@@ -119,7 +119,7 @@ export default function Header({ isDarkMode, toggleTheme }) {
             </li>
             <li
               className="px-4 py-2 cursor-pointer hover:underline"
-              onClick={(deleteAllCookies, () => navigate('/landing'))}
+              onClick={(deleteAllCookies, () => navigate('/'))}
             >
               Log Out
             </li>

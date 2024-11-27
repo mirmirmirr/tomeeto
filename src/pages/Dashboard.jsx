@@ -134,7 +134,7 @@ export default function Dashboard() {
             Your Events
           </div>
           <button
-            onClick={(deleteAllCookies, () => navigate('/landing'))}
+            onClick={(deleteAllCookies, () => navigate('/'))}
             className="px-4 py-2 bg-red-500 text-white rounded-md shadow-md transition duration-300 hover:bg-red-600"
           >
             Sign Out
