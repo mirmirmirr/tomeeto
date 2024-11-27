@@ -5,6 +5,14 @@ import { useNavigate } from 'react-router-dom';
 
 var id = 1;
 
+function deleteAllCookies() {
+  document.cookie.split(';').forEach((cookie) => {
+    const eqPos = cookie.indexOf('=');
+    const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  });
+}
+
 export default function Dashboard() {
   const [mockIndividualEvents, setArrayOne] = useState([]); // First array of objects
   const [mockUserEvents, setArrayTwo] = useState([]); // Second array of objects
@@ -104,16 +112,16 @@ export default function Dashboard() {
     get_all_events();
   }, []);
 
-  const handleLogout = () => {
-    // Clear cookies
-    const cookies = document.cookie.split(';');
-    for (const cookie of cookies) {
-      const eqPos = cookie.indexOf('=');
-      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
-    }
-    navigate('/');
-  };
+  // const handleLogout = () => {
+  //   // Clear cookies
+  //   const cookies = document.cookie.split(';');
+  //   for (const cookie of cookies) {
+  //     const eqPos = cookie.indexOf('=');
+  //     const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+  //     document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+  //   }
+  //   navigate('/');
+  // };
 
   return (
     <div
@@ -126,7 +134,7 @@ export default function Dashboard() {
             Your Events
           </div>
           <button
-            onClick={handleLogout}
+            onClick={deleteAllCookies}
             className="px-4 py-2 bg-red-500 text-white rounded-md shadow-md transition duration-300 hover:bg-red-600"
           >
             Sign Out
