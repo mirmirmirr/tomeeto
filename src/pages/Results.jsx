@@ -263,6 +263,8 @@ export default function Result() {
 
           scheduleData.push(myDictionary);
         }
+        console.log('HERE IS THE SCHEDuLE DATA:');
+        console.log(scheduleData);
 
         console.log('Processed Schedule Data:', scheduleData);
         setResults(scheduleData);
