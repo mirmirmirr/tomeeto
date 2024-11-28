@@ -151,7 +151,6 @@ export default function CreateEvent() {
     }
   }, [selectDaysOfWeek]);
 
-
   const get_event_data = async () => {
     const data = {
       // email: 'testing@gmail.com',
@@ -166,8 +165,8 @@ export default function CreateEvent() {
     const cookies = document.cookie; // Get all cookies as a single string
     const cookieObj = {};
 
-    cookies.split(';').forEach(cookie => {
-      const [key, value] = cookie.split('=').map(part => part.trim());
+    cookies.split(';').forEach((cookie) => {
+      const [key, value] = cookie.split('=').map((part) => part.trim());
       if (key && value) {
         try {
           // Parse JSON if it's valid JSON, otherwise use as-is
@@ -179,24 +178,38 @@ export default function CreateEvent() {
       }
     });
 
-    if (cookieObj["login_email"] && cookieObj["login_password"]) {
-      data["email"] = cookieObj["login_email"];
-      data["password"] = cookieObj["login_password"];
+    if (cookieObj['login_email'] && cookieObj['login_password']) {
+      data['email'] = cookieObj['login_email'];
+      data['password'] = cookieObj['login_password'];
     } else {
-      try {
-        const response = await fetch('http://tomeeto.cs.rpi.edu:8000/create_guest');
-        if (response.ok) {
-          const responseData = await response.json();
-          data["email"] = responseData.guest_id;
-          data["password"] = responseData.guest_password;
-        } else {
-          console.error('Failed to make guest:', response.status, response.statusText);
+      if (cookieObj['guest_email'] && cookieObj['guest_password']) {
+        data['email'] = cookieObj['guest_email'];
+        data['password'] = cookieObj['guest_password'];
+      } else {
+        try {
+          const response = await fetch(
+            'http://tomeeto.cs.rpi.edu:8000/create_guest'
+          );
+          if (response.ok) {
+            const responseData = await response.json();
+            data['email'] = responseData.guest_id;
+            data['password'] = responseData.guest_password;
+            const guestEmailCookie = `guest_email=${encodeURIComponent(JSON.stringify(responseData.guest_id))}; path=/;`;
+            const guestPasswordCookie = `guest_password=${encodeURIComponent(JSON.stringify(responseData.guest_password))}; path=/;`;
+            document.cookie = guestEmailCookie;
+            document.cookie = guestPasswordCookie;
+          } else {
+            console.error(
+              'Failed to make guest:',
+              response.status,
+              response.statusText
+            );
+          }
+        } catch (error) {
+          console.error('Error:', error);
         }
-      } catch (error) {
-        console.error('Error:', error);
       }
-    };
-
+    }
 
     console.log('data sent:', data);
 
@@ -215,13 +228,16 @@ export default function CreateEvent() {
     console.log('works');
 
     try {
-      const response = await fetch('http://tomeeto.cs.rpi.edu:8000/create_event', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        'http://tomeeto.cs.rpi.edu:8000/create_event',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (response.ok) {
         const responseData = await response.json();

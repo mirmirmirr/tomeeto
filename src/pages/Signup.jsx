@@ -87,10 +87,9 @@ export default function Signup() {
       if (response.ok) {
         deleteAllCookies();
         const result = await response.json();
-        if (result.message.localeCompare("User created" === 0)) {
+        if (result.message.localeCompare('User created' === 0)) {
           console.log('Login successful:', result);
           setCookie(email.email, passwordValues.password);
-          // this shpould be dashboard whenever gavin finishes
           navigate('/dashboard');
         } else {
           console.error('Failed to signup:', response.statusText);

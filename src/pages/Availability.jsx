@@ -29,6 +29,8 @@ export default function Availability() {
   const eventCode = getCookieValue('code');
   var userEmail = getCookieValue('login_email');
   var userPW = getCookieValue('login_password');
+  var guestEmail = getCookieValue('guest_email');
+  var guestPW = getCookieValue('guest_password');
   console.log('Code cookie:', eventCode);
   console.log('email', userEmail);
 
@@ -50,26 +52,36 @@ export default function Availability() {
   const [availability, setAvailability] = useState([]);
   const [eventName, setEventName] = useState([]);
 
-
   const check_user = async (dataToUse) => {
     if (userEmail !== null && userPW !== null) {
-      dataToUse["email"] = userEmail;
-      dataToUse["password"] = userPW;
+      dataToUse['email'] = userEmail;
+      dataToUse['password'] = userPW;
     } else {
-      try {
-        const response = await fetch('http://tomeeto.cs.rpi.edu:8000/create_guest');
-        if (response.ok) {
-          const responseData = await response.json();
-          dataToUse["email"] = responseData.guest_id;
-          dataToUse["password"] = responseData.guest_password;
-        } else {
-          console.error('Failed to make guest:', response.status, response.statusText);
+      if (guestEmail !== null && guestPW !== null) {
+        dataToUse['email'] = guestEmail;
+        dataToUse['password'] = guestPW;
+      } else {
+        try {
+          const response = await fetch(
+            'http://tomeeto.cs.rpi.edu:8000/create_guest'
+          );
+          if (response.ok) {
+            const responseData = await response.json();
+            dataToUse['email'] = responseData.guest_id;
+            dataToUse['password'] = responseData.guest_password;
+          } else {
+            console.error(
+              'Failed to make guest:',
+              response.status,
+              response.statusText
+            );
+          }
+        } catch (error) {
+          console.error('Error:', error);
         }
-      } catch (error) {
-        console.error('Error:', error);
       }
-    };
-  }
+    }
+  };
 
   useEffect(() => {
     if (eventCode) {

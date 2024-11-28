@@ -15,6 +15,57 @@ function deleteAllCookies() {
   });
 }
 
+const check_user = async (dataToUse) => {
+  const cookies = document.cookie; // Get all cookies as a single string
+  const cookieObj = {};
+
+  cookies.split(';').forEach((cookie) => {
+    const [key, value] = cookie.split('=').map((part) => part.trim());
+    if (key && value) {
+      try {
+        // Parse JSON if it's valid JSON, otherwise use as-is
+        const parsedValue = JSON.parse(decodeURIComponent(value));
+        cookieObj[key] = String(parsedValue);
+      } catch {
+        cookieObj[key] = String(decodeURIComponent(value)); // Handle plain strings
+      }
+    }
+  });
+
+  if (cookieObj['login_email'] && cookieObj['login_password']) {
+    dataToUse['email'] = cookieObj['login_email'];
+    dataToUse['password'] = cookieObj['login_password'];
+  } else {
+    if (cookieObj['guest_email'] && cookieObj['guest_password']) {
+      dataToUse['email'] = cookieObj['guest_email'];
+      dataToUse['password'] = cookieObj['guest_password'];
+    } else {
+      try {
+        const response = await fetch(
+          'http://tomeeto.cs.rpi.edu:8000/create_guest'
+        );
+        if (response.ok) {
+          const responseData = await response.json();
+          dataToUse['email'] = responseData.guest_id;
+          dataToUse['password'] = responseData.guest_password;
+          const guestEmailCookie = `guest_email=${encodeURIComponent(JSON.stringify(responseData.guest_id))}; path=/;`;
+          const guestPasswordCookie = `guest_password=${encodeURIComponent(JSON.stringify(responseData.guest_password))}; path=/;`;
+          document.cookie = guestEmailCookie;
+          document.cookie = guestPasswordCookie;
+        } else {
+          console.error(
+            'Failed to make guest:',
+            response.status,
+            response.statusText
+          );
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  }
+};
+
 export default function Dashboard() {
   const [mockIndividualEvents, setArrayOne] = useState([]); // First array of objects
   const [mockUserEvents, setArrayTwo] = useState([]); // Second array of objects
@@ -54,9 +105,12 @@ export default function Dashboard() {
 
   const get_all_events = async () => {
     const data = {
-      email: 'testing@gmail.com',
-      password: '123',
+      // email: 'testing@gmail.com',
+      // password: '123',
     };
+
+    check_user(data);
+    console.log(data);
 
     try {
       const response = await fetch(

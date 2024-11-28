@@ -4,6 +4,53 @@ import { useTheme } from '../resources/ThemeContext';
 
 import Header from '../resources/Header';
 
+const check_user = async (dataToUse) => {
+  const cookies = document.cookie; // Get all cookies as a single string
+  const cookieObj = {};
+
+  cookies.split(';').forEach((cookie) => {
+    const [key, value] = cookie.split('=').map((part) => part.trim());
+    if (key && value) {
+      try {
+        // Parse JSON if it's valid JSON, otherwise use as-is
+        const parsedValue = JSON.parse(decodeURIComponent(value));
+        cookieObj[key] = String(parsedValue);
+      } catch {
+        cookieObj[key] = String(decodeURIComponent(value)); // Handle plain strings
+      }
+    }
+  });
+
+  if (cookieObj['login_email'] && cookieObj['login_password']) {
+    dataToUse['email'] = cookieObj['login_email'];
+    dataToUse['password'] = cookieObj['login_password'];
+  } else {
+    if (cookieObj['guest_email'] && cookieObj['guest_password']) {
+      dataToUse['email'] = cookieObj['guest_email'];
+      dataToUse['password'] = cookieObj['guest_password'];
+    } else {
+      try {
+        const response = await fetch(
+          'http://tomeeto.cs.rpi.edu:8000/create_guest'
+        );
+        if (response.ok) {
+          const responseData = await response.json();
+          dataToUse['email'] = responseData.guest_id;
+          dataToUse['password'] = responseData.guest_password;
+        } else {
+          console.error(
+            'Failed to make guest:',
+            response.status,
+            response.statusText
+          );
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  }
+};
+
 export default function Result() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -11,6 +58,7 @@ export default function Result() {
 
   console.log('Event Code:', eventCode);
   console.log('Event Name:', eventName);
+  console.log(document.cookie);
 
   const { isDarkMode, toggleTheme } = useTheme();
   const [hoveredCell, setHoveredCell] = useState({ row: null, column: null });
@@ -71,10 +119,13 @@ export default function Result() {
   useEffect(() => {
     if (eventCode) {
       const credentials = {
-        email: 'testing@gmail.com',
-        password: '123',
+        // email: 'testing@gmail.com',
+        // password: '123',
         event_code: eventCode,
       };
+
+      check_user(credentials);
+      console.log(credentials);
 
       // First, fetch event details
       fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
@@ -174,10 +225,13 @@ export default function Result() {
 
     // Fetch results data
     const credentials = {
-      email: 'testing@gmail.com',
-      password: '123',
+      // email: 'testing@gmail.com',
+      // password: '123',
       event_code: eventCode,
     };
+
+    check_user(credentials);
+    console.log(credentials);
 
     try {
       const response = await fetch(

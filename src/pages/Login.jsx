@@ -64,12 +64,12 @@ export default function Login() {
   // console.log(myCookie); // Outputs: 123
 
   // if cookies exist, login the user already
-  console.log("getting cookies");
+  console.log('getting cookies');
   const cookies = document.cookie; // Get all cookies as a single string
   const cookieObj = {};
 
-  cookies.split(';').forEach(cookie => {
-    const [key, value] = cookie.split('=').map(part => part.trim());
+  cookies.split(';').forEach((cookie) => {
+    const [key, value] = cookie.split('=').map((part) => part.trim());
     if (key && value) {
       try {
         // Parse JSON if it's valid JSON, otherwise use as-is
@@ -85,19 +85,36 @@ export default function Login() {
 
   // const all_existing_cookies = getCookiesAsObject();
   // console.log(all_existing_cookies);
-  
 
   const login_user = async () => {
     var data = {};
-    if (cookieObj["login_email"] !== null && cookieObj["login_password"] !== null) {
-      data["email"] = cookieObj["login_email"];
-      data["password"] = cookieObj["login_password"];
+    console.log(document.cookie);
+    if (cookieObj['login_email'] && cookieObj['login_password']) {
+      data['email'] = cookieObj['login_email'];
+      data['password'] = cookieObj['login_password'];
+      const emailCookie = `guest_email=${encodeURIComponent(JSON.stringify(cookieObj['login_email']))}; path=/;`;
+      const passwordCookie = `guest_password=${encodeURIComponent(JSON.stringify(cookieObj['login_password']))}; path=/;`;
+      document.cookie = emailCookie;
+      document.cookie = passwordCookie;
+    } else if (cookieObj['guest_email'] && cookieObj['guest_password']) {
+      data['email'] = cookieObj['guest_email'];
+      data['password'] = cookieObj['guest_password'];
+      const guestEmailCookie = `guest_email=${encodeURIComponent(JSON.stringify(cookieObj['guest_email']))}; path=/;`;
+      const guestPasswordCookie = `guest_password=${encodeURIComponent(JSON.stringify(cookieObj['guest_password']))}; path=/;`;
+      document.cookie = guestEmailCookie;
+      document.cookie = guestPasswordCookie;
     } else {
-      data["email"] = email.email;
-      data["password"] = passwordValues.password;
+      console.log('Ran');
+      data['email'] = email.email;
+      data['password'] = passwordValues.password;
+      const emailCookie = `login_email=${encodeURIComponent(JSON.stringify(email.email))}; path=/;`;
+      const passwordCookie = `login_password=${encodeURIComponent(JSON.stringify(passwordValues.password))}; path=/;`;
+      document.cookie = emailCookie;
+      document.cookie = passwordCookie;
     }
-    
+
     // console.log(data);
+    console.log(data);
 
     try {
       const response = await fetch('http://tomeeto.cs.rpi.edu:8000/login', {
@@ -111,6 +128,7 @@ export default function Login() {
       if (response.ok) {
         const result = await response.json();
         // console.log('Login successful:', result);
+        console.log(result.message);
         if (result.message.localeCompare('Login successful') === 0) {
           navigate('/dashboard');
         }
@@ -122,9 +140,11 @@ export default function Login() {
     }
   };
 
-
-  if (cookieObj["login_email"] && cookieObj["login_password"]) {
-    console.log("We have login");
+  if (
+    (cookieObj['login_email'] && cookieObj['login_password']) ||
+    (cookieObj['guest_login'] && cookieObj['guest_password'])
+  ) {
+    console.log('We have login');
     login_user();
   }
 
