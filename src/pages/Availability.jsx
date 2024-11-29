@@ -150,7 +150,7 @@ export default function Availability() {
           day: 'numeric',
         })
       );
-      console.log(daysArray);
+      console.log("ALLDAYS: ", daysArray);
       currentDate.setDate(currentDate.getDate() + 1);
       console.log(currentDate);
     }
@@ -164,18 +164,25 @@ export default function Availability() {
       (_, i) => startHour + i
     );
     setHours(generatedHours);
-    console.log(generatedHours);
+    console.log("HOURS", generatedHours);
 
     const availabilityArray = Array(daysArray.length).fill(
       Array(generatedHours.length).fill(0)
     );
+    // const availabilityArray = Array(generatedHours.length).fill(
+    //   Array(daysArray.length).fill(0)
+    // );
     setAvailability(availabilityArray);
+    setTotalDays(daysArray.length);
   };
 
   const displayedDays = allDays.slice(
     currentPage * daysPerPage,
     (currentPage + 1) * daysPerPage
   );
+
+  console.log("CurrentPage: ", currentPage);
+  console.log("TOTAL DAYS: ", totalDays);
 
   useEffect(() => {
     console.log('Availability updated:', availability);
@@ -393,7 +400,7 @@ export default function Availability() {
           className="w-[90vw] h-[64vh] mt-[1vh] flex flex-row overflow-hidden"
         >
           <div className="flex mt-4">
-            {currentPage > 0 && (
+            {currentPage >= 0 && (
               <button
                 onClick={goToPrevPage}
                 className="px-4 py-2 font-bold opacity-25 hover:opacity-100"
