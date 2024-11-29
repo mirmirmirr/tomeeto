@@ -119,13 +119,14 @@ export default function Result() {
   useEffect(() => {
     if (eventCode) {
       const credentials = {
-        email: 'testing@gmail.com',
-        password: '123',
+        // email: 'testing@gmail.com',
+        // password: '123',
         event_code: eventCode,
       };
 
-      // check_user(credentials);
+      check_user(credentials);
       console.log(credentials);
+      console.log("RANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN")
 
       // First, fetch event details
       fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
@@ -225,12 +226,12 @@ export default function Result() {
 
     // Fetch results data
     const credentials = {
-      email: 'testing@gmail.com',
-      password: '123',
+      // email: 'testing@gmail.com',
+      // password: '123',
       event_code: eventCode,
     };
 
-    // check_user(credentials);
+    check_user(credentials);
     console.log(credentials);
 
     try {
