@@ -6,7 +6,12 @@ import Header from '../resources/Header';
 export default function Availability() {
   const navigate = useNavigate();
   const location = useLocation();
-  // const { eventCode } = location.state || {};
+  const { eventName2, isUpdating } = location.state || {};
+
+  console.log(eventName2);
+  console.log(isUpdating);
+
+  console.log('RAN');
 
   function getCookieValue(cookieName) {
     const cookies = document.cookie.split('; ');
@@ -91,6 +96,7 @@ export default function Availability() {
         event_code: eventCode,
       };
 
+      // console.log(data);
       check_user(data);
       // console.log(data);
       // return;
@@ -244,59 +250,95 @@ export default function Availability() {
   };
 
   const submit_button = async () => {
-    console.log('Ran');
-    console.log(name);
-    console.log(availability);
-
     var credentials = {
       event_code: eventCode,
       nickname: name,
       availability: availability,
     };
 
-    if (userEmail == null && userPW == null) {
-      console.log('HEREEEE');
+    if (isUpdating === true) {
+      console.log(availability);
 
-      await fetch('http://tomeeto.cs.rpi.edu:8000/create_guest', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          credentials.guest_id = data.guest_id;
-          credentials.guest_password = data.guest_password;
-          console.log(credentials.guest_id);
-        });
+      check_user(credentials);
+
+      console.log(credentials);
+
+      try {
+        const response = await fetch(
+          'http://tomeeto.cs.rpi.edu:8000/update_availability',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
+          }
+        );
+        console.log(credentials);
+        if (response.ok) {
+          const result = await response.json();
+          console.log(result.message);
+          if (result.message.localeCompare('Availability updated') === 0) {
+            navigate('/dashboard');
+          } else {
+            console.log(result);
+          }
+          // session management with dashboard
+        } else {
+          console.error('Failed to record time:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     } else {
-      credentials.email = userEmail;
-      credentials.password = userPW;
-    }
-    console.log(credentials);
-    try {
-      const response = await fetch(
-        'http://tomeeto.cs.rpi.edu:8000/add_availability',
-        {
-          method: 'POST',
+      // console.log('Ran');
+      // console.log(name);
+      // console.log(availability);
+
+      if (userEmail == null && userPW == null) {
+        console.log('HEREEEE');
+
+        await fetch('http://tomeeto.cs.rpi.edu:8000/create_guest', {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(credentials),
-        }
-      );
-      console.log(credentials);
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Time Set Successfully', result);
-
-        // session management with dashboard
-        navigate('/results', { state: { eventCode, eventName } });
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            credentials.guest_id = data.guest_id;
+            credentials.guest_password = data.guest_password;
+            console.log(credentials.guest_id);
+          });
       } else {
-        console.error('Failed to record time:', response.statusText);
+        credentials.email = userEmail;
+        credentials.password = userPW;
       }
-    } catch (error) {
-      console.error('Error:', error);
+      console.log(credentials);
+      try {
+        const response = await fetch(
+          'http://tomeeto.cs.rpi.edu:8000/add_availability',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
+          }
+        );
+        console.log(credentials);
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Time Set Successfully', result);
+
+          // session management with dashboard
+          navigate('/results', { state: { eventCode, eventName } });
+        } else {
+          console.error('Failed to record time:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
   };
 

@@ -95,9 +95,16 @@ export default function Dashboard() {
   };
 
   const handleEditEvent = async (event) => {
+    console.log('ran');
+    console.log(event);
     try {
-      const data = await response.json();
-      navigate(data.editUrl);
+      const codeChange = `code=${encodeURIComponent(JSON.stringify(event.code))}; path=/;`;
+      document.cookie = codeChange;
+      navigate('/availability', {
+        state: { eventName2: event.title, isUpdating: true },
+      });
+      // console.log(event);
+      // navigate(data.editUrl);
     } catch (error) {
       console.error('Error editing event:', error);
     }
