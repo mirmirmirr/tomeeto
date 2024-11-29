@@ -400,7 +400,7 @@ export default function Availability() {
           className="w-[90vw] h-[64vh] mt-[1vh] flex flex-row overflow-hidden"
         >
           <div className="flex mt-4">
-            {currentPage >= 0 && (
+            {currentPage > 0 && (
               <button
                 onClick={goToPrevPage}
                 className="px-4 py-2 font-bold opacity-25 hover:opacity-100"
