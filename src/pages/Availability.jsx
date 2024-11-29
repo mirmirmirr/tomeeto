@@ -58,8 +58,8 @@ export default function Availability() {
       dataToUse['password'] = userPW;
     } else {
       if (guestEmail !== null && guestPW !== null) {
-        dataToUse['email'] = guestEmail;
-        dataToUse['password'] = guestPW;
+        dataToUse['guest_id'] = guestEmail;
+        dataToUse['guest_password'] = guestPW;
       } else {
         try {
           const response = await fetch(
@@ -67,8 +67,8 @@ export default function Availability() {
           );
           if (response.ok) {
             const responseData = await response.json();
-            dataToUse['email'] = responseData.guest_id;
-            dataToUse['password'] = responseData.guest_password;
+            dataToUse['guest_id'] = responseData.guest_id;
+            dataToUse['guest_password'] = responseData.guest_password;
           } else {
             console.error(
               'Failed to make guest:',
