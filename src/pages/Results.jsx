@@ -119,12 +119,12 @@ export default function Result() {
   useEffect(() => {
     if (eventCode) {
       const credentials = {
-        // email: 'testing@gmail.com',
-        // password: '123',
+        email: 'testing@gmail.com',
+        password: '123',
         event_code: eventCode,
       };
 
-      check_user(credentials);
+      // check_user(credentials);
       console.log(credentials);
 
       // First, fetch event details
@@ -225,12 +225,12 @@ export default function Result() {
 
     // Fetch results data
     const credentials = {
-      // email: 'testing@gmail.com',
-      // password: '123',
+      email: 'testing@gmail.com',
+      password: '123',
       event_code: eventCode,
     };
 
-    check_user(credentials);
+    // check_user(credentials);
     console.log(credentials);
 
     try {
