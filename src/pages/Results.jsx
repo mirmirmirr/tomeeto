@@ -252,7 +252,7 @@ export default function Result() {
 
       // Process and update results
       if (resultsData) {
-        var scheduleData = [];
+        var scheduleDataTemp = [];
         for (const [key, value] of Object.entries(resultsData)) {
           console.log(key, value);
           const myDictionary = {};
@@ -261,13 +261,13 @@ export default function Result() {
           // Transform value to an array of single-element arrays
           myDictionary.availability = value.map((v) => [v]);
 
-          scheduleData.push(myDictionary);
+          scheduleDataTemp.push(myDictionary);
         }
         console.log('HERE IS THE SCHEDuLE DATA:');
-        console.log(scheduleData);
+        console.log(scheduleDataTemp);
 
-        console.log('Processed Schedule Data:', scheduleData);
-        setResults(scheduleData);
+        console.log('Processed Schedule Data:', scheduleDataTemp);
+        setResults(scheduleDataTemp);
       } else {
         console.warn('No availabilities found in results data');
       }
