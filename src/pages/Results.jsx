@@ -26,8 +26,8 @@ const check_user = async (dataToUse) => {
     dataToUse['password'] = cookieObj['login_password'];
   } else {
     if (cookieObj['guest_email'] && cookieObj['guest_password']) {
-      dataToUse['email'] = cookieObj['guest_email'];
-      dataToUse['password'] = cookieObj['guest_password'];
+      dataToUse['guest_id'] = parseInt(cookieObj['guest_email']);
+      dataToUse['guest_password'] = cookieObj['guest_password'];
     } else {
       try {
         const response = await fetch(
@@ -35,8 +35,8 @@ const check_user = async (dataToUse) => {
         );
         if (response.ok) {
           const responseData = await response.json();
-          dataToUse['email'] = responseData.guest_id;
-          dataToUse['password'] = responseData.guest_password;
+          dataToUse['guest_id'] = parseInt(responseData.guest_id);
+          dataToUse['guest_password'] = responseData.guest_password;
         } else {
           console.error(
             'Failed to make guest:',

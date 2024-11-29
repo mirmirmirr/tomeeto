@@ -164,6 +164,7 @@ export default function CreateEvent() {
 
     const cookies = document.cookie; // Get all cookies as a single string
     const cookieObj = {};
+    console.log('Ran here 1');
 
     cookies.split(';').forEach((cookie) => {
       const [key, value] = cookie.split('=').map((part) => part.trim());
@@ -183,8 +184,8 @@ export default function CreateEvent() {
       data['password'] = cookieObj['login_password'];
     } else {
       if (cookieObj['guest_email'] && cookieObj['guest_password']) {
-        data['email'] = cookieObj['guest_email'];
-        data['password'] = cookieObj['guest_password'];
+        data['guest_id'] = parseInt(cookieObj['guest_email']);
+        data['guest_password'] = cookieObj['guest_password'];
       } else {
         try {
           const response = await fetch(
@@ -192,8 +193,8 @@ export default function CreateEvent() {
           );
           if (response.ok) {
             const responseData = await response.json();
-            data['email'] = responseData.guest_id;
-            data['password'] = responseData.guest_password;
+            data['guest_id'] = parseInt(responseData.guest_id);
+            data['guest_password'] = responseData.guest_password;
             const guestEmailCookie = `guest_email=${encodeURIComponent(JSON.stringify(responseData.guest_id))}; path=/;`;
             const guestPasswordCookie = `guest_password=${encodeURIComponent(JSON.stringify(responseData.guest_password))}; path=/;`;
             document.cookie = guestEmailCookie;
@@ -225,6 +226,7 @@ export default function CreateEvent() {
       console.log(data.end_date);
     }
 
+    console.log(data);
     console.log('works');
 
     try {
@@ -242,6 +244,7 @@ export default function CreateEvent() {
       if (response.ok) {
         const responseData = await response.json();
         console.log('Response Data:', responseData);
+        console.log(responseData);
 
         navigate('/confirmCreated', {
           state: { eventCode: responseData.event_code, eventName: data.title },
