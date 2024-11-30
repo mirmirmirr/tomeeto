@@ -427,76 +427,76 @@ export default function Availability() {
           </div>
 
           <div className="flex flex-col mr-[10px] h-[70vh]">
-              <div
-                className=" pb-1 font-[400] opacity-0"
-                style={{
-                  fontSize: `min(3vw, 15px)`,
-                  width: `min(10vw, 40px)`,
-                }}
-              >
-                nnn
-              </div>
-              <div
-                className="pb-2 font-[400] opacity-0"
-                style={{
-                  fontSize: `min(3vw, 15px)`,
-                }}
-              >
-                nnn
-              </div>
-              {hours.map((hour, index) => (
-                <div
-                  key={index}
-                  className="relative text-right align-top"
-                  style={{
-                    height: `calc(100% / ${hours.length})`,
-                    display: 'flex',
-                    justifyContent: 'end',
-                    fontSize: `min(3vw, 12px)`,
-                  }}
-                >
-                  <span
-                    className="absolute top-0 right-0"
-                    style={{ transform: `translate(0, -50%)` }}
-                  >
-                    {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
-                  </span>
-                </div>
-              ))}
+            <div
+              className=" pb-1 font-[400] opacity-0"
+              style={{
+                fontSize: `min(3vw, 15px)`,
+                width: `min(10vw, 40px)`,
+              }}
+            >
+              nnn
             </div>
+            <div
+              className="pb-2 font-[400] opacity-0"
+              style={{
+                fontSize: `min(3vw, 15px)`,
+              }}
+            >
+              nnn
+            </div>
+            {hours.map((hour, index) => (
+              <div
+                key={index}
+                className="relative text-right align-top"
+                style={{
+                  height: `calc(100% / ${hours.length})`,
+                  display: 'flex',
+                  justifyContent: 'end',
+                  fontSize: `min(3vw, 12px)`,
+                }}
+              >
+                <span
+                  className="absolute top-0 right-0"
+                  style={{ transform: `translate(0, -50%)` }}
+                >
+                  {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
+                </span>
+              </div>
+            ))}
+          </div>
 
-            <table className="w-[100%] table-fixed h-[70vh]">
+          <table className="w-[100%] table-fixed h-[70vh]">
             <thead>
-            <tr>
+              <tr>
                 <th style={{ width: `0.5vw` }}></th>
-                  {displayedWeekDays.map((day, index) => (
-                    <th
-                      key={index}
-                      className="font-[400] opacity-75"
-                      style={{
-                        fontSize: `min(3vw, 15px)`,
-                        height: `calc(100% / (${hours.length}+2))`,
-                      }}
-                    >
-                      {day}
-                    </th>
-                  ))}
-                </tr>
-                <tr>
-                  <th style={{ width: `0.5vw` }}></th>
-                  {displayedDays.map((day, index) => (
-                    <th
-                      key={index}
-                      className="pb-2 font-[400]"
-                      style={{
-                        fontSize: `min(3vw, 15px)`,
-                        height: `calc(100% / (${hours.length}+2))`,
-                      }}
-                    >
-                      {day}
-                    </th>
-                  ))}
-                </tr>
+                {displayedWeekDays.map((day, index) => (
+                  <th
+                    key={index}
+                    className="font-[400] opacity-75"
+                    style={{
+                      fontSize: `min(3vw, 15px)`,
+                      height: `calc(100% / (${hours.length}+2))`,
+                    }}
+                  >
+                    {day}
+                  </th>
+                ))}
+              </tr>
+              <tr>
+                <th style={{ width: `0.5vw` }}></th>
+                {displayedDays.map((day, index) => (
+                  <th
+                    key={index}
+                    className="pb-2 font-[400]"
+                    style={{
+                      fontSize: `min(3vw, 15px)`,
+                      height: `calc(100% / (${hours.length}+2))`,
+                    }}
+                  >
+                    {day}
+                  </th>
+                ))}
+              </tr>
             </thead>
             <tbody>
               {hours.map((_, row) => (
