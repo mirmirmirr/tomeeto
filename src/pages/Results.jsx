@@ -428,15 +428,15 @@ export default function Result() {
 
   return (
     <div
-      className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
+      className={`relative flex flex-col h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div
-        className={`flex flex-col mt-[5vh] items-center ${isDarkMode ? 'text-white' : 'text-black'}`}
-      >
+        className={`flex flex-col mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
+        >
         <div
           id="eventName"
-          className="flex flex-row w-[80vw] lg:w-[93vw] lg:ml-4 justify-between"
+          className="flex flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between"
           style={{ fontSize: `max(3vw, 35px)` }}
         >
           {eventName}
@@ -454,18 +454,18 @@ export default function Result() {
         </div>
 
         <div
-          className={`w-[80vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
-        ></div>
+          className={`justify-center w-[85vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
+          ></div>
 
         <div
           id="results"
-          className="w-full lg:w-[80vw] h-[100vh] lg:h-[70vh] lg:ml-[5%] items-center mr-auto mt-[3vh] flex flex-col lg:flex-row overflow-hidden"
+          className="flex flex-col lg:flex-row w-full lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] lg:mt-[4vh] overflow-hidden"
         >
-          <div className="block lg:hidden w-[80vw] flex flex-col mb-[3vh]">
+          <div className="block lg:hidden w-[80vw] flex flex-col mb-[3vh] ml-4">
             <div className="text-[20px] font-[500]">
               Attendees ({attendeesFraction})
             </div>
-            <div className="grid grid-flow-row auto-rows-max grid-cols-[repeat(auto-fill,minmax(50px,1fr))] gap-[10px] justify-center w-full">
+            <div className="grid grid-flow-row auto-rows-max grid-cols-[repeat(auto-fill,minmax(50px,1fr))] gap-[10px] w-full">
               {scheduleData.map((attendee, index) => {
                 const isAvailable =
                   hoveredCell.row !== null &&
@@ -608,12 +608,12 @@ export default function Result() {
                       return (
                         <td
                           key={column}
-                          className={`p-2 relative cursor-pointer overflow-visible ${
+                          className={`p-2 relative cursor-pointer overflow-visible border ${isDarkMode ? 'border-white' : 'border-black'} ${
                             isSelected ? 'ring-2 ring-[#FF5C5C]' : ''
                           }`}
                           style={{
                             backgroundColor: `rgba(72, 187, 120, ${opacity})`,
-                            border: '1px solid #b9b9b9',
+                            // border: '1px solid #b9b9b9',
                           }}
                           onMouseEnter={() => setHoveredCell({ row, column })}
                           onMouseLeave={() =>

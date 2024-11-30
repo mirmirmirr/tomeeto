@@ -389,9 +389,9 @@ export default function Availability() {
 
   return (
     <div
-      className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
+      className={`relative flex flex-col h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
       onMouseUp={handleMouseUp}
-      style={{ userSelect: 'none' }} // Disable text selection
+      style={{ userSelect: 'none' }}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
@@ -400,7 +400,7 @@ export default function Availability() {
       >
         <div
           id="eventName"
-          className="flex flex-row w-[90vw] lg:w-[93vw] lg:ml-4 justify-between"
+          className="flex flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between"
           style={{ fontSize: `max(3vw, 35px)` }}
         >
           {eventName}
@@ -418,7 +418,7 @@ export default function Availability() {
         </div>
 
         <div
-          className={`w-[90vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
+          className={`w-[85vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
         ></div>
 
         <div className="flex w-[90vw] justify-between items-center mt-4">
@@ -451,7 +451,7 @@ export default function Availability() {
 
         <div
           id="availability"
-          className="flex flex-row w-full lg:w-[80vw] lg:h-[70vh] lg:ml-[5%] items-center mr-auto mt-[3vh] overflow-hidden"
+          className="flex flex-row w-full lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] overflow-hidden"
         >
           <div className="flex justify-between mt-4">
             {currentPage > 0 && (
@@ -475,7 +475,7 @@ export default function Availability() {
             )}
           </div>
 
-          <div className="flex flex-col mr-[10px] h-[70vh]">
+          <div className="flex flex-col mr-[10px] h-[60vh]">
             <div
               className=" pb-1 font-[400] opacity-0"
               style={{
@@ -514,7 +514,7 @@ export default function Availability() {
             ))}
           </div>
 
-          <table className="w-[100%] table-fixed h-[70vh]">
+          <table className="w-[100%] table-fixed h-[60vh]">
             <thead>
               <tr>
                 <th style={{ width: `0.5vw` }}></th>
