@@ -434,25 +434,24 @@ export default function Result() {
       <div
         className={`flex flex-col mt-[5vh] items-center ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
-
-<div
-        id="eventName"
-        className="flex flex-row w-[80vw] lg:w-[93vw] lg:ml-4 justify-between"
-        style={{ fontSize: `max(3vw, 35px)` }}
-      >
-        {eventName}
-        
         <div
-          className='lg:mr-[30px]'
-          style={{
-            fontSize: `max(1vw, 15px)`,
-            marginTop: 'auto',
-            marginBottom: '10px',
-          }}
+          id="eventName"
+          className="flex flex-row w-[80vw] lg:w-[93vw] lg:ml-4 justify-between"
+          style={{ fontSize: `max(3vw, 35px)` }}
         >
-          {eventDates}
+          {eventName}
+
+          <div
+            className="lg:mr-[30px]"
+            style={{
+              fontSize: `max(1vw, 15px)`,
+              marginTop: 'auto',
+              marginBottom: '10px',
+            }}
+          >
+            {eventDates}
+          </div>
         </div>
-      </div>
 
         <div
           className={`w-[80vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}

@@ -37,6 +37,9 @@ export default function CreateEvent() {
   const [startCalendarDay, setCalendarStart] = useState(today);
   const [endCalendarDay, setCalendarEnd] = useState(today);
 
+  const [errorEventMessage, setErrorEventMessage] = useState(false);
+  const [errorDateMessage, setErrorDateMessage] = useState(false);
+
   // Styling based on the current theme
   const bgColor = isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]';
   const textColor = isDarkMode ? 'text-[#F5F5F5]' : 'text-[#3E505B]';
@@ -44,6 +47,16 @@ export default function CreateEvent() {
   const placeholderColor = isDarkMode
     ? 'placeholder-[#F5F5F5]'
     : 'placeholder-[#3E505B]';
+
+  const handleError = (errortype) => {
+    if (errortype == 'event name') {
+      setErrorEventMessage(true);
+      setTimeout(() => setErrorEventMessage(false), 2000);
+    } else if (errortype == 'event date') {
+      setErrorDateMessage(true);
+      setTimeout(() => setErrorDateMessage(false), 2000);
+    }
+  };
 
   const handleCalendarStartChange = (event) => {
     setCalendarStart(event.target.value);
@@ -62,16 +75,18 @@ export default function CreateEvent() {
   };
 
   const formatTime = (time) => {
-    const [hour, minute, modifier] = time.match(/(\d+):(\d+)\s*(AM|PM)/i).slice(1);
-  
+    const [hour, minute, modifier] = time
+      .match(/(\d+):(\d+)\s*(AM|PM)/i)
+      .slice(1);
+
     let formattedHour = parseInt(hour, 10);
-  
+
     if (modifier === 'PM' && formattedHour !== 12) {
       formattedHour += 12;
     } else if (modifier === 'AM' && formattedHour === 12) {
       formattedHour = 0;
     }
-  
+
     const formattedTime = `${String(formattedHour).padStart(2, '0')}:${minute}`;
     return formattedTime;
   };
@@ -79,7 +94,7 @@ export default function CreateEvent() {
   const handleStartTimeChange = (time) => {
     setStartTime(formatTime(time));
   };
-  
+
   const handleEndTimeChange = (time) => {
     setEndTime(formatTime(time));
   };
@@ -168,6 +183,11 @@ export default function CreateEvent() {
   }, [selectDaysOfWeek]);
 
   const get_event_data = async () => {
+    if (eventName == '') {
+      handleError('event name');
+      return;
+    }
+
     const data = {
       // email: 'testing@gmail.com',
       // password: '123',
@@ -240,6 +260,11 @@ export default function CreateEvent() {
       data.end_date = endCalendarDay;
       console.log(data.start_date);
       console.log(data.end_date);
+
+      if (startCalendarDay > endCalendarDay) {
+        handleError('event date');
+        return;
+      }
     }
 
     console.log(data);
@@ -604,6 +629,23 @@ export default function CreateEvent() {
             />
           </div> */}
 
+          {errorEventMessage && (
+            <div
+              className={`w-full h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
+            >
+              Please create a title for the event.
+            </div>
+          )}
+          {errorDateMessage && (
+            <div
+              className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center ${
+                textColor
+              }`}
+            >
+              Please enter a valid date and time for the event.
+            </div>
+          )}
+
           {/* Create Event button */}
           <button
             onClick={get_event_data}
@@ -629,13 +671,29 @@ export default function CreateEvent() {
                 ${textColor} ${borderColor} ${placeholderColor} text-[20px]`}
             />
           </div> */}
+          {errorEventMessage && (
+            <div
+              className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center ${
+                textColor
+              }`}
+            >
+              Please create a title for the event.
+            </div>
+          )}
+          {errorDateMessage && (
+            <div
+              className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center ${
+                textColor
+              }`}
+            >
+              Please enter a valid date and time for the event.
+            </div>
+          )}
 
           {/* Create Event button */}
           <button
             onClick={get_event_data}
-            className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center ${
-              textColor
-            }`}
+            className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
             style={{ fontSize: `max(1vw, 20px)` }}
           >
             Create Event
