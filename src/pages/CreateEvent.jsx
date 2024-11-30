@@ -19,11 +19,16 @@ export default function CreateEvent() {
   const { isDarkMode, toggleTheme } = useTheme();
 
   // State for handling dropdowns and selections
-  const [openDropdown, setOpenDropdown] = useState(null); // tracks the open dropdown ('startTime', 'endTime', 'startDay', 'endDay', 'startCal', 'endCal')
+  const [openDropdown, setOpenDropdown] = useState(null); // Tracks the open dropdown ('startTime', 'endTime', 'startDay', 'endDay', 'startCal', 'endCal')
+  const [intervalDropdownVisible, setIntervalDropdownVisible] = useState(false);
   const [selectedInterval, setSelectedInterval] = useState('60 minutes');
   const [selectDaysOfWeek, setSelectDaysOfWeek] = useState(false);
   const [selectedStartDay, setSelectedStartDay] = useState('Start Day');
   const [selectedEndDay, setSelectedEndDay] = useState('End Day');
+  const [startDayDropdownVisible, setStartDayDropdownVisible] = useState(false);
+  const [endDayDropdownVisible, setEndDayDropdownVisible] = useState(false);
+  const [showStartCalendar, setShowStartCalendar] = useState(false);
+  const [showEndCalendar, setShowEndCalendar] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [eventName, setEventName] = useState('');
