@@ -154,7 +154,7 @@ export default function Availability() {
 
     var daysArray = [];
     const weekdaysArray = [];
-    if (event_type == "date_range") {
+    if (event_type == 'date_range') {
       const startDate = new Date(start_date + ' ' + start_time);
       const endDate = new Date(end_date + ' ' + end_time);
       console.log(startDate);
@@ -176,7 +176,7 @@ export default function Availability() {
       setEventDates(`${formattedStartDate} - ${formattedEndDate}`);
 
       let currentDate = new Date(startDate);
-  
+
       while (currentDate <= endDate) {
         daysArray.push(currentDate.getDate().toString()); // Day of the month
         weekdaysArray.push(
@@ -188,22 +188,29 @@ export default function Availability() {
       }
       setAllDays(daysArray);
       setWeekdays(weekdaysArray);
-
     } else {
       setIsGenericWeek(true);
       setEventDates(`${start_day} - ${end_day}`);
-      console.log("here");
+      console.log('here');
 
-      const abbreviations = all_dates[0].weekdayName.map(day => {
+      const abbreviations = all_dates[0].weekdayName.map((day) => {
         switch (day) {
-          case 'Saturday': return 'SAT';
-          case 'Monday': return 'MON';
-          case 'Tuesday': return 'TUE';
-          case 'Wednesday': return 'WED';
-          case 'Thursday': return 'THU';
-          case 'Friday': return 'FRI';
-          case 'Sunday': return 'SUN';
-          default: return day;
+          case 'Saturday':
+            return 'SAT';
+          case 'Monday':
+            return 'MON';
+          case 'Tuesday':
+            return 'TUE';
+          case 'Wednesday':
+            return 'WED';
+          case 'Thursday':
+            return 'THU';
+          case 'Friday':
+            return 'FRI';
+          case 'Sunday':
+            return 'SUN';
+          default:
+            return day;
         }
       });
 
@@ -227,7 +234,7 @@ export default function Availability() {
     setTotalDays(daysArray.length);
   };
 
-  console.log("ALLDAYS", allDays);
+  console.log('ALLDAYS', allDays);
   const displayedDays = allDays.slice(
     currentPage * daysPerPage,
     (currentPage + 1) * daysPerPage
@@ -491,19 +498,19 @@ export default function Availability() {
           className="flex flex-row w-full lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] overflow-hidden"
         >
           {!isGenericWeek && (
-             <div className="flex justify-between mt-4 w-[50px]">
-            {(currentPage > 0 && !isGenericWeek) && (
-              <button
-                onClick={goToPrevPage}
-                className="font-bold opacity-25 hover:opacity-100"
-                style={{ fontSize: '2rem' }}
-              >
-                &#65308;
-              </button>
-            )}
-          </div>
+            <div className="flex justify-between mt-4 w-[50px]">
+              {currentPage > 0 && !isGenericWeek && (
+                <button
+                  onClick={goToPrevPage}
+                  className="font-bold opacity-25 hover:opacity-100"
+                  style={{ fontSize: '2rem' }}
+                >
+                  &#65308;
+                </button>
+              )}
+            </div>
           )}
-         
+
           <div className="flex flex-col mr-[10px] h-[60vh]">
             <div
               className=" pb-1 font-[400] opacity-0"
@@ -623,19 +630,18 @@ export default function Availability() {
             </tbody>
           </table>
           {!isGenericWeek && (
-             <div className="flex justify-between mt-4 w-[60px]">
-            {(currentPage + 1) * daysPerPage < totalDays && (
-              <button
-                onClick={goToNextPage}
-                className="font-bold opacity-25 hover:opacity-100 ml-2"
-                style={{ fontSize: '2rem' }}
-              >
-                &#65310;
-              </button>
-            )}
-          </div>
+            <div className="flex justify-between mt-4 w-[60px]">
+              {(currentPage + 1) * daysPerPage < totalDays && (
+                <button
+                  onClick={goToNextPage}
+                  className="font-bold opacity-25 hover:opacity-100 ml-2"
+                  style={{ fontSize: '2rem' }}
+                >
+                  &#65310;
+                </button>
+              )}
+            </div>
           )}
-         
         </div>
 
         <div

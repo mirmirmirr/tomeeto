@@ -190,62 +190,69 @@ export default function Result() {
 
     var daysArray = [];
     const weekdaysArray = [];
-    if (event_type == "date_range") {
-          // Parse start and end dates
-    const startDate = new Date(`${start_date} ${start_time}`);
-    const endDate = new Date(`${end_date} ${end_time}`);
-    console.log('Start Date:', startDate);
-    console.log('End Date:', endDate);
+    if (event_type == 'date_range') {
+      // Parse start and end dates
+      const startDate = new Date(`${start_date} ${start_time}`);
+      const endDate = new Date(`${end_date} ${end_time}`);
+      console.log('Start Date:', startDate);
+      console.log('End Date:', endDate);
 
-    const formattedStartDate = startDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+      const formattedStartDate = startDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
 
-    const formattedEndDate = endDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+      const formattedEndDate = endDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
 
-    setEventDates(`${formattedStartDate} - ${formattedEndDate}`);
+      setEventDates(`${formattedStartDate} - ${formattedEndDate}`);
 
-    // Generate days and weekdays arrays
-    let currentDate = new Date(startDate); // Use a new instance to avoid mutating startDate
+      // Generate days and weekdays arrays
+      let currentDate = new Date(startDate); // Use a new instance to avoid mutating startDate
 
-    while (currentDate <= endDate) {
-      daysArray.push(currentDate.getDate().toString()); // Day of the month
-      weekdaysArray.push(
-        currentDate
-          .toLocaleDateString('en-US', { weekday: 'short' })
-          .toUpperCase()
-      );
-      currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
-    }
+      while (currentDate <= endDate) {
+        daysArray.push(currentDate.getDate().toString()); // Day of the month
+        weekdaysArray.push(
+          currentDate
+            .toLocaleDateString('en-US', { weekday: 'short' })
+            .toUpperCase()
+        );
+        currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+      }
 
-    console.log('Days Array:', daysArray);
-    console.log('Weekdays Array:', weekdaysArray);
+      console.log('Days Array:', daysArray);
+      console.log('Weekdays Array:', weekdaysArray);
 
-    setAllDays(daysArray);
-    setTotalDays(daysArray.length);
-    setWeekdays(weekdaysArray);
-
+      setAllDays(daysArray);
+      setTotalDays(daysArray.length);
+      setWeekdays(weekdaysArray);
     } else {
       setIsGenericWeek(true);
       setEventDates(`${start_day} - ${end_day}`);
-      console.log("here");
+      console.log('here');
 
-      const abbreviations = all_dates[0].weekdayName.map(day => {
+      const abbreviations = all_dates[0].weekdayName.map((day) => {
         switch (day) {
-          case 'Saturday': return 'SAT';
-          case 'Monday': return 'MON';
-          case 'Tuesday': return 'TUE';
-          case 'Wednesday': return 'WED';
-          case 'Thursday': return 'THU';
-          case 'Friday': return 'FRI';
-          case 'Sunday': return 'SUN';
-          default: return day;
+          case 'Saturday':
+            return 'SAT';
+          case 'Monday':
+            return 'MON';
+          case 'Tuesday':
+            return 'TUE';
+          case 'Wednesday':
+            return 'WED';
+          case 'Thursday':
+            return 'THU';
+          case 'Friday':
+            return 'FRI';
+          case 'Sunday':
+            return 'SUN';
+          default:
+            return day;
         }
       });
 
@@ -520,19 +527,18 @@ export default function Result() {
 
           <div className="flex flex-row">
             {!isGenericWeek && (
-               <div className="flex justify-between mt-4 w-[50px]">
-              {currentPage > 0 && (
-                <button
-                  onClick={goToPrevPage}
-                  className="font-bold opacity-25 hover:opacity-100"
-                  style={{ fontSize: '2rem' }}
-                >
-                  &#65308;
-                </button>
-              )}
-            </div>
+              <div className="flex justify-between mt-4 w-[50px]">
+                {currentPage > 0 && (
+                  <button
+                    onClick={goToPrevPage}
+                    className="font-bold opacity-25 hover:opacity-100"
+                    style={{ fontSize: '2rem' }}
+                  >
+                    &#65308;
+                  </button>
+                )}
+              </div>
             )}
-           
 
             <div className="flex flex-col mr-[10px] h-[70vh]">
               <div
@@ -647,21 +653,20 @@ export default function Result() {
                 ))}
               </tbody>
             </table>
-          
-          {!isGenericWeek && (
-                        <div className="flex justify-between mt-4 w-[60px]">
-              {(currentPage + 1) * daysPerPage < totalDays && (
-                <button
-                  onClick={goToNextPage}
-                  className="font-bold opacity-25 hover:opacity-100 ml-2"
-                  style={{ fontSize: '2rem' }}
-                >
-                  &#65310;
-                </button>
-              )}
-            </div>
-          )}
 
+            {!isGenericWeek && (
+              <div className="flex justify-between mt-4 w-[60px]">
+                {(currentPage + 1) * daysPerPage < totalDays && (
+                  <button
+                    onClick={goToNextPage}
+                    className="font-bold opacity-25 hover:opacity-100 ml-2"
+                    style={{ fontSize: '2rem' }}
+                  >
+                    &#65310;
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="hidden lg:block w-full flex flex-col text-center h-[70vh]">
