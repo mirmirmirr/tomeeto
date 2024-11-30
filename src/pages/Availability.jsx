@@ -190,14 +190,11 @@ export default function Availability() {
       (_, i) => startHour + i
     );
     setHours(generatedHours);
-    console.log('HOURS', generatedHours);
 
-    const availabilityArray = Array(daysArray.length).fill(
-      Array(generatedHours.length).fill(0)
+    const availabilityArray = Array(generatedHours.length).fill(
+      Array(daysArray.length).fill(0)
     );
-    // const availabilityArray = Array(generatedHours.length).fill(
-    //   Array(daysArray.length).fill(0)
-    // );
+
     setAvailability(availabilityArray);
     setTotalDays(daysArray.length);
   };
@@ -287,11 +284,22 @@ export default function Availability() {
     );
   };
 
+  const transpose = (matrix) => {
+    return matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
+  };
+
   const submit_button = async () => {
+    if (name == "") {
+      handleError("Please enter a name for the event");
+      return;
+    }
+    const transposedAvailability = transpose(availability); // Declare with 'const'
+    console.log(transposedAvailability);
+
     var credentials = {
       event_code: eventCode,
       nickname: name,
-      availability: availability,
+      availability: transposedAvailability,
     };
 
     if (isUpdating === true) {
@@ -561,30 +569,30 @@ export default function Availability() {
                     }}
                   ></td>
 
-                  {displayedDays.map((_, column) => (
+{displayedDays.map((_, column) => (
                     <td
                       key={column}
                       className={`border ${isDarkMode ? 'border-white' : 'border-black'} text-[10pt]`} // Add text size class here
                       style={{
                         backgroundColor: isInDragArea(
-                          column,
-                          currentPage * daysPerPage + row
+                          row,
+                          currentPage * daysPerPage + column
                         )
                           ? 'rgba(72, 187, 120, 0.5)' // Highlight drag area
-                          : availability[column][
-                                currentPage * daysPerPage + row
+                          : availability[row][
+                                currentPage * daysPerPage + column
                               ]
                             ? 'rgba(72, 187, 120, 1)' // Filled cell
                             : 'transparent', // Empty cell
                         userSelect: 'none', // Disable text selection
                       }}
                       onMouseDown={() =>
-                        handleMouseDown(column, currentPage * daysPerPage + row)
+                        handleMouseDown(row, currentPage * daysPerPage + column)
                       }
                       onMouseEnter={() =>
                         handleMouseEnter(
-                          column,
-                          currentPage * daysPerPage + row
+                          row,
+                          currentPage * daysPerPage + column
                         )
                       }
                     ></td>
