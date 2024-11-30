@@ -4,6 +4,7 @@ import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
 import Calendar from '../resources/Calendar';
 import TimeSelector from '../resources/TimeSelector';
+import { formToJSON } from 'axios';
 
 export default function CreateEvent() {
   const tempToday = new Date();
@@ -60,12 +61,27 @@ export default function CreateEvent() {
     setEventDescription(event.target.value);
   };
 
-  const handleStartTimeChange = (event) => {
-    setStartTime(event.target.value);
+  const formatTime = (time) => {
+    const [hour, minute, modifier] = time.match(/(\d+):(\d+)\s*(AM|PM)/i).slice(1);
+  
+    let formattedHour = parseInt(hour, 10);
+  
+    if (modifier === 'PM' && formattedHour !== 12) {
+      formattedHour += 12;
+    } else if (modifier === 'AM' && formattedHour === 12) {
+      formattedHour = 0;
+    }
+  
+    const formattedTime = `${String(formattedHour).padStart(2, '0')}:${minute}`;
+    return formattedTime;
   };
 
-  const handleEndTimeChange = (event) => {
-    setEndTime(event.target.value);
+  const handleStartTimeChange = (time) => {
+    setStartTime(formatTime(time));
+  };
+  
+  const handleEndTimeChange = (time) => {
+    setEndTime(formatTime(time));
   };
 
   // Functions to handle dropdown visibility for start day
@@ -327,8 +343,8 @@ export default function CreateEvent() {
                     </div>
                     <TimeSelector
                       defaultTime={startTime}
-                      onTimeSelect={setStartTime}
-                      onChange={handleStartTimeChange}
+                      onTimeSelect={handleStartTimeChange}
+                      // onChange={handleStartTimeChange}
                       className="h-full w-[30%]"
                     />
                   </div>
@@ -385,8 +401,8 @@ export default function CreateEvent() {
                     </div>
                     <TimeSelector
                       defaultTime={endTime}
-                      onTimeSelect={setEndTime}
-                      onChange={handleEndTimeChange}
+                      onTimeSelect={handleEndTimeChange}
+                      // onChange={handleEndTimeChange}
                       className="h-full w-[30%]"
                     />
                   </div>
@@ -415,13 +431,6 @@ export default function CreateEvent() {
                     </div>
                   )}
                 </div>
-                <input
-                  type="time"
-                  defaultValue={endTime}
-                  className="p-3 text-lg rounded-lg bg-red-500 text-white
-                    text-center focus:outline-none"
-                  onChange={handleEndTimeChange}
-                />
               </>
             ) : (
               <>
@@ -445,8 +454,8 @@ export default function CreateEvent() {
                     </div>
                     <TimeSelector
                       defaultTime={startTime}
-                      onTimeSelect={setStartTime}
-                      onChange={handleStartTimeChange}
+                      onTimeSelect={handleStartTimeChange}
+                      // onChange={handleStartTimeChange}
                       className="h-full w-[30%]"
                     />
                   </div>
@@ -484,8 +493,8 @@ export default function CreateEvent() {
                     </div>
                     <TimeSelector
                       defaultTime={endTime}
-                      onTimeSelect={setEndTime}
-                      onChange={handleEndTimeChange}
+                      onTimeSelect={handleEndTimeChange}
+                      // onChange={handleEndTimeChange}
                       className="h-full w-[30%]"
                     />
                   </div>
