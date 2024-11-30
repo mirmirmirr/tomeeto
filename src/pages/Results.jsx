@@ -67,6 +67,7 @@ export default function Result() {
   const daysPerPage = 7; // Number of days per page
 
   const [eventDetails, setEventDetails] = useState(null);
+  const [eventDates, setEventDates] = useState(null);
   const [allDays, setAllDays] = useState([]);
   const [weekdays, setWeekdays] = useState([]);
   const [scheduleData, setResults] = useState([]);
@@ -173,14 +174,35 @@ export default function Result() {
   }, [eventCode]);
 
   const updateEventData = async (data) => {
-    const { start_date, start_time, end_date, end_time, duration, event_type } =
-      data;
+    const {
+      start_date,
+      start_time,
+      end_date,
+      end_time,
+      duration,
+      event_type,
+      title,
+    } = data;
 
     // Parse start and end dates
     const startDate = new Date(`${start_date} ${start_time}`);
     const endDate = new Date(`${end_date} ${end_time}`);
     console.log('Start Date:', startDate);
     console.log('End Date:', endDate);
+
+    const formattedStartDate = startDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+
+    const formattedEndDate = endDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+
+    setEventDates(`${formattedStartDate} - ${formattedEndDate}`);
 
     // Generate days and weekdays arrays
     const daysArray = [];
@@ -412,13 +434,25 @@ export default function Result() {
       <div
         className={`flex flex-col mt-[5vh] items-center ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
+
+<div
+        id="eventName"
+        className="flex flex-row w-[80vw] lg:w-[93vw] lg:ml-4 justify-between"
+        style={{ fontSize: `max(3vw, 35px)` }}
+      >
+        {eventName}
+        
         <div
-          id="eventName"
-          className="w-[80vw] lg:w-[93vw]"
-          style={{ fontSize: `max(3vw, 35px)` }}
+          className='lg:mr-[30px]'
+          style={{
+            fontSize: `max(1vw, 15px)`,
+            marginTop: 'auto',
+            marginBottom: '10px',
+          }}
         >
-          {eventName}
+          {eventDates}
         </div>
+      </div>
 
         <div
           className={`w-[80vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
@@ -519,7 +553,7 @@ export default function Result() {
               ))}
             </div>
 
-            <table className="w-[80%] table-fixed h-[70vh]">
+            <table className="w-[90%] table-fixed h-[70vh]">
               <thead>
                 <tr>
                   <th style={{ width: `0.5vw` }}></th>

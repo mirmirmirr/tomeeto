@@ -51,6 +51,7 @@ export default function Availability() {
   const daysPerPage = 7;
 
   const [eventDetails, setEventDetails] = useState(null);
+  const [eventDates, setEventDates] = useState(null);
   const [allDays, setAllDays] = useState([]);
   const [weekdays, setWeekdays] = useState([]);
   const [totalDays, setTotalDays] = useState(0);
@@ -139,6 +140,22 @@ export default function Availability() {
     const endDate = new Date(end_date + ' ' + end_time);
     console.log(startDate);
     console.log(endDate);
+
+    // Format the dates to the desired format
+    const formattedStartDate = startDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+
+    const formattedEndDate = endDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+
+    // Combine the formatted start and end dates
+    setEventDates(`${formattedStartDate} - ${formattedEndDate}`);
 
     const daysArray = [];
     const weekdaysArray = [];
@@ -354,6 +371,8 @@ export default function Availability() {
     }
   };
 
+  console.log("EVENT DATES", eventDates);
+
   return (
     <div
       className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
@@ -365,13 +384,25 @@ export default function Availability() {
       <div
         className={`flex flex-col mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
+      <div
+        id="eventName"
+        className="flex flex-row w-[90vw] lg:w-[93vw] lg:ml-4 justify-between"
+        style={{ fontSize: `max(3vw, 35px)` }}
+      >
+        {eventName}
+        
         <div
-          id="eventName"
-          className="w-[80vw] lg:w-[93vw] lg:ml-4"
-          style={{ fontSize: `max(3vw, 35px)` }}
+          className='lg:mr-[30px]'
+          style={{
+            fontSize: `max(1vw, 15px)`,
+            marginTop: 'auto',
+            marginBottom: '10px',
+          }}
         >
-          {eventName}
+          {eventDates}
         </div>
+      </div>
+
 
         <div
           className={`w-[90vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
