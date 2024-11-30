@@ -39,6 +39,8 @@ export default function CreateEvent() {
 
   const [errorEventMessage, setErrorEventMessage] = useState(false);
   const [errorDateMessage, setErrorDateMessage] = useState(false);
+  const [errorTimeMessage, setErrorTimeMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false);
 
   // Styling based on the current theme
   const bgColor = isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]';
@@ -47,14 +49,21 @@ export default function CreateEvent() {
   const placeholderColor = isDarkMode
     ? 'placeholder-[#F5F5F5]'
     : 'placeholder-[#3E505B]';
-
+  
   const handleError = (errortype) => {
     if (errortype == 'event name') {
+      console.log("ERRRRORRR");
       setErrorEventMessage(true);
       setTimeout(() => setErrorEventMessage(false), 2000);
     } else if (errortype == 'event date') {
       setErrorDateMessage(true);
       setTimeout(() => setErrorDateMessage(false), 2000);
+    } else if (errortype == 'event time') {
+      setErrorTimeMessage(true);
+      setTimeout(() => setErrorTimeMessage(false), 2000);
+    } else {
+      setErrorMessage(true);
+      setTimeout(() => setErrorMessage(false), 2000);
     }
   };
 
@@ -183,9 +192,14 @@ export default function CreateEvent() {
   }, [selectDaysOfWeek]);
 
   const get_event_data = async () => {
+    var errorMessage = false;
+
     if (eventName == '') {
       handleError('event name');
-      return;
+      errorMessage = true;
+    } else if (endTime <= startTime) {
+      handleError('event time');
+      errorMessage = true;
     }
 
     const data = {
@@ -263,38 +277,44 @@ export default function CreateEvent() {
 
       if (startCalendarDay > endCalendarDay) {
         handleError('event date');
-        return;
+        errorMessage = true;
       }
     }
 
     console.log(data);
     console.log('works');
 
-    try {
-      const response = await fetch(
-        'http://tomeeto.cs.rpi.edu:8000/create_event',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
+    if (!errorMessage) {
+      try {
+        const response = await fetch(
+          'http://tomeeto.cs.rpi.edu:8000/create_event',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          }
+        );
+  
+        if (response.ok) {
+          const responseData = await response.json();
+          console.log('Response Data:', responseData);
+          console.log(responseData);
+
+          if (response.message != "Event created") {
+            handleError();
+          }
+  
+          navigate('/confirmCreated', {
+            state: { eventCode: responseData.event_code, eventName: data.title },
+          });
+        } else {
+          console.error('Failed to create event:', response.statusText);
         }
-      );
-
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log('Response Data:', responseData);
-        console.log(responseData);
-
-        navigate('/confirmCreated', {
-          state: { eventCode: responseData.event_code, eventName: data.title },
-        });
-      } else {
-        console.error('Failed to create event:', response.statusText);
+      } catch (error) {
+        console.error('Error:', error);
       }
-    } catch (error) {
-      console.error('Error:', error);
     }
   };
 
@@ -636,13 +656,19 @@ export default function CreateEvent() {
               Please create a title for the event.
             </div>
           )}
-          {errorDateMessage && (
+          {(errorDateMessage || errorTimeMessage) && (
             <div
-              className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center ${
-                textColor
-              }`}
+            className={`w-full h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
+
             >
-              Please enter a valid date and time for the event.
+              Please enter a valid date range and time range for the event.
+            </div>
+          )}
+          {errorMessage && (
+            <div
+             className={`w-full h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
+            >
+              Too many other errors :p
             </div>
           )}
 
@@ -680,13 +706,22 @@ export default function CreateEvent() {
               Please create a title for the event.
             </div>
           )}
-          {errorDateMessage && (
+          {(errorDateMessage || errorTimeMessage) && (
             <div
               className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center ${
                 textColor
               }`}
             >
-              Please enter a valid date and time for the event.
+              Please enter a valid date and time range for the event.
+            </div>
+          )}
+          {errorMessage && (
+            <div
+              className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center ${
+                textColor
+              }`}
+            >
+              Too many other errors :p
             </div>
           )}
 
