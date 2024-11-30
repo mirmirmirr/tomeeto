@@ -52,6 +52,7 @@ export default function Availability() {
 
   const [eventDetails, setEventDetails] = useState(null);
   const [allDays, setAllDays] = useState([]);
+  const [weekdays, setWeekdays] = useState([]);
   const [totalDays, setTotalDays] = useState(0);
   const [hours, setHours] = useState([]);
   const [availability, setAvailability] = useState([]);
@@ -140,22 +141,21 @@ export default function Availability() {
     console.log(endDate);
 
     const daysArray = [];
-    let currentDate = startDate;
+    const weekdaysArray = [];
+    let currentDate = new Date(startDate); // Use a new instance to avoid mutating startDate
+
     while (currentDate <= endDate) {
-      console.log('here');
-      daysArray.push(
-        currentDate.toLocaleDateString('en-US', {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric',
-        })
+      daysArray.push(currentDate.getDate().toString()); // Day of the month
+      weekdaysArray.push(
+        currentDate
+          .toLocaleDateString('en-US', { weekday: 'short' })
+          .toUpperCase()
       );
-      console.log('ALLDAYS: ', daysArray);
-      currentDate.setDate(currentDate.getDate() + 1);
-      console.log(currentDate);
+      currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
     }
 
     setAllDays(daysArray);
+    setWeekdays(weekdaysArray);
 
     const startHour = parseInt(start_time.split(':')[0]);
     const endHour = parseInt(end_time.split(':')[0]);
@@ -177,6 +177,11 @@ export default function Availability() {
   };
 
   const displayedDays = allDays.slice(
+    currentPage * daysPerPage,
+    (currentPage + 1) * daysPerPage
+  );
+
+  const displayedWeekDays = weekdays.slice(
     currentPage * daysPerPage,
     (currentPage + 1) * daysPerPage
   );
@@ -397,13 +402,13 @@ export default function Availability() {
 
         <div
           id="availability"
-          className="w-[90vw] h-[64vh] mt-[1vh] flex flex-row overflow-hidden"
+          className="w-full lg:w-[80vw] h-[100vh] lg:h-[70vh] lg:ml-[5%] items-center mr-auto mt-[3vh] flex flex-col lg:flex-row overflow-hidden"
         >
-          <div className="flex mt-4">
+          <div className="flex justify-between mt-4">
             {currentPage > 0 && (
               <button
                 onClick={goToPrevPage}
-                className="px-4 py-2 font-bold opacity-25 hover:opacity-100"
+                className="lg:px-4 py-2 font-bold opacity-25 hover:opacity-100"
                 style={{ fontSize: '2rem' }}
               >
                 &#65308; {/* Previous page entity */}
@@ -412,7 +417,7 @@ export default function Availability() {
             {(currentPage + 1) * daysPerPage < totalDays && (
               <button
                 onClick={goToNextPage}
-                className="h-full flex items-center justify-center px-4 py-2 opacity-0"
+                className="h-full flex items-center justify-center lg:px-4 py-2 opacity-0"
                 style={{ fontSize: '2rem' }}
                 disabled={isDisabled}
               >
@@ -421,37 +426,91 @@ export default function Availability() {
             )}
           </div>
 
-          <table className="w-full table-fixed">
-            <thead>
-              <tr>
-                <th className="p-2" style={{ width: `min(10vw, 55px)` }}></th>
-                {displayedDays.map((day, index) => (
-                  <th
-                    key={index}
-                    className="p-2 font-[400]"
-                    style={{
-                      fontSize: `min(3vw, 15px)`,
-                      height: `calc(100% / (${hours.length}+2))`,
-                    }}
-                  >
-                    {day}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {hours.map((hour, row) => (
-                <tr
-                  key={row}
-                  className="h-full"
-                  style={{ height: `calc(100% / ${hours.length})` }}
+          <div className="flex flex-col mr-[10px] h-[70vh]">
+              <div
+                className=" pb-1 font-[400] opacity-0"
+                style={{
+                  fontSize: `min(3vw, 15px)`,
+                  width: `min(10vw, 40px)`,
+                }}
+              >
+                nnn
+              </div>
+              <div
+                className="pb-2 font-[400] opacity-0"
+                style={{
+                  fontSize: `min(3vw, 15px)`,
+                }}
+              >
+                nnn
+              </div>
+              {hours.map((hour, index) => (
+                <div
+                  key={index}
+                  className="relative text-right align-top"
+                  style={{
+                    height: `calc(100% / ${hours.length})`,
+                    display: 'flex',
+                    justifyContent: 'end',
+                    fontSize: `min(3vw, 12px)`,
+                  }}
                 >
-                  <td
-                    className="pr-2 text-right"
-                    style={{ fontSize: `min(3vw, 12px)` }}
+                  <span
+                    className="absolute top-0 right-0"
+                    style={{ transform: `translate(0, -50%)` }}
                   >
                     {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
-                  </td>
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <table className="w-[100%] table-fixed h-[70vh]">
+            <thead>
+            <tr>
+                <th style={{ width: `0.5vw` }}></th>
+                  {displayedWeekDays.map((day, index) => (
+                    <th
+                      key={index}
+                      className="font-[400] opacity-75"
+                      style={{
+                        fontSize: `min(3vw, 15px)`,
+                        height: `calc(100% / (${hours.length}+2))`,
+                      }}
+                    >
+                      {day}
+                    </th>
+                  ))}
+                </tr>
+                <tr>
+                  <th style={{ width: `0.5vw` }}></th>
+                  {displayedDays.map((day, index) => (
+                    <th
+                      key={index}
+                      className="pb-2 font-[400]"
+                      style={{
+                        fontSize: `min(3vw, 15px)`,
+                        height: `calc(100% / (${hours.length}+2))`,
+                      }}
+                    >
+                      {day}
+                    </th>
+                  ))}
+                </tr>
+            </thead>
+            <tbody>
+              {hours.map((_, row) => (
+                <tr
+                  key={row}
+                  // className="h-full"
+                  style={{ height: `calc(100% / (${hours.length}+2))` }}
+                >
+                  <td
+                    className="border-gray-400 p-2 relative"
+                    style={{
+                      borderTop: '1px solid #b9b9b9',
+                    }}
+                  ></td>
                   {displayedDays.map((_, column) => (
                     <td
                       key={column}
