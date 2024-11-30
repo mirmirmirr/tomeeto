@@ -60,13 +60,13 @@ export default function Availability() {
   const [eventName, setEventName] = useState([]);
 
   const [isError, setIsError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleError = (errormessage) => {
     setErrorMessage(errormessage);
     setIsError(true);
     setTimeout(() => setIsError(false), 2000);
-  }
+  };
 
   const check_user = async (dataToUse) => {
     if (userEmail !== null && userPW !== null) {
@@ -168,7 +168,7 @@ export default function Availability() {
 
     const daysArray = [];
     const weekdaysArray = [];
-    let currentDate = new Date(startDate); // Use a new instance to avoid mutating startDate
+    let currentDate = new Date(startDate);
 
     while (currentDate <= endDate) {
       daysArray.push(currentDate.getDate().toString()); // Day of the month
@@ -285,15 +285,15 @@ export default function Availability() {
   };
 
   const transpose = (matrix) => {
-    return matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
+    return matrix[0].map((_, colIndex) => matrix.map((row) => row[colIndex]));
   };
 
   const submit_button = async () => {
-    if (name == "") {
-      handleError("Please enter a name for the event");
+    if (name == '') {
+      handleError('Please enter a name for the event');
       return;
     }
-    const transposedAvailability = transpose(availability); // Declare with 'const'
+    const transposedAvailability = transpose(availability);
     console.log(transposedAvailability);
 
     var credentials = {
@@ -443,7 +443,7 @@ export default function Availability() {
             add your availability here
           </div>
           <div className="hidden lg:flex flex items-end justify-end">
-          {isError && (
+            {isError && (
               <div className="w-[400px] p-2 bg-[#FF5C5C] flex items-center justify-center mr-4 ">
                 {errorMessage}
               </div>
@@ -461,24 +461,14 @@ export default function Availability() {
           id="availability"
           className="flex flex-row w-full lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] overflow-hidden"
         >
-          <div className="flex justify-between mt-4">
+          <div className="flex justify-between mt-4 w-[50px]">
             {currentPage > 0 && (
               <button
                 onClick={goToPrevPage}
-                className="lg:px-4 py-2 font-bold opacity-25 hover:opacity-100"
+                className="font-bold opacity-25 hover:opacity-100"
                 style={{ fontSize: '2rem' }}
               >
-                &#65308; {/* Previous page entity */}
-              </button>
-            )}
-            {(currentPage + 1) * daysPerPage < totalDays && (
-              <button
-                onClick={goToNextPage}
-                className="h-full flex items-center justify-center lg:px-4 py-2 opacity-0"
-                style={{ fontSize: '2rem' }}
-                disabled={isDisabled}
-              >
-                &#65310;
+                &#65308;
               </button>
             )}
           </div>
@@ -569,7 +559,7 @@ export default function Availability() {
                     }}
                   ></td>
 
-{displayedDays.map((_, column) => (
+                  {displayedDays.map((_, column) => (
                     <td
                       key={column}
                       className={`border ${isDarkMode ? 'border-white' : 'border-black'} text-[10pt]`} // Add text size class here
@@ -602,24 +592,14 @@ export default function Availability() {
             </tbody>
           </table>
 
-          <div className="flex justify-between mt-4">
-            {currentPage > 0 && (
-              <button
-                onClick={goToPrevPage}
-                className="px-4 py-2 opacity-0"
-                style={{ fontSize: '2rem' }}
-                disabled={isDisabled}
-              >
-                &#65308; {/* Previous page entity */}
-              </button>
-            )}
+          <div className="flex justify-between mt-4 w-[60px]">
             {(currentPage + 1) * daysPerPage < totalDays && (
               <button
                 onClick={goToNextPage}
-                className="h-full flex items-center justify-center px-4 py-2 font-bold opacity-25 hover:opacity-100"
+                className="font-bold opacity-25 hover:opacity-100 ml-2"
                 style={{ fontSize: '2rem' }}
               >
-                &#65310; {/* Next page entity */}
+                &#65310;
               </button>
             )}
           </div>
@@ -628,11 +608,11 @@ export default function Availability() {
         <div
           className={`lg:hidden fixed bottom-0 left-0 flex-shrink-0 flex flex-col`}
         >
-        {isError && (
-              <div className="w-[100vw] p-2 bg-[#FF5C5C] flex items-center justify-center mb-4 ">
-                {errorMessage}
-              </div>
-            )}
+          {isError && (
+            <div className="w-[100vw] p-2 bg-[#FF5C5C] flex items-center justify-center mb-4 ">
+              {errorMessage}
+            </div>
+          )}
           <button
             onClick={submit_button}
             className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}

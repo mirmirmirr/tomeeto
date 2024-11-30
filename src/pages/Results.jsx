@@ -433,7 +433,7 @@ export default function Result() {
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div
         className={`flex flex-col mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
-        >
+      >
         <div
           id="eventName"
           className="flex flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between"
@@ -455,7 +455,7 @@ export default function Result() {
 
         <div
           className={`justify-center w-[85vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
-          ></div>
+        ></div>
 
         <div
           id="results"
@@ -491,24 +491,14 @@ export default function Result() {
           </div>
 
           <div className="flex flex-row">
-            <div className="flex justify-between mt-4">
+            <div className="flex justify-between mt-4 w-[50px]">
               {currentPage > 0 && (
                 <button
                   onClick={goToPrevPage}
-                  className="lg:px-4 py-2 font-bold opacity-25 hover:opacity-100"
+                  className="font-bold opacity-25 hover:opacity-100"
                   style={{ fontSize: '2rem' }}
                 >
                   &#65308;
-                </button>
-              )}
-              {(currentPage + 1) * daysPerPage < totalDays && (
-                <button
-                  onClick={goToNextPage}
-                  className="h-full flex items-center justify-center lg:px-4 py-2 opacity-0"
-                  style={{ fontSize: '2rem' }}
-                  disabled={isDisabled}
-                >
-                  &#65310;
                 </button>
               )}
             </div>
@@ -627,21 +617,11 @@ export default function Result() {
               </tbody>
             </table>
 
-            <div className="flex justify-between mt-4">
-              {currentPage > 0 && (
-                <button
-                  onClick={goToPrevPage}
-                  className="lg:px-4 py-2 opacity-0"
-                  style={{ fontSize: '2rem' }}
-                  disabled={isDisabled}
-                >
-                  &#65308;
-                </button>
-              )}
+            <div className="flex justify-between mt-4 w-[60px]">
               {(currentPage + 1) * daysPerPage < totalDays && (
                 <button
                   onClick={goToNextPage}
-                  className="h-full flex items-center justify-center lg:px-4 py-2 font-bold opacity-25 hover:opacity-100"
+                  className="font-bold opacity-25 hover:opacity-100 ml-2"
                   style={{ fontSize: '2rem' }}
                 >
                   &#65310;
