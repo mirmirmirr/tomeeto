@@ -114,8 +114,6 @@ export default function Result() {
     (currentPage + 1) * daysPerPage
   );
 
-  var receivedData = {};
-
   useEffect(() => {
     if (eventCode) {
       const credentials = {
@@ -126,7 +124,7 @@ export default function Result() {
 
       check_user(credentials);
       console.log(credentials);
-      console.log("RANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN")
+      console.log('RANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN');
 
       // First, fetch event details
       fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
@@ -141,7 +139,7 @@ export default function Result() {
           console.log('Event details:', eventDetailsData);
 
           // Update the state based on event details
-          setEventDetails(eventDetailsData);
+          // setEventDetails(eventDetailsData);
           updateEventData(eventDetailsData);
 
           // Next, fetch results using the same credentials
@@ -220,6 +218,7 @@ export default function Result() {
 
     // Update states
     setAllDays(daysArray); // e.g., ['6', '7', '8', '9', ...]
+    setTotalDays(daysArray.length);
     setWeekdays(weekdaysArray); // e.g., ['SUN', 'MON', 'TUE', ...]
     setHours(generatedHours);
     setAvailability(availabilityArray);
@@ -277,7 +276,7 @@ export default function Result() {
     }
   };
 
-  console.log('resultssss', scheduleData);
+  console.log('SCHEDULEDATA', scheduleData);
 
   // const fetch_data = async () => {
   //   console.log('Ran');
@@ -360,22 +359,35 @@ export default function Result() {
   //     ],
   //   },
   // ];
+  console.log('SCHEDULE', scheduleData);
+  console.log('HOURS', hours);
+  console.log('DISPLAYEDDAYS', displayedDays);
+  console.log('SCHEDULEDATA', scheduleData);
+  // console.log("attendee Avail: ", scheduleData[0].availability);
 
   const availabilityCounts = hours.map((_, row) =>
     displayedDays.map((_, column) => {
-      const count = scheduleData.filter(
-        (attendee) => attendee.availability[0][column][row] == 1
-      ).length;
+      const count = scheduleData.filter((attendee) => {
+        // Check if the availability for the specific day and time slot is 1
+        return (
+          attendee.availability[column] &&
+          attendee.availability[column][0][row] === 1
+        );
+      }).length;
+
       return count / scheduleData.length;
     })
   );
 
   const attendeesAvailable =
     hoveredCell.row !== null && hoveredCell.column !== null
-      ? scheduleData.filter(
-          (attendee) =>
-            attendee.availability[0][hoveredCell.column][hoveredCell.row] == 1
-        ).length
+      ? scheduleData.filter((attendee) => {
+          return (
+            attendee.availability[hoveredCell.column] &&
+            attendee.availability[hoveredCell.column][0][hoveredCell.row] === 1
+          );
+          // attendee.availability[0][hoveredCell.column][hoveredCell.row] == 1
+        }).length
       : 0;
 
   const attendeesFraction = `${attendeesAvailable}/${scheduleData.length}`;
@@ -425,9 +437,10 @@ export default function Result() {
                 const isAvailable =
                   hoveredCell.row !== null &&
                   hoveredCell.column !== null &&
-                  attendee.availability[0][hoveredCell.column][
+                  attendee.availability[hoveredCell.column] &&
+                  attendee.availability[hoveredCell.column][0][
                     hoveredCell.row
-                  ] == 1;
+                  ] === 1;
                 const opacityStyle = isAvailable
                   ? 'opacity-100'
                   : 'opacity-50 line-through';
@@ -612,8 +625,10 @@ export default function Result() {
               const isAvailable =
                 hoveredCell.row !== null &&
                 hoveredCell.column !== null &&
-                attendee.availability[0][hoveredCell.column][hoveredCell.row] ==
-                  1;
+                attendee.availability[hoveredCell.column] &&
+                attendee.availability[hoveredCell.column][0][
+                  hoveredCell.row
+                ] === 1;
               const opacityStyle = isAvailable
                 ? 'opacity-100'
                 : 'opacity-50 line-through';

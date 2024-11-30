@@ -150,7 +150,7 @@ export default function Availability() {
           day: 'numeric',
         })
       );
-      console.log("ALLDAYS: ", daysArray);
+      console.log('ALLDAYS: ', daysArray);
       currentDate.setDate(currentDate.getDate() + 1);
       console.log(currentDate);
     }
@@ -164,7 +164,7 @@ export default function Availability() {
       (_, i) => startHour + i
     );
     setHours(generatedHours);
-    console.log("HOURS", generatedHours);
+    console.log('HOURS', generatedHours);
 
     const availabilityArray = Array(daysArray.length).fill(
       Array(generatedHours.length).fill(0)
@@ -181,8 +181,8 @@ export default function Availability() {
     (currentPage + 1) * daysPerPage
   );
 
-  console.log("CurrentPage: ", currentPage);
-  console.log("TOTAL DAYS: ", totalDays);
+  console.log('CurrentPage: ', currentPage);
+  console.log('TOTAL DAYS: ', totalDays);
 
   useEffect(() => {
     console.log('Availability updated:', availability);
