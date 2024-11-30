@@ -10,6 +10,12 @@ export default function TimeSelector({ onTimeSelect }) {
   const textColor = isDarkMode ? 'text-[#F5F5F5]' : 'text-[#3E505B]';
 
   const times = [
+    '12:00 AM',
+    '2:00 AM',
+    '3:00 AM',
+    '4:00 AM',
+    '5:00 AM',
+    '6:00 AM',
     '7:00 AM',
     '8:00 AM',
     '9:00 AM',
@@ -25,13 +31,7 @@ export default function TimeSelector({ onTimeSelect }) {
     '8:00 PM',
     '9:00 PM',
     '10:00 PM',
-    '11:00 PM',
-    '12:00 AM',
-    '2:00 AM',
-    '3:00 AM',
-    '4:00 AM',
-    '5:00 AM',
-    '6:00 AM',
+    '11:00 PM'
   ];
 
   const toggleDropdown = () => {
@@ -45,11 +45,11 @@ export default function TimeSelector({ onTimeSelect }) {
   };
 
   return (
-    <div className="relative">
+    <div className="relative flex flex-col">
       {/* Time Display Button */}
       <button
         onClick={toggleDropdown}
-        className={`lg:p-3 w-[120px] lg:rounded-md lg:bg-[#FF5C5C] text-[#F5F5F5] text-lg
+        className={`lg:p-3 w-[120px] lg:rounded-md lg:bg-[#FF5C5C] text-[#F5F5F5] text-lg ml-auto
          focus:outline-none`}
         style={{ fontSize: `max(1vw, 20px)` }}
       >
@@ -59,7 +59,7 @@ export default function TimeSelector({ onTimeSelect }) {
       {/* Dropdown Menu */}
       {timeDropdownVisible && (
         <div
-          className={`text-center lg:absolute z-10 lg:mt-2 w-[90vw] ml-[-55vw] lg:ml-[0px] lg:w-full max-h-[120px] rounded-md 
+          className={`-ml-[30vw] text-center lg:absolute lg:mt-2 w-[85vw] lg:ml-[0px] lg:w-full max-h-[120px] rounded-md 
             ${bgColor} lg:shadow-lg overflow-y-auto ${textColor}`}
           style={{
             scrollbarWidth: 'none', // Hides scrollbar for Firefox
@@ -77,7 +77,7 @@ export default function TimeSelector({ onTimeSelect }) {
             <div
               key={time}
               onClick={() => handleSelectTime(time)}
-              className="p-2 cursor-pointer text-center"
+              className="p-1 cursor-pointer text-center"
             >
               {time}
             </div>

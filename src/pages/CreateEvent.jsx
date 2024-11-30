@@ -336,13 +336,13 @@ export default function CreateEvent() {
 
       <div className="flex flex-col lg:flex-row mt-[5vh]">
         {/* Event Information */}
-        <div className="pl-[25px] flex-shrink-0 lg:w-[60%]">
+        <div className="p-4 flex-shrink-0 lg:w-[60%]">
           {/* Input for event name */}
           <div className="flex flex-col lg:flex-row mb-5 lg:w-[80vw]">
             <input
               type="text"
               placeholder="Add Event Name"
-              className={`flex-grow bg-transparent w-[80vw] lg:w-[55vw] rounded-none
+              className={`flex-grow bg-transparent w-full lg:w-[55vw] rounded-none
                 border-b-2 focus:outline-none ${textColor} 
                 ${borderColor} ${placeholderColor}`}
               style={{ fontSize: `max(3vw, 35px)` }}
@@ -351,7 +351,7 @@ export default function CreateEvent() {
             />
 
             {/* checkbox for selecting days of the week */}
-            {/* <label className={`flex items-center mt-4 ${textColor}`}>
+            <label className={`flex items-center mt-4 ${textColor}`}>
               <input
                 type="checkbox"
                 checked={selectDaysOfWeek}
@@ -362,7 +362,7 @@ export default function CreateEvent() {
               <span style={{ fontSize: `max(1.5vw, 20px)` }}>
                 Select from days of the week
               </span>
-            </label> */}
+            </label>
           </div>
 
           {/* Date and Time Selection */}
