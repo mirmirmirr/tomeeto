@@ -40,7 +40,7 @@ class Availability:
                 time_row,
                 is_available
             FROM
-                availability
+                user_event_availability
                 INNER JOIN url_code USING (user_event_id)
                 INNER JOIN user_event_participant USING (user_event_id, user_account_id)
             WHERE
@@ -57,7 +57,7 @@ class Availability:
         curr_date = None
         for row in cursor.fetchall():
             if row["nickname"] not in avail_grids:
-                avail_grids[row["nickname"]] = [[]]
+                avail_grids[row["nickname"]] = []
                 user_ids[row["nickname"]] = row["user_account_id"]
                 curr_nickname = row["nickname"]
             if row["date_column"] != curr_date:
