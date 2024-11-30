@@ -588,7 +588,7 @@ export default function CreateEvent() {
         <div
           className={`hidden lg:block pl-8 fixed bottom-[10vw] right-4 flex-shrink-0 lg:w-[40%] flex lg:flex-col items-start`}
         >
-          {/* Invite URL input */}
+          {/* Invite URL input
           <div className="w-full">
             <label
               className={`block font-semibold ${textColor}`}
@@ -602,7 +602,7 @@ export default function CreateEvent() {
                 ${textColor} ${borderColor} ${placeholderColor}`}
               style={{ fontSize: `max(1vw, 20px)` }}
             />
-          </div>
+          </div> */}
 
           {/* Create Event button */}
           <button
@@ -619,7 +619,7 @@ export default function CreateEvent() {
           className={`lg:hidden fixed bottom-0 left-0 flex-shrink-0 flex flex-col ${bgColor}`}
         >
           {/* Invite URL input */}
-          <div className="flex flex-row w-full m-4 gap-4">
+          {/* <div className="flex flex-row w-full m-4 gap-4">
             <label className={`font-semibold ${textColor} text-[20px]`}>
               Invite Code:
             </label>
@@ -628,7 +628,7 @@ export default function CreateEvent() {
               className={`w-[55vw] text-lg bg-transparent text-left border-b-2 focus:outline-none rounded-none
                 ${textColor} ${borderColor} ${placeholderColor} text-[20px]`}
             />
-          </div>
+          </div> */}
 
           {/* Create Event button */}
           <button
