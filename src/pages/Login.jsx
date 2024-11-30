@@ -142,7 +142,7 @@ export default function Login() {
 
   if (
     (cookieObj['login_email'] && cookieObj['login_password']) ||
-    (cookieObj['guest_login'] && cookieObj['guest_password'])
+    (cookieObj['guest_email'] && cookieObj['guest_password'])
   ) {
     console.log('We have login');
     login_user();

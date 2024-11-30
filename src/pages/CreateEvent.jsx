@@ -351,7 +351,7 @@ export default function CreateEvent() {
             />
 
             {/* checkbox for selecting days of the week */}
-            <label className={`flex items-center mt-4 ${textColor}`}>
+            {/* <label className={`flex items-center mt-4 ${textColor}`}>
               <input
                 type="checkbox"
                 checked={selectDaysOfWeek}
@@ -362,7 +362,7 @@ export default function CreateEvent() {
               <span style={{ fontSize: `max(1.5vw, 20px)` }}>
                 Select from days of the week
               </span>
-            </label>
+            </label> */}
           </div>
 
           {/* Date and Time Selection */}
