@@ -374,7 +374,7 @@ export default function Availability() {
         </div>
 
         <div
-          className={`w-[93vw] border-t-2 m-auto opacity-25 ${isDarkMode ? 'border-gray-300' : 'border-gray-500'}`}
+          className={`w-[90vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
         ></div>
 
         <div className="flex w-[90vw] justify-between items-center mt-4">
@@ -402,7 +402,7 @@ export default function Availability() {
 
         <div
           id="availability"
-          className="w-full lg:w-[80vw] h-[100vh] lg:h-[70vh] lg:ml-[5%] items-center mr-auto mt-[3vh] flex flex-col lg:flex-row overflow-hidden"
+          className="flex flex-row w-full lg:w-[80vw] lg:h-[70vh] lg:ml-[5%] items-center mr-auto mt-[3vh] overflow-hidden"
         >
           <div className="flex justify-between mt-4">
             {currentPage > 0 && (
@@ -511,6 +511,7 @@ export default function Availability() {
                       borderTop: '1px solid #b9b9b9',
                     }}
                   ></td>
+
                   {displayedDays.map((_, column) => (
                     <td
                       key={column}
