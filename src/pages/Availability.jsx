@@ -59,6 +59,15 @@ export default function Availability() {
   const [availability, setAvailability] = useState([]);
   const [eventName, setEventName] = useState([]);
 
+  const [isError, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleError = (errormessage) => {
+    setErrorMessage(errormessage);
+    setIsError(true);
+    setTimeout(() => setIsError(false), 2000);
+  }
+
   const check_user = async (dataToUse) => {
     if (userEmail !== null && userPW !== null) {
       dataToUse['email'] = userEmail;
@@ -358,6 +367,11 @@ export default function Availability() {
         console.log(credentials);
         if (response.ok) {
           const result = await response.json();
+
+          if (result.message != 'Availability added') {
+            handleError(result.message);
+            return;
+          }
           console.log('Time Set Successfully', result);
 
           // session management with dashboard
@@ -371,7 +385,7 @@ export default function Availability() {
     }
   };
 
-  console.log("EVENT DATES", eventDates);
+  console.log('EVENT DATES', eventDates);
 
   return (
     <div
@@ -384,25 +398,24 @@ export default function Availability() {
       <div
         className={`flex flex-col mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
-      <div
-        id="eventName"
-        className="flex flex-row w-[90vw] lg:w-[93vw] lg:ml-4 justify-between"
-        style={{ fontSize: `max(3vw, 35px)` }}
-      >
-        {eventName}
-        
         <div
-          className='lg:mr-[30px]'
-          style={{
-            fontSize: `max(1vw, 15px)`,
-            marginTop: 'auto',
-            marginBottom: '10px',
-          }}
+          id="eventName"
+          className="flex flex-row w-[90vw] lg:w-[93vw] lg:ml-4 justify-between"
+          style={{ fontSize: `max(3vw, 35px)` }}
         >
-          {eventDates}
-        </div>
-      </div>
+          {eventName}
 
+          <div
+            className="lg:mr-[30px]"
+            style={{
+              fontSize: `max(1vw, 15px)`,
+              marginTop: 'auto',
+              marginBottom: '10px',
+            }}
+          >
+            {eventDates}
+          </div>
+        </div>
 
         <div
           className={`w-[90vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
@@ -421,7 +434,12 @@ export default function Availability() {
             <br />
             add your availability here
           </div>
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex flex items-end justify-end">
+          {isError && (
+              <div className="w-[400px] p-2 bg-[#FF5C5C] flex items-center justify-center mr-4 ">
+                {errorMessage}
+              </div>
+            )}
             <button
               onClick={submit_button}
               className="w-32 p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500"
