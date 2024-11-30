@@ -617,10 +617,18 @@ export default function Availability() {
           </div>
         </div>
 
-        <div className="lg:hidden mt-4">
+        <div
+          className={`lg:hidden fixed bottom-0 left-0 flex-shrink-0 flex flex-col`}
+        >
+        {isError && (
+              <div className="w-[100vw] p-2 bg-[#FF5C5C] flex items-center justify-center mb-4 ">
+                {errorMessage}
+              </div>
+            )}
           <button
             onClick={submit_button}
-            className="w-full p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500"
+            className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
+            style={{ fontSize: `max(1vw, 20px)` }}
           >
             Submit
           </button>
