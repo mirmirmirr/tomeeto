@@ -68,6 +68,7 @@ export default function Result() {
 
   const [eventDetails, setEventDetails] = useState(null);
   const [eventDates, setEventDates] = useState(null);
+  const [isGenericWeek, setIsGenericWeek] = useState(false);
   const [allDays, setAllDays] = useState([]);
   const [weekdays, setWeekdays] = useState([]);
   const [scheduleData, setResults] = useState([]);
@@ -175,8 +176,11 @@ export default function Result() {
 
   const updateEventData = async (data) => {
     const {
+      all_dates,
       start_date,
       start_time,
+      start_day,
+      end_day,
       end_date,
       end_time,
       duration,
@@ -184,7 +188,10 @@ export default function Result() {
       title,
     } = data;
 
-    // Parse start and end dates
+    var daysArray = [];
+    const weekdaysArray = [];
+    if (event_type == "date_range") {
+          // Parse start and end dates
     const startDate = new Date(`${start_date} ${start_time}`);
     const endDate = new Date(`${end_date} ${end_time}`);
     console.log('Start Date:', startDate);
@@ -205,8 +212,6 @@ export default function Result() {
     setEventDates(`${formattedStartDate} - ${formattedEndDate}`);
 
     // Generate days and weekdays arrays
-    const daysArray = [];
-    const weekdaysArray = [];
     let currentDate = new Date(startDate); // Use a new instance to avoid mutating startDate
 
     while (currentDate <= endDate) {
@@ -221,6 +226,32 @@ export default function Result() {
 
     console.log('Days Array:', daysArray);
     console.log('Weekdays Array:', weekdaysArray);
+
+    setAllDays(daysArray);
+    setTotalDays(daysArray.length);
+    setWeekdays(weekdaysArray);
+
+    } else {
+      setIsGenericWeek(true);
+      setEventDates(`${start_day} - ${end_day}`);
+      console.log("here");
+
+      const abbreviations = all_dates[0].weekdayName.map(day => {
+        switch (day) {
+          case 'Saturday': return 'SAT';
+          case 'Monday': return 'MON';
+          case 'Tuesday': return 'TUE';
+          case 'Wednesday': return 'WED';
+          case 'Thursday': return 'THU';
+          case 'Friday': return 'FRI';
+          case 'Sunday': return 'SUN';
+          default: return day;
+        }
+      });
+
+      daysArray = abbreviations;
+      setAllDays(daysArray);
+    }
 
     // Generate hours array
     const startHour = parseInt(start_time.split(':')[0], 10);
@@ -239,9 +270,6 @@ export default function Result() {
     console.log('Initial Availability Array:', availabilityArray);
 
     // Update states
-    setAllDays(daysArray); // e.g., ['6', '7', '8', '9', ...]
-    setTotalDays(daysArray.length);
-    setWeekdays(weekdaysArray); // e.g., ['SUN', 'MON', 'TUE', ...]
     setHours(generatedHours);
     setAvailability(availabilityArray);
 
@@ -491,7 +519,8 @@ export default function Result() {
           </div>
 
           <div className="flex flex-row">
-            <div className="flex justify-between mt-4 w-[50px]">
+            {!isGenericWeek && (
+               <div className="flex justify-between mt-4 w-[50px]">
               {currentPage > 0 && (
                 <button
                   onClick={goToPrevPage}
@@ -502,6 +531,8 @@ export default function Result() {
                 </button>
               )}
             </div>
+            )}
+           
 
             <div className="flex flex-col mr-[10px] h-[70vh]">
               <div
@@ -616,8 +647,9 @@ export default function Result() {
                 ))}
               </tbody>
             </table>
-
-            <div className="flex justify-between mt-4 w-[60px]">
+          
+          {!isGenericWeek && (
+                        <div className="flex justify-between mt-4 w-[60px]">
               {(currentPage + 1) * daysPerPage < totalDays && (
                 <button
                   onClick={goToNextPage}
@@ -628,6 +660,8 @@ export default function Result() {
                 </button>
               )}
             </div>
+          )}
+
           </div>
 
           <div className="hidden lg:block w-full flex flex-col text-center h-[70vh]">

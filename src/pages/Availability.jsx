@@ -52,6 +52,7 @@ export default function Availability() {
 
   const [eventDetails, setEventDetails] = useState(null);
   const [eventDates, setEventDates] = useState(null);
+  const [isGenericWeek, setIsGenericWeek] = useState(false);
   const [allDays, setAllDays] = useState([]);
   const [weekdays, setWeekdays] = useState([]);
   const [totalDays, setTotalDays] = useState(0);
@@ -135,8 +136,11 @@ export default function Availability() {
 
   const updateEventData = (data) => {
     const {
+      all_dates,
       start_date,
       start_time,
+      start_day,
+      end_day,
       end_date,
       end_time,
       duration,
@@ -145,43 +149,67 @@ export default function Availability() {
     } = data;
     setEventName(title);
 
-    const startDate = new Date(start_date + ' ' + start_time);
-    const endDate = new Date(end_date + ' ' + end_time);
-    console.log(startDate);
-    console.log(endDate);
+    console.log(event_type);
+    console.log(all_dates[0].weekdayName);
 
-    // Format the dates to the desired format
-    const formattedStartDate = startDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-
-    const formattedEndDate = endDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-
-    // Combine the formatted start and end dates
-    setEventDates(`${formattedStartDate} - ${formattedEndDate}`);
-
-    const daysArray = [];
+    var daysArray = [];
     const weekdaysArray = [];
-    let currentDate = new Date(startDate);
+    if (event_type == "date_range") {
+      const startDate = new Date(start_date + ' ' + start_time);
+      const endDate = new Date(end_date + ' ' + end_time);
+      console.log(startDate);
+      console.log(endDate);
 
-    while (currentDate <= endDate) {
-      daysArray.push(currentDate.getDate().toString()); // Day of the month
-      weekdaysArray.push(
-        currentDate
-          .toLocaleDateString('en-US', { weekday: 'short' })
-          .toUpperCase()
-      );
-      currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+      // Format the dates to the desired format
+      const formattedStartDate = startDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+
+      const formattedEndDate = endDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+
+      setEventDates(`${formattedStartDate} - ${formattedEndDate}`);
+
+      let currentDate = new Date(startDate);
+  
+      while (currentDate <= endDate) {
+        daysArray.push(currentDate.getDate().toString()); // Day of the month
+        weekdaysArray.push(
+          currentDate
+            .toLocaleDateString('en-US', { weekday: 'short' })
+            .toUpperCase()
+        );
+        currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+      }
+      setAllDays(daysArray);
+      setWeekdays(weekdaysArray);
+
+    } else {
+      setIsGenericWeek(true);
+      setEventDates(`${start_day} - ${end_day}`);
+      console.log("here");
+
+      const abbreviations = all_dates[0].weekdayName.map(day => {
+        switch (day) {
+          case 'Saturday': return 'SAT';
+          case 'Monday': return 'MON';
+          case 'Tuesday': return 'TUE';
+          case 'Wednesday': return 'WED';
+          case 'Thursday': return 'THU';
+          case 'Friday': return 'FRI';
+          case 'Sunday': return 'SUN';
+          default: return day;
+        }
+      });
+
+      daysArray = abbreviations;
+      setAllDays(daysArray);
     }
-
-    setAllDays(daysArray);
-    setWeekdays(weekdaysArray);
 
     const startHour = parseInt(start_time.split(':')[0]);
     const endHour = parseInt(end_time.split(':')[0]);
@@ -199,6 +227,7 @@ export default function Availability() {
     setTotalDays(daysArray.length);
   };
 
+  console.log("ALLDAYS", allDays);
   const displayedDays = allDays.slice(
     currentPage * daysPerPage,
     (currentPage + 1) * daysPerPage
@@ -461,8 +490,9 @@ export default function Availability() {
           id="availability"
           className="flex flex-row w-full lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] overflow-hidden"
         >
-          <div className="flex justify-between mt-4 w-[50px]">
-            {currentPage > 0 && (
+          {!isGenericWeek && (
+             <div className="flex justify-between mt-4 w-[50px]">
+            {(currentPage > 0 && !isGenericWeek) && (
               <button
                 onClick={goToPrevPage}
                 className="font-bold opacity-25 hover:opacity-100"
@@ -472,7 +502,8 @@ export default function Availability() {
               </button>
             )}
           </div>
-
+          )}
+         
           <div className="flex flex-col mr-[10px] h-[60vh]">
             <div
               className=" pb-1 font-[400] opacity-0"
@@ -591,8 +622,8 @@ export default function Availability() {
               ))}
             </tbody>
           </table>
-
-          <div className="flex justify-between mt-4 w-[60px]">
+          {!isGenericWeek && (
+             <div className="flex justify-between mt-4 w-[60px]">
             {(currentPage + 1) * daysPerPage < totalDays && (
               <button
                 onClick={goToNextPage}
@@ -603,6 +634,8 @@ export default function Availability() {
               </button>
             )}
           </div>
+          )}
+         
         </div>
 
         <div
