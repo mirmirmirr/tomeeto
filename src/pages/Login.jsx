@@ -92,21 +92,12 @@ export default function Login() {
     if (cookieObj['login_email'] && cookieObj['login_password']) {
       data['email'] = cookieObj['login_email'];
       data['password'] = cookieObj['login_password'];
-      const emailCookie = `guest_email=${encodeURIComponent(JSON.stringify(cookieObj['login_email']))}; path=/;`;
-      const passwordCookie = `guest_password=${encodeURIComponent(JSON.stringify(cookieObj['login_password']))}; path=/;`;
-      document.cookie = emailCookie;
-      document.cookie = passwordCookie;
     } else if (cookieObj['guest_email'] && cookieObj['guest_password']) {
       data['guest_id'] = parseInt(cookieObj['guest_email']);
       data['guest_password'] = cookieObj['guest_password'];
-      const guestEmailCookie = `guest_email=${encodeURIComponent(JSON.stringify(cookieObj['guest_email']))}; path=/;`;
-      const guestPasswordCookie = `guest_password=${encodeURIComponent(JSON.stringify(cookieObj['guest_password']))}; path=/;`;
-      document.cookie = guestEmailCookie;
-      document.cookie = guestPasswordCookie;
     } else {
-      console.log('Ran');
-      data['guest_id'] = parseInt(email.email);
-      data['guest_password'] = passwordValues.password;
+      data['email'] = email.email;
+      data['password'] = passwordValues.password;
       const emailCookie = `login_email=${encodeURIComponent(JSON.stringify(email.email))}; path=/;`;
       const passwordCookie = `login_password=${encodeURIComponent(JSON.stringify(passwordValues.password))}; path=/;`;
       document.cookie = emailCookie;

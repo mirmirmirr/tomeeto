@@ -41,6 +41,7 @@ export default function Landing() {
           onChange={(e) => setCode(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
+              document.cookie = `code=${encodeURIComponent(JSON.stringify(e.target.value))}; path=/;`;
               navigate('/availability', { state: { code: e.target.value } });
             }
           }}

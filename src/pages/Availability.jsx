@@ -75,7 +75,7 @@ export default function Availability() {
       dataToUse['password'] = userPW;
     } else {
       if (guestEmail !== null && guestPW !== null) {
-        dataToUse['guest_id'] = guestEmail;
+        dataToUse['guest_id'] = parseInt(guestEmail);
         dataToUse['guest_password'] = guestPW;
       } else {
         try {
@@ -84,8 +84,12 @@ export default function Availability() {
           );
           if (response.ok) {
             const responseData = await response.json();
-            dataToUse['guest_id'] = responseData.guest_id;
+            dataToUse['guest_id'] = parseInt(responseData.guest_id);
             dataToUse['guest_password'] = responseData.guest_password;
+            const guestEmailCookie = `guest_email=${encodeURIComponent(JSON.stringify(responseData.guest_id))}; path=/;`;
+            const guestPasswordCookie = `guest_password=${encodeURIComponent(JSON.stringify(responseData.guest_password))}; path=/;`;
+            document.cookie = guestEmailCookie;
+            document.cookie = guestPasswordCookie;
           } else {
             console.error(
               'Failed to make guest:',
@@ -101,38 +105,49 @@ export default function Availability() {
   };
 
   useEffect(() => {
-    if (eventCode) {
-      const data = {
-        // email: 'testing@gmail.com',
-        // password: '123',
-        event_code: eventCode,
-      };
-
-      // console.log(data);
-      check_user(data);
-      // console.log(data);
-      // return;
-      fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // Assuming the data from /event_details contains 'days' and 'start_time'
-          console.log('Event details:', data);
-
-          // Update the state based on the event details
-          setEventDetails(data);
-          updateEventData(data); // Call function to update days and hours
-        })
-        .catch((error) => {
-          console.error('Error fetching event details:', error);
+    async function handleEventDetails() {
+      try {
+        const data = {
+          // email: 'testing@gmail.com',
+          // password: '123',
+          event_code: eventCode,
+        };
+  
+        console.log('Before user check:', data);
+  
+        // Wait for check_user to complete
+        await check_user(data);
+  
+        console.log('After user check:', data);
+  
+        // Proceed with fetch after check_user completes
+        const response = await fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
         });
+  
+        if (!response.ok) {
+          throw new Error('Failed to fetch event details');
+        }
+  
+        const eventData = await response.json();
+        console.log('Event details:', eventData);
+  
+        // Update state based on the event details
+        setEventDetails(eventData);
+        updateEventData(eventData);
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
-  }, [eventCode]);
+  
+    if (eventCode) {
+      handleEventDetails(); // Call the async function
+    }
+  }, [eventCode]);  
 
   const updateEventData = (data) => {
     const {
@@ -339,6 +354,7 @@ export default function Availability() {
     };
 
     if (isUpdating === true) {
+      console.log("UPDATINGGGGGGGGGGGGGGGGGGGG");
       console.log(availability);
 
       check_user(credentials);
@@ -373,7 +389,7 @@ export default function Availability() {
         console.error('Error:', error);
       }
     } else {
-      // console.log('Ran');
+      console.log('Ran this random thing');
       // console.log(name);
       // console.log(availability);
 

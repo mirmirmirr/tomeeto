@@ -224,7 +224,7 @@ export default function Dashboard() {
                     onClick={() => handleCopyLink(event)}
                     className="px-4 py-2 bg-green-500 text-white rounded-md"
                   >
-                    Copy Link
+                    Copy Event Code
                   </button>
                   <button
                     onClick={() => handleEditEvent(event)}
