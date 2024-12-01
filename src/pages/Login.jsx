@@ -108,7 +108,7 @@ export default function Login() {
     var data = {};
     console.log(document.cookie);
 
-    if (email.email == '' || passwordValue == '') {
+    if (email.email == '' || passwordValues.password == '') {
       handleError("Email + Password can't be empty.");
       return;
     }
@@ -150,10 +150,10 @@ export default function Login() {
     }
   };
 
-  if (cookieObj['login_email'] && cookieObj['login_password']) {
-    console.log('We have login');
-    login_user();
-  }
+  // if (cookieObj['login_email'] && cookieObj['login_password']) {
+  //   console.log('We have login');
+  //   login_user();
+  // }
 
   return (
     <div
