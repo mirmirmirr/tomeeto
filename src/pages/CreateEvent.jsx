@@ -34,7 +34,7 @@ export default function CreateEvent() {
   const [eventName, setEventName] = useState('');
   const [eventDescription, setEventDescription] = useState('');
   const [startTime, setStartTime] = useState('07:00');
-  const [endTime, setEndTime] = useState('19:00');
+  const [endTime, setEndTime] = useState('07:00');
   const [startCalendarDay, setCalendarStart] = useState(today);
   const [endCalendarDay, setCalendarEnd] = useState(today);
 
