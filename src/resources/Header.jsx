@@ -31,7 +31,7 @@ function checkUserLogin() {
     }
   });
 
-  if (cookieObj['login_email'] && cookieObj['login_password']) {
+  if ((cookieObj['login_email'] && cookieObj['login_password']) || (cookieObj['guest_email'] && cookieObj['guest_password'])) {
     return true;
   }
 
