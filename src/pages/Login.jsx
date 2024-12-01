@@ -51,7 +51,8 @@ export default function Login() {
         error: false,
         message: '',
       });
-    }, 2000);  };
+    }, 2000);
+  };
 
   // document.cookie = 'email=' + email;
   // document.cookie = 'password=' + passwordValues;
@@ -120,7 +121,7 @@ export default function Login() {
     document.cookie = passwordCookie;
 
     // console.log(data);
-    console.log("login data? ", data);
+    console.log('login data? ', data);
 
     try {
       const response = await fetch('http://tomeeto.cs.rpi.edu:8000/login', {
@@ -149,9 +150,7 @@ export default function Login() {
     }
   };
 
-  if (
-    (cookieObj['login_email'] && cookieObj['login_password'])
-  ) {
+  if (cookieObj['login_email'] && cookieObj['login_password']) {
     console.log('We have login');
     login_user();
   }
@@ -197,7 +196,7 @@ export default function Login() {
 
         {/*login form */}
         <div className="w-full lg:w-1/2 flex flex-col items-center space-y-4 p-6">
-        {error.error && (
+          {error.error && (
             <div
               className={`absolute w-[35vw] h-8 mb-4 -mt-8 bg-[#FF5C5C] flex items-center justify-center ${isDarkMode ? 'text-white' : 'text-black'}`}
             >
@@ -296,36 +295,37 @@ export default function Login() {
         </div>
 
         {isSmallScreen && (
-          <div             className={`fixed bottom-0 left-0 flex flex-col items-center justify-center ${
-            isDarkMode ? 'text-white' : 'text-[#3E505B]'
-          }`}>
-                      {error.error && (
-            <div
-              className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center`}
-            >
-              {error.message}
-            </div>
-          )}
-            <div           className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
-
+          <div
+            className={`fixed bottom-0 left-0 flex flex-col items-center justify-center ${
+              isDarkMode ? 'text-white' : 'text-[#3E505B]'
+            }`}
           >
-            <button
-              onClick={() => navigate('/signup')}
-              className="mr-[40px] bg-[#FF5C5C] text-white rounded-md"
+            {error.error && (
+              <div
+                className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center`}
+              >
+                {error.message}
+              </div>
+            )}
+            <div
+              className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
             >
-              No account? <span className="underline">Sign up here!</span>
-            </button>
-            <button
-              onClick={login_user}
-              className={`w-[125px] p-[10px] rounded-md ${
-                isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'
-              }`}
-            >
-              LOGIN
-            </button>
+              <button
+                onClick={() => navigate('/signup')}
+                className="mr-[40px] bg-[#FF5C5C] text-white rounded-md"
+              >
+                No account? <span className="underline">Sign up here!</span>
+              </button>
+              <button
+                onClick={login_user}
+                className={`w-[125px] p-[10px] rounded-md ${
+                  isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'
+                }`}
+              >
+                LOGIN
+              </button>
+            </div>
           </div>
-          </div>
-          
         )}
       </div>
     </div>
