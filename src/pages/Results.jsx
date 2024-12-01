@@ -427,8 +427,8 @@ export default function Result() {
       const count = scheduleData.filter((attendee) => {
         // Check if the availability for the specific day and time slot is 1
         return (
-          attendee.availability[column] &&
-          attendee.availability[column][0][row] === 1
+          attendee.availability[currentPage * daysPerPage + column] &&
+          attendee.availability[currentPage * daysPerPage + column][0][row] === 1
         );
       }).length;
 
@@ -440,10 +440,10 @@ export default function Result() {
     hoveredCell.row !== null && hoveredCell.column !== null
       ? scheduleData.filter((attendee) => {
           return (
-            attendee.availability[hoveredCell.column] &&
-            attendee.availability[hoveredCell.column][0][hoveredCell.row] === 1
+            attendee.availability[currentPage * daysPerPage + hoveredCell.column] &&
+            attendee.availability[currentPage * daysPerPage + hoveredCell.column][0][hoveredCell.row] === 1
           );
-          // attendee.availability[0][hoveredCell.column][hoveredCell.row] == 1
+          // attendee.availability[0][currentPage * daysPerPage + hoveredCell.column][hoveredCell.row] == 1
         }).length
       : 0;
 
@@ -505,8 +505,8 @@ export default function Result() {
                 const isAvailable =
                   hoveredCell.row !== null &&
                   hoveredCell.column !== null &&
-                  attendee.availability[hoveredCell.column] &&
-                  attendee.availability[hoveredCell.column][0][
+                  attendee.availability[currentPage * daysPerPage + hoveredCell.column] &&
+                  attendee.availability[currentPage * daysPerPage + hoveredCell.column][0][
                     hoveredCell.row
                   ] === 1;
                 const opacityStyle = isAvailable
@@ -677,8 +677,8 @@ export default function Result() {
               const isAvailable =
                 hoveredCell.row !== null &&
                 hoveredCell.column !== null &&
-                attendee.availability[hoveredCell.column] &&
-                attendee.availability[hoveredCell.column][0][
+                attendee.availability[currentPage * daysPerPage + hoveredCell.column] &&
+                attendee.availability[currentPage * daysPerPage + hoveredCell.column][0][
                   hoveredCell.row
                 ] === 1;
               const opacityStyle = isAvailable
