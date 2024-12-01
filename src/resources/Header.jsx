@@ -14,41 +14,42 @@ function deleteAllCookies() {
   });
 }
 
-function checkUserLogin() {
-  const cookies = document.cookie;
-  const cookieObj = {};
-
-  cookies.split(';').forEach((cookie) => {
-    const [key, value] = cookie.split('=').map((part) => part.trim());
-    if (key && value) {
-      try {
-        // Parse JSON if it's valid JSON, otherwise use as-is
-        const parsedValue = JSON.parse(decodeURIComponent(value));
-        cookieObj[key] = String(parsedValue);
-      } catch {
-        cookieObj[key] = String(decodeURIComponent(value));
-      }
-    }
-  });
-
-  if ((cookieObj['login_email'] && cookieObj['login_password']) || (cookieObj['guest_email'] && cookieObj['guest_password'])) {
-    return true;
-  }
-
-  return false;
-}
-
 export default function Header({ isDarkMode, toggleTheme }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [isGuestLoggedIn, setIsGuestLoggedIn] = useState(false);
   const menuRef = useRef(null);
   const hamburgerRef = useRef(null);
 
   useEffect(() => {
-    setIsLoggedIn(checkUserLogin());
+    const checkUserLogin = () => {
+      const cookies = document.cookie;
+      const cookieObj = {};
+    
+      cookies.split(';').forEach((cookie) => {
+        const [key, value] = cookie.split('=').map((part) => part.trim());
+        if (key && value) {
+          try {
+            // Parse JSON if it's valid JSON, otherwise use as-is
+            const parsedValue = JSON.parse(decodeURIComponent(value));
+            cookieObj[key] = String(parsedValue);
+          } catch {
+            cookieObj[key] = String(decodeURIComponent(value));
+          }
+        }
+      });
+    
+      if ((cookieObj['login_email'] && cookieObj['login_password'])) {
+        setIsUserLoggedIn(true);
+      } else if (cookieObj['guest_email'] && cookieObj['guest_password']) {
+        setIsGuestLoggedIn(true);
+      }
+    };
+
+    checkUserLogin();
   }, []);
 
   // Update screen size state on window resize
@@ -66,6 +67,8 @@ export default function Header({ isDarkMode, toggleTheme }) {
 
   const handleLogout = () => {
     deleteAllCookies();
+    setIsUserLoggedIn(false);
+    setIsGuestLoggedIn(false);
     navigate('/');
   };
 
@@ -130,7 +133,15 @@ export default function Header({ isDarkMode, toggleTheme }) {
             >
               Create Event
             </li>
-            {!isLoggedIn ? (
+            {(isUserLoggedIn || isGuestLoggedIn) && (
+                              <li
+                              className="px-4 py-2 cursor-pointer hover:underline"
+                              onClick={() => navigate('/dashboard')}
+                            >
+                              Dashboard
+                            </li>
+            )}
+            {!isUserLoggedIn ? (
               <>
                 <li
                   className="px-4 py-2 cursor-pointer hover:underline"
@@ -147,12 +158,6 @@ export default function Header({ isDarkMode, toggleTheme }) {
               </>
             ) : (
               <>
-                <li
-                  className="px-4 py-2 cursor-pointer hover:underline"
-                  onClick={() => navigate('/create')}
-                >
-                  Dashboard
-                </li>
                 <li
                   className="px-4 py-2 cursor-pointer hover:underline"
                   onClick={handleLogout}
@@ -181,7 +186,7 @@ export default function Header({ isDarkMode, toggleTheme }) {
             toggleTheme={toggleTheme}
           />
 
-          {isLoggedIn && (
+          {(isUserLoggedIn || isGuestLoggedIn) && (
             <label
               class="absolute top-11 right-[140px] group"
               onClick={() => navigate('/dashboard')}
