@@ -112,30 +112,33 @@ export default function Availability() {
           // password: '123',
           event_code: eventCode,
         };
-  
+
         console.log('Before user check:', data);
-  
+
         // Wait for check_user to complete
         await check_user(data);
-  
+
         console.log('After user check:', data);
-  
+
         // Proceed with fetch after check_user completes
-        const response = await fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        });
-  
+        const response = await fetch(
+          'http://tomeeto.cs.rpi.edu:8000/event_details',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          }
+        );
+
         if (!response.ok) {
           throw new Error('Failed to fetch event details');
         }
-  
+
         const eventData = await response.json();
         console.log('Event details:', eventData);
-  
+
         // Update state based on the event details
         setEventDetails(eventData);
         updateEventData(eventData);
@@ -143,11 +146,11 @@ export default function Availability() {
         console.error('Error:', error);
       }
     }
-  
+
     if (eventCode) {
       handleEventDetails(); // Call the async function
     }
-  }, [eventCode]);  
+  }, [eventCode]);
 
   const updateEventData = (data) => {
     const {
@@ -354,7 +357,7 @@ export default function Availability() {
     };
 
     if (isUpdating === true) {
-      console.log("UPDATINGGGGGGGGGGGGGGGGGGGG");
+      console.log('UPDATINGGGGGGGGGGGGGGGGGGGG');
       console.log(availability);
 
       check_user(credentials);
