@@ -28,7 +28,7 @@ export default function Header({ isDarkMode, toggleTheme }) {
     const checkUserLogin = () => {
       const cookies = document.cookie;
       const cookieObj = {};
-    
+
       cookies.split(';').forEach((cookie) => {
         const [key, value] = cookie.split('=').map((part) => part.trim());
         if (key && value) {
@@ -41,8 +41,8 @@ export default function Header({ isDarkMode, toggleTheme }) {
           }
         }
       });
-    
-      if ((cookieObj['login_email'] && cookieObj['login_password'])) {
+
+      if (cookieObj['login_email'] && cookieObj['login_password']) {
         setIsUserLoggedIn(true);
       } else if (cookieObj['guest_email'] && cookieObj['guest_password']) {
         setIsGuestLoggedIn(true);
@@ -134,12 +134,12 @@ export default function Header({ isDarkMode, toggleTheme }) {
               Create Event
             </li>
             {(isUserLoggedIn || isGuestLoggedIn) && (
-                              <li
-                              className="px-4 py-2 cursor-pointer hover:underline"
-                              onClick={() => navigate('/dashboard')}
-                            >
-                              Dashboard
-                            </li>
+              <li
+                className="px-4 py-2 cursor-pointer hover:underline"
+                onClick={() => navigate('/dashboard')}
+              >
+                Dashboard
+              </li>
             )}
             {!isUserLoggedIn ? (
               <>
@@ -167,14 +167,14 @@ export default function Header({ isDarkMode, toggleTheme }) {
               </>
             )}
             {isGuestLoggedIn && (
-                          <>
-                            <li
-                              className="mt-8 px-4 py-2 cursor-pointer hover:underline"
-                              onClick={handleLogout}
-                            >
-                              Clear Dashboard Data
-                            </li>
-                          </>
+              <>
+                <li
+                  className="mt-8 px-4 py-2 cursor-pointer hover:underline"
+                  onClick={handleLogout}
+                >
+                  Clear Dashboard Data
+                </li>
+              </>
             )}
           </ul>
         </div>

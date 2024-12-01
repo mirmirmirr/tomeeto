@@ -186,11 +186,10 @@ export default function Dashboard() {
       className={`relative flex flex-col h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B] text-white' : 'bg-[#F5F5F5] text-black'}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-      <div         className={`flex flex-col mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
+      <div
+        className={`flex flex-col mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
-
-        <div           className="flex flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between"
-        >
+        <div className="flex flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between">
           <div id="dashboardTitle" style={{ fontSize: `max(3vh, 35px)` }}>
             Your Events
           </div>
@@ -204,7 +203,7 @@ export default function Dashboard() {
 
         <div
           className={`justify-center lg:ml-4 w-[85vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
-          ></div>
+        ></div>
 
         {notification && (
           <div className="fixed bottom-0 left-0 w-full bg-red-500 text-white text-center py-2">
