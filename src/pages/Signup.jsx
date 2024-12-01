@@ -163,7 +163,7 @@ export default function Signup() {
         <div className="w-full lg:w-1/2 flex flex-col items-center space-y-4 p-6">
           {error.error && (
             <div
-              className={`absolute w-[30vw] h-8 mb-4 -mt-8 bg-[#FF5C5C] flex items-center justify-center ${isDarkMode ? 'text-white' : 'text-black'}`}
+              className={`hidden lg;block absolute w-[30vw] h-8 mb-4 -mt-8 bg-[#FF5C5C] flex items-center justify-center ${isDarkMode ? 'text-white' : 'text-black'}`}
             >
               {error.message}
             </div>
