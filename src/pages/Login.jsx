@@ -36,6 +36,23 @@ export default function Login() {
     showEmail: false,
   });
 
+  const [error, setError] = useState({
+    error: false,
+    message: '',
+  });
+
+  const handleError = (errormessage) => {
+    setError({
+      error: true,
+      message: errormessage,
+    });
+    setTimeout(() => {
+      setError({
+        error: false,
+        message: '',
+      });
+    }, 2000);  };
+
   // document.cookie = 'email=' + email;
   // document.cookie = 'password=' + passwordValues;
 
@@ -89,23 +106,21 @@ export default function Login() {
   const login_user = async () => {
     var data = {};
     console.log(document.cookie);
-    if (cookieObj['login_email'] && cookieObj['login_password']) {
-      data['email'] = cookieObj['login_email'];
-      data['password'] = cookieObj['login_password'];
-    } else if (cookieObj['guest_email'] && cookieObj['guest_password']) {
-      data['guest_id'] = parseInt(cookieObj['guest_email']);
-      data['guest_password'] = cookieObj['guest_password'];
-    } else {
-      data['email'] = email.email;
-      data['password'] = passwordValues.password;
-      const emailCookie = `login_email=${encodeURIComponent(JSON.stringify(email.email))}; path=/;`;
-      const passwordCookie = `login_password=${encodeURIComponent(JSON.stringify(passwordValues.password))}; path=/;`;
-      document.cookie = emailCookie;
-      document.cookie = passwordCookie;
+
+    if (email.email == '' || passwordValue == '') {
+      handleError("Email + Password can't be empty.");
+      return;
     }
 
+    data['email'] = email.email;
+    data['password'] = passwordValues.password;
+    const emailCookie = `login_email=${encodeURIComponent(JSON.stringify(email.email))}; path=/;`;
+    const passwordCookie = `login_password=${encodeURIComponent(JSON.stringify(passwordValues.password))}; path=/;`;
+    document.cookie = emailCookie;
+    document.cookie = passwordCookie;
+
     // console.log(data);
-    console.log(data);
+    console.log("login data? ", data);
 
     try {
       const response = await fetch('http://tomeeto.cs.rpi.edu:8000/login', {
@@ -122,6 +137,9 @@ export default function Login() {
         console.log(result.message);
         if (result.message.localeCompare('Login successful') === 0) {
           navigate('/dashboard');
+        } else {
+          handleError(result.message);
+          return;
         }
       } else {
         console.error('Failed to log in:', response.statusText);
@@ -132,8 +150,7 @@ export default function Login() {
   };
 
   if (
-    (cookieObj['login_email'] && cookieObj['login_password']) ||
-    (cookieObj['guest_email'] && cookieObj['guest_password'])
+    (cookieObj['login_email'] && cookieObj['login_password'])
   ) {
     console.log('We have login');
     login_user();
@@ -141,7 +158,7 @@ export default function Login() {
 
   return (
     <div
-      className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
+      className={`relative flex flex-col h-[100vh] p-4 overflow-hidden ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
@@ -180,6 +197,13 @@ export default function Login() {
 
         {/*login form */}
         <div className="w-full lg:w-1/2 flex flex-col items-center space-y-4 p-6">
+        {error.error && (
+            <div
+              className={`absolute w-[35vw] h-8 mb-4 -mt-8 bg-[#FF5C5C] flex items-center justify-center ${isDarkMode ? 'text-white' : 'text-black'}`}
+            >
+              {error.message}
+            </div>
+          )}
           <div className="w-[80vw] lg:w-[35vw] mb-[20px]">
             <label
               className={`block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
@@ -272,10 +296,18 @@ export default function Login() {
         </div>
 
         {isSmallScreen && (
-          <div
-            className={`fixed bottom-0 left-0 w-full h-[10vh] bg-[#FF5C5C] flex items-center justify-center ${
-              isDarkMode ? 'text-white' : 'text-[#3E505B]'
-            }`}
+          <div             className={`fixed bottom-0 left-0 flex flex-col items-center justify-center ${
+            isDarkMode ? 'text-white' : 'text-[#3E505B]'
+          }`}>
+                      {error.error && (
+            <div
+              className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center`}
+            >
+              {error.message}
+            </div>
+          )}
+            <div           className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
+
           >
             <button
               onClick={() => navigate('/signup')}
@@ -292,6 +324,8 @@ export default function Login() {
               LOGIN
             </button>
           </div>
+          </div>
+          
         )}
       </div>
     </div>
