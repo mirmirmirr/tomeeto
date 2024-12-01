@@ -198,19 +198,19 @@ export default function Header({ isDarkMode, toggleTheme }) {
 
           {(isUserLoggedIn || isGuestLoggedIn) && (
             <label
-              class="absolute top-11 right-[140px] group"
+              className="absolute top-11 right-[140px] group"
               onClick={() => navigate('/dashboard')}
             >
               <div
-                class={`absolute left-1/2 top-full mt-1 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none text-white py-1 px-2 rounded-md shadow-lg transition-opacity duration-300 text-[10px] ${isDarkMode ? 'bg-zinc-500' : 'bg-[#3E505B]'}`}
+                className={`absolute left-1/2 top-full mt-1 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none text-white py-1 px-2 rounded-md shadow-lg transition-opacity duration-300 text-[10px] ${isDarkMode ? 'bg-zinc-500' : 'bg-[#3E505B]'}`}
               >
                 Dashboard
               </div>
 
-              <input type="checkbox" class="hidden peer" />
+              <input type="checkbox" className="hidden peer" />
               <div
                 tabindex="0"
-                class={`burger flex items-center justify-center w-[38px] h-[38px] m-[2px] rounded-full transition duration-300 cursor-pointer focus:outline-none ${isDarkMode ? 'bg-zinc-500' : 'bg-[#3E505B]'}`}
+                className={`burger flex items-center justify-center w-[38px] h-[38px] m-[2px] rounded-full transition duration-300 cursor-pointer focus:outline-none ${isDarkMode ? 'bg-zinc-500' : 'bg-[#3E505B]'}`}
               >
                 <svg
                   viewBox="0 0 24 24"
