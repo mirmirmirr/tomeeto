@@ -31,7 +31,7 @@ export default function Landing() {
             isDarkMode ? 'bg-white text-[#3E505B]' : 'bg-[#3E505B] text-white'
           }`}
         >
-          Create A New Event!
+          create a new event!
         </button>
 
         <input
