@@ -481,7 +481,7 @@ export default function Availability() {
         </div>
 
         <div
-          className={`w-[85vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
+          className={`lg:ml-4 w-[85vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
         ></div>
 
         <div className="flex w-[90vw] justify-between items-center mt-4">

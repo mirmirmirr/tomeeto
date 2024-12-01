@@ -494,7 +494,7 @@ export default function Result() {
         </div>
 
         <div
-          className={`justify-center w-[85vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
+          className={`justify-center lg:ml-4 w-[85vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
         ></div>
 
         <div

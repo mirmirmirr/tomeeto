@@ -166,6 +166,16 @@ export default function Header({ isDarkMode, toggleTheme }) {
                 </li>
               </>
             )}
+            {isGuestLoggedIn && (
+                          <>
+                            <li
+                              className="mt-8 px-4 py-2 cursor-pointer hover:underline"
+                              onClick={handleLogout}
+                            >
+                              Clear Dashboard Data
+                            </li>
+                          </>
+            )}
           </ul>
         </div>
       )}
