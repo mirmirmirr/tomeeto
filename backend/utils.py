@@ -400,3 +400,33 @@ def get_event_results(code: str) -> List[Availability]:
             avail_json[avail.nickname] = avail.to_json()["availability"]
 
     return avail_json
+
+
+def check_user_in_event(json: dict) -> dict:
+    query = """
+        SELECT
+            user_account_id
+        FROM
+            user_event_participant
+        WHERE
+            user_account_id = %s
+            AND user_event_id = (
+                SELECT
+                    user_event_id
+                FROM
+                    url_code
+                WHERE
+                    url_code = %s
+            )
+    """
+    try:
+        DB_CURSOR.execute(query, (json["account_id"], json["event_code"]))
+        if DB_CURSOR.fetchone() is None:
+            return {"message": "User not in event"}
+        avails = Availability.from_sql(DB_CURSOR, json["event_code"])
+        for avail in avails:
+            if avail.user.id == json["account_id"]:
+                return avail.to_json()
+    except MySQL.Error as e:
+        print(e)
+        return {"message": "Database error"}
