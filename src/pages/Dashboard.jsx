@@ -183,7 +183,7 @@ export default function Dashboard() {
 
   return (
     <div
-      className={`relative flex flex-col p-4 ${isDarkMode ? 'bg-[#3E505B] text-white' : 'bg-[#F5F5F5] text-black'}`}
+      className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B] text-white' : 'bg-[#F5F5F5] text-black'}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div
