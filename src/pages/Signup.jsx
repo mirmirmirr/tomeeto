@@ -85,7 +85,6 @@ export default function Signup() {
   };
 
   const signupClick = async () => {
-    deleteAllCookies();
     console.log(passwordValues.password);
     console.log(email.email);
     const data = {
@@ -106,6 +105,7 @@ export default function Signup() {
         deleteAllCookies();
         const result = await response.json();
         if (result.message.localeCompare('User created' === 0)) {
+          deleteAllCookies();
           console.log('Login successful:', result);
           setCookie(email.email, passwordValues.password);
           navigate('/dashboard');
