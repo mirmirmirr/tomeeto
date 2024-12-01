@@ -397,20 +397,25 @@ export default function Availability() {
       // console.log(availability);
 
       if (userEmail == null && userPW == null) {
-        console.log('HEREEEE');
-
-        await fetch('http://tomeeto.cs.rpi.edu:8000/create_guest', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            credentials.guest_id = data.guest_id;
-            credentials.guest_password = data.guest_password;
-            console.log(credentials.guest_id);
-          });
+        if (guestEmail != null && guestPW != null) {
+          credentials.guest_id = parseInt(guestEmail);
+          credentials.guest_password = guestPW;
+          console.log("SET GUEST STUFF");
+        } else {
+          await fetch('http://tomeeto.cs.rpi.edu:8000/create_guest', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              credentials.guest_id = data.guest_id;
+              credentials.guest_password = data.guest_password;
+              console.log(credentials.guest_id);
+            });
+        }
+        console.log('HEREEEEFORTHEUSERAND');
       } else {
         credentials.email = userEmail;
         credentials.password = userPW;
