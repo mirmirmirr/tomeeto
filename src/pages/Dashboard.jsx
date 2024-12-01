@@ -106,7 +106,7 @@ export default function Dashboard() {
       // console.log(event);
       // navigate(data.editUrl);
     } catch (error) {
-      console.error('Error editing event:', error);
+      console.error('Error editing availability:', error);
     }
   };
 
@@ -235,7 +235,7 @@ export default function Dashboard() {
                     onClick={() => handleEditEvent(event)}
                     className="px-4 py-2 bg-yellow-500 text-white rounded-md"
                   >
-                    Edit
+                    Edit Availability
                   </button>
                 </div>
               </div>
@@ -260,7 +260,13 @@ export default function Dashboard() {
                     onClick={() => handleCopyLink(event)}
                     className="px-4 py-2 bg-green-500 text-white rounded-md"
                   >
-                    Copy Link
+                    Copy Event Code
+                  </button>
+                  <button
+                    onClick={() => handleEditEvent(event)}
+                    className="px-4 py-2 bg-yellow-500 text-white rounded-md"
+                  >
+                    Edit Availability
                   </button>
                 </div>
               </div>
