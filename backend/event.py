@@ -107,7 +107,7 @@ class Event(ABC):
             if field not in json:
                 return None
 
-        if len(json["title"]) == 0:
+        if len(json["title"]) == 0 or len(json["title"]) > 255:
             return None
 
         creator: User = User(json["account_id"])
