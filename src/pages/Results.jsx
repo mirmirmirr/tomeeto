@@ -468,7 +468,7 @@ export default function Result() {
 
   return (
     <div
-    className={`relative flex flex-col min-h-screen lg:h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
+      className={`relative flex flex-col min-h-screen lg:h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div

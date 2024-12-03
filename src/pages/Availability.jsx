@@ -73,47 +73,48 @@ export default function Availability() {
     const preventTouchScroll = (e) => {
       if (isDragging) e.preventDefault();
     };
-  
-    window.addEventListener("touchmove", preventTouchScroll, { passive: false });
-  
+
+    window.addEventListener('touchmove', preventTouchScroll, {
+      passive: false,
+    });
+
     return () => {
-      window.removeEventListener("touchmove", preventTouchScroll);
+      window.removeEventListener('touchmove', preventTouchScroll);
     };
   }, [isDragging]);
 
-  
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
     const targetCell = document.elementFromPoint(touch.clientX, touch.clientY);
-  
-    if (targetCell && targetCell.tagName === "TD") {
-      const day = targetCell.getAttribute("data-day");
-      const hour = targetCell.getAttribute("data-hour");
+
+    if (targetCell && targetCell.tagName === 'TD') {
+      const day = targetCell.getAttribute('data-day');
+      const hour = targetCell.getAttribute('data-hour');
       setIsDragging(true);
       setDragStart({ day: Number(day), hour: Number(hour) });
       setDragEnd({ day: Number(day), hour: Number(hour) });
     }
   };
-  
+
   const handleTouchMove = (e) => {
     if (!isDragging) return;
-  
+
     const touch = e.touches[0];
     const targetCell = document.elementFromPoint(touch.clientX, touch.clientY);
-  
-    if (targetCell && targetCell.tagName === "TD") {
-      const day = targetCell.getAttribute("data-day");
-      const hour = targetCell.getAttribute("data-hour");
+
+    if (targetCell && targetCell.tagName === 'TD') {
+      const day = targetCell.getAttribute('data-day');
+      const hour = targetCell.getAttribute('data-hour');
       setDragEnd({ day: Number(day), hour: Number(hour) });
     }
   };
-  
+
   const handleTouchEnd = () => {
     setIsDragging(false);
     setDragStart(null);
     setDragEnd(null);
     handleMouseUp();
-  };  
+  };
 
   const check_user = async (dataToUse) => {
     if (userEmail !== null && userPW !== null) {
@@ -667,35 +668,39 @@ export default function Availability() {
                     }}
                   ></td>
 
-{displayedDays.map((_, column) => (
-  <td
-    key={column}
-    data-day={row}
-    data-hour={column}
-    className={`border ${isDarkMode ? 'border-white' : 'border-black'} text-[10pt]`}
-    style={{
-      backgroundColor: isInDragArea(
-        row,
-        currentPage * daysPerPage + column
-      )
-        ? 'rgba(72, 187, 120, 0.5)' 
-        : availability[row][currentPage * daysPerPage + column]
-        ? 'rgba(72, 187, 120, 1)' 
-        : 'transparent',
-      userSelect: 'none',
-    }}
-    onMouseDown={() =>
-      handleMouseDown(row, currentPage * daysPerPage + column)
-    }
-    onMouseEnter={() =>
-      handleMouseEnter(row, currentPage * daysPerPage + column)
-    }
-    onTouchStart={handleTouchStart}
-    onTouchMove={handleTouchMove}
-    onTouchEnd={handleTouchEnd}
-  ></td>
-))}
-
+                  {displayedDays.map((_, column) => (
+                    <td
+                      key={column}
+                      data-day={row}
+                      data-hour={column}
+                      className={`border ${isDarkMode ? 'border-white' : 'border-black'} text-[10pt]`}
+                      style={{
+                        backgroundColor: isInDragArea(
+                          row,
+                          currentPage * daysPerPage + column
+                        )
+                          ? 'rgba(72, 187, 120, 0.5)'
+                          : availability[row][
+                                currentPage * daysPerPage + column
+                              ]
+                            ? 'rgba(72, 187, 120, 1)'
+                            : 'transparent',
+                        userSelect: 'none',
+                      }}
+                      onMouseDown={() =>
+                        handleMouseDown(row, currentPage * daysPerPage + column)
+                      }
+                      onMouseEnter={() =>
+                        handleMouseEnter(
+                          row,
+                          currentPage * daysPerPage + column
+                        )
+                      }
+                      onTouchStart={handleTouchStart}
+                      onTouchMove={handleTouchMove}
+                      onTouchEnd={handleTouchEnd}
+                    ></td>
+                  ))}
                 </tr>
               ))}
             </tbody>
