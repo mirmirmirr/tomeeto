@@ -152,7 +152,6 @@ export default function CreateEvent() {
   }, [selectDaysOfWeek]);
 
   const get_event_data = async () => {
-
     const data = {
       // email: 'testing@gmail.com',
       // password: '123',
@@ -247,8 +246,8 @@ export default function CreateEvent() {
         console.log('Response Data:', responseData);
         console.log(responseData);
 
-        if (responseData.message != "Event created") {
-          console.log("ERROR");
+        if (responseData.message != 'Event created') {
+          console.log('ERROR');
           handleError(responseData.message);
           return;
         }
