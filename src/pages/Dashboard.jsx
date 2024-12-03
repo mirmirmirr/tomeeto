@@ -4,15 +4,67 @@ import Header from '../resources/Header';
 import { useNavigate } from 'react-router-dom';
 
 var id = 1;
-// const mockIndividualEvents = [
-//   { id: 1, title: 'Meeting with Bob', code: 'EVT001' },
-//   { id: 2, title: 'Project Kickoff', code: 'EVT002' },
-// ];
 
-// const mockUserEvents = [
-//   { id: 3, title: 'Lunch with Sarah', code: 'EVT003' },
-//   { id: 4, title: 'Client Presentation', code: 'EVT004' },
-// ];
+function deleteAllCookies() {
+  document.cookie.split(';').forEach((cookie) => {
+    const eqPos = cookie.indexOf('=');
+    const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+    // Decode cookie name to handle encoded cookies
+    const decodedName = decodeURIComponent(name);
+    document.cookie = `${decodedName}=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+  });
+}
+
+const check_user = async (dataToUse) => {
+  const cookies = document.cookie; // Get all cookies as a single string
+  const cookieObj = {};
+
+  cookies.split(';').forEach((cookie) => {
+    const [key, value] = cookie.split('=').map((part) => part.trim());
+    if (key && value) {
+      try {
+        // Parse JSON if it's valid JSON, otherwise use as-is
+        const parsedValue = JSON.parse(decodeURIComponent(value));
+        cookieObj[key] = String(parsedValue);
+      } catch {
+        cookieObj[key] = String(decodeURIComponent(value)); // Handle plain strings
+      }
+    }
+  });
+
+  if (cookieObj['login_email'] && cookieObj['login_password']) {
+    dataToUse['email'] = cookieObj['login_email'];
+    dataToUse['password'] = cookieObj['login_password'];
+  } else {
+    if (cookieObj['guest_email'] && cookieObj['guest_password']) {
+      dataToUse['guest_id'] = parseInt(cookieObj['guest_email']);
+      dataToUse['guest_password'] = cookieObj['guest_password'];
+    } else {
+      try {
+        const response = await fetch(
+          'http://tomeeto.cs.rpi.edu:8000/create_guest'
+        );
+        if (response.ok) {
+          const responseData = await response.json();
+          dataToUse['guest_id'] = parseInt(responseData.guest_id);
+          dataToUse['guest_password'] = responseData.guest_password;
+          const guestEmailCookie = `guest_email=${encodeURIComponent(JSON.stringify(responseData.guest_id))}; path=/;`;
+          const guestPasswordCookie = `guest_password=${encodeURIComponent(JSON.stringify(responseData.guest_password))}; path=/;`;
+          document.cookie = guestEmailCookie;
+          document.cookie = guestPasswordCookie;
+        } else {
+          console.error(
+            'Failed to make guest:',
+            response.status,
+            response.statusText
+          );
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  }
+};
 
 export default function Dashboard() {
   const [mockIndividualEvents, setArrayOne] = useState([]); // First array of objects
@@ -43,19 +95,29 @@ export default function Dashboard() {
   };
 
   const handleEditEvent = async (event) => {
+    console.log('ran');
+    console.log(event);
     try {
-      const data = await response.json();
-      navigate(data.editUrl);
+      const codeChange = `code=${encodeURIComponent(JSON.stringify(event.code))}; path=/;`;
+      document.cookie = codeChange;
+      navigate('/availability', {
+        state: { eventName2: event.title, isUpdating: true },
+      });
+      // console.log(event);
+      // navigate(data.editUrl);
     } catch (error) {
-      console.error('Error editing event:', error);
+      console.error('Error editing availability:', error);
     }
   };
 
   const get_all_events = async () => {
     const data = {
-      email: 'testing@gmail.com',
-      password: '123',
+      // email: 'testing@gmail.com',
+      // password: '123',
     };
+
+    check_user(data);
+    console.log(data);
 
     try {
       const response = await fetch(
@@ -87,7 +149,7 @@ export default function Dashboard() {
           id += 1;
         }
 
-        setArrayOne(alpha);
+        setArrayTwo(alpha);
         // console.log(mockIndividualEvents);
         id = 1;
         var beta = [];
@@ -100,7 +162,7 @@ export default function Dashboard() {
           beta.push(myDictionary);
           id += 1;
         }
-        setArrayTwo(beta);
+        setArrayOne(beta);
       } else {
         console.error('Failed get results:', response.statusText);
       }
@@ -113,28 +175,43 @@ export default function Dashboard() {
     get_all_events();
   }, []);
 
+  const handleLogout = () => {
+    // Clear cookies
+    deleteAllCookies();
+    navigate('/');
+  };
+
   return (
     <div
       className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B] text-white' : 'bg-[#F5F5F5] text-black'}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-      <div className="container mx-auto p-4">
-        <div
-          id="dashboardTitle"
-          className="pl-4 mb-4 mt-8"
-          style={{ fontSize: `min(6vh, 60px)` }}
-        >
-          Your Events
+      <div
+        className={`flex flex-col mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
+      >
+        <div className="flex flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between">
+          <div id="dashboardTitle" style={{ fontSize: `max(3vh, 35px)` }}>
+            Your Events
+          </div>
+          <button
+            onClick={handleLogout}
+            className="hidden lg:block px-4 h-[40px] -mb-2 bg-red-500 text-white rounded-md shadow-md transition duration-300 hover:bg-red-600"
+          >
+            Sign Out
+          </button>
         </div>
+
         <div
-          className={`w-full border-t-2 mb-4 opacity-25 ${isDarkMode ? 'border-gray-300' : 'border-gray-500'}`}
+          className={`justify-center lg:ml-4 w-[85vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
         ></div>
+
         {notification && (
           <div className="fixed bottom-0 left-0 w-full bg-red-500 text-white text-center py-2">
             {notification}
           </div>
         )}
-        <div className="mb-8">
+
+        <div className="mt-[2vh] lg:mt-[4vh] lg:ml-4 w-full lg:w-[93vw]">
           <h2 className="text-2xl font-bold mb-4">My Events</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {mockUserEvents.map((event) => (
@@ -152,20 +229,20 @@ export default function Dashboard() {
                     onClick={() => handleCopyLink(event)}
                     className="px-4 py-2 bg-green-500 text-white rounded-md"
                   >
-                    Copy Link
+                    Copy Event Code
                   </button>
                   <button
                     onClick={() => handleEditEvent(event)}
                     className="px-4 py-2 bg-yellow-500 text-white rounded-md"
                   >
-                    Edit
+                    Edit Availability
                   </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <div>
+        <div className="mt-[2vh] lg:mt-[4vh] lg:ml-4 w-full lg:w-[93vw]">
           <h2 className="text-2xl font-bold mb-4">Other Events</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {mockIndividualEvents.map((event) => (
@@ -183,7 +260,13 @@ export default function Dashboard() {
                     onClick={() => handleCopyLink(event)}
                     className="px-4 py-2 bg-green-500 text-white rounded-md"
                   >
-                    Copy Link
+                    Copy Event Code
+                  </button>
+                  <button
+                    onClick={() => handleEditEvent(event)}
+                    className="px-4 py-2 bg-yellow-500 text-white rounded-md"
+                  >
+                    Edit Availability
                   </button>
                 </div>
               </div>

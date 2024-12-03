@@ -10,7 +10,8 @@ export default function Landing() {
   const { isDarkMode, toggleTheme } = useTheme();
   const { isSmallScreen, isLargeScreen } = useScreenSize();
 
-  document.cookie = 'code=' + code;
+  // document.cookie = 'code=' + code;
+  console.log(document.cookie);
 
   const handelFocus = () => {
     setIsFocused;
@@ -30,7 +31,7 @@ export default function Landing() {
             isDarkMode ? 'bg-white text-[#3E505B]' : 'bg-[#3E505B] text-white'
           }`}
         >
-          Create A New Event!
+          create a new event!
         </button>
 
         <input
@@ -40,6 +41,7 @@ export default function Landing() {
           onChange={(e) => setCode(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
+              document.cookie = `code=${encodeURIComponent(JSON.stringify(e.target.value))}; path=/;`;
               navigate('/availability', { state: { code: e.target.value } });
             }
           }}

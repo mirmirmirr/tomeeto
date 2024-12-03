@@ -4,13 +4,22 @@ import { useTheme } from '../resources/ThemeContext';
 import Header from '../resources/Header';
 import Calendar from '../resources/Calendar';
 import TimeSelector from '../resources/TimeSelector';
+import { formToJSON } from 'axios';
 
 export default function CreateEvent() {
-  const today = new Date().toISOString().split('T')[0];
+  const tempToday = new Date();
+  const today =
+    tempToday.getMonth() +
+    1 +
+    '/' +
+    tempToday.getDate() +
+    '/' +
+    tempToday.getFullYear();
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
 
   // State for handling dropdowns and selections
+  const [openDropdown, setOpenDropdown] = useState(null); // Tracks the open dropdown ('startTime', 'endTime', 'startDay', 'endDay', 'startCal', 'endCal')
   const [intervalDropdownVisible, setIntervalDropdownVisible] = useState(false);
   const [selectedInterval, setSelectedInterval] = useState('60 minutes');
   const [selectDaysOfWeek, setSelectDaysOfWeek] = useState(false);
@@ -25,9 +34,14 @@ export default function CreateEvent() {
   const [eventName, setEventName] = useState('');
   const [eventDescription, setEventDescription] = useState('');
   const [startTime, setStartTime] = useState('07:00');
-  const [endTime, setEndTime] = useState('19:00');
+  const [endTime, setEndTime] = useState('07:00');
   const [startCalendarDay, setCalendarStart] = useState(today);
   const [endCalendarDay, setCalendarEnd] = useState(today);
+
+  const [errorEventMessage, setErrorEventMessage] = useState(false);
+  const [errorDateMessage, setErrorDateMessage] = useState(false);
+  const [errorTimeMessage, setErrorTimeMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false);
 
   // Styling based on the current theme
   const bgColor = isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]';
@@ -36,6 +50,27 @@ export default function CreateEvent() {
   const placeholderColor = isDarkMode
     ? 'placeholder-[#F5F5F5]'
     : 'placeholder-[#3E505B]';
+
+  const handleError = (errortype) => {
+    if (errortype == 'event name') {
+      console.log('ERRRRORRR');
+      setErrorEventMessage(true);
+      setTimeout(() => setErrorEventMessage(false), 2000);
+    } else if (errortype == 'event date') {
+      setErrorDateMessage(true);
+      setTimeout(() => setErrorDateMessage(false), 2000);
+    } else if (errortype == 'event time') {
+      setErrorTimeMessage(true);
+      setTimeout(() => setErrorTimeMessage(false), 2000);
+    } else {
+      setErrorMessage(true);
+      setTimeout(() => setErrorMessage(false), 2000);
+    }
+  };
+
+  const handleToggle = (dropdownId) => {
+    setOpenDropdown((prev) => (prev === dropdownId ? null : dropdownId));
+  };
 
   const handleCalendarStartChange = (event) => {
     setCalendarStart(event.target.value);
@@ -53,53 +88,29 @@ export default function CreateEvent() {
     setEventDescription(event.target.value);
   };
 
-  const handleStartTimeChange = (event) => {
-    setStartTime(event.target.value);
+  const formatTime = (time) => {
+    const [hour, minute, modifier] = time
+      .match(/(\d+):(\d+)\s*(AM|PM)/i)
+      .slice(1);
+
+    let formattedHour = parseInt(hour, 10);
+
+    if (modifier === 'PM' && formattedHour !== 12) {
+      formattedHour += 12;
+    } else if (modifier === 'AM' && formattedHour === 12) {
+      formattedHour = 0;
+    }
+
+    const formattedTime = `${String(formattedHour).padStart(2, '0')}:${minute}`;
+    return formattedTime;
   };
 
-  const handleEndTimeChange = (event) => {
-    setEndTime(event.target.value);
+  const handleStartTimeChange = (time) => {
+    setStartTime(formatTime(time));
   };
 
-  // Functions to handle dropdown visibility for start day
-  const toggleStartDayDropdown = () => {
-    setStartDayDropdownVisible(!startDayDropdownVisible);
-    setEndDayDropdownVisible(false);
-    setShowStartCalendar(false);
-    setShowEndCalendar(false);
-    setIntervalDropdownVisible(false);
-  };
-
-  const toggleEndDayDropdown = () => {
-    setStartDayDropdownVisible(false);
-    setEndDayDropdownVisible(!endDayDropdownVisible);
-    setShowStartCalendar(false);
-    setShowEndCalendar(false);
-    setIntervalDropdownVisible(false);
-  };
-
-  const toggleStartCalendar = () => {
-    setStartDayDropdownVisible(false);
-    setEndDayDropdownVisible(false);
-    setShowStartCalendar(!showStartCalendar);
-    setShowEndCalendar(false);
-    setIntervalDropdownVisible(false);
-  };
-
-  const toggleEndCalendar = () => {
-    setStartDayDropdownVisible(false);
-    setEndDayDropdownVisible(false);
-    setShowStartCalendar(false);
-    setShowEndCalendar(!showEndCalendar);
-    setIntervalDropdownVisible(false);
-  };
-
-  const toggleIntervalDropdown = () => {
-    setStartDayDropdownVisible(false);
-    setEndDayDropdownVisible(false);
-    setShowStartCalendar(false);
-    setShowEndCalendar(false);
-    setIntervalDropdownVisible(!intervalDropdownVisible);
+  const handleEndTimeChange = (time) => {
+    setEndTime(formatTime(time));
   };
 
   // Function to toggle the checkbox for "Select from days of the week"
@@ -114,12 +125,18 @@ export default function CreateEvent() {
   const handleStartDateSelect = (date) => {
     setStartDate(date);
     setShowStartCalendar(false);
+    const formattedDate =
+      date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+    setCalendarStart(formattedDate);
   };
 
   // Handles end date selection
   const handleEndDateSelect = (date) => {
     setEndDate(date);
     setShowEndCalendar(false);
+    const formattedDate =
+      date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+    setCalendarEnd(formattedDate);
   };
 
   // Handles time interval selection
@@ -139,9 +156,19 @@ export default function CreateEvent() {
   }, [selectDaysOfWeek]);
 
   const get_event_data = async () => {
+    var errorMessage = false;
+
+    if (eventName == '') {
+      handleError('event name');
+      errorMessage = true;
+    } else if (endTime <= startTime) {
+      handleError('event time');
+      errorMessage = true;
+    }
+
     const data = {
-      email: 'testing@gmail.com',
-      password: '123',
+      // email: 'testing@gmail.com',
+      // password: '123',
       title: eventName,
       description: eventDescription,
       duration: parseInt(selectedInterval),
@@ -149,44 +176,112 @@ export default function CreateEvent() {
       end_time: endTime,
     };
 
+    const cookies = document.cookie; // Get all cookies as a single string
+    const cookieObj = {};
+    console.log('Ran here 1');
+
+    cookies.split(';').forEach((cookie) => {
+      const [key, value] = cookie.split('=').map((part) => part.trim());
+      if (key && value) {
+        try {
+          // Parse JSON if it's valid JSON, otherwise use as-is
+          const parsedValue = JSON.parse(decodeURIComponent(value));
+          cookieObj[key] = String(parsedValue);
+        } catch {
+          cookieObj[key] = String(decodeURIComponent(value)); // Handle plain strings
+        }
+      }
+    });
+
+    if (cookieObj['login_email'] && cookieObj['login_password']) {
+      data['email'] = cookieObj['login_email'];
+      data['password'] = cookieObj['login_password'];
+    } else {
+      if (cookieObj['guest_email'] && cookieObj['guest_password']) {
+        data['guest_id'] = parseInt(cookieObj['guest_email']);
+        data['guest_password'] = cookieObj['guest_password'];
+      } else {
+        try {
+          const response = await fetch(
+            'http://tomeeto.cs.rpi.edu:8000/create_guest'
+          );
+          if (response.ok) {
+            const responseData = await response.json();
+            data['guest_id'] = parseInt(responseData.guest_id);
+            data['guest_password'] = responseData.guest_password;
+            const guestEmailCookie = `guest_email=${encodeURIComponent(JSON.stringify(responseData.guest_id))}; path=/;`;
+            const guestPasswordCookie = `guest_password=${encodeURIComponent(JSON.stringify(responseData.guest_password))}; path=/;`;
+            document.cookie = guestEmailCookie;
+            document.cookie = guestPasswordCookie;
+          } else {
+            console.error(
+              'Failed to make guest:',
+              response.status,
+              response.statusText
+            );
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
+    }
+
+    console.log('data sent:', data);
+
     if (selectDaysOfWeek) {
       data.event_type = 'generic_week';
       data.start_day = selectedStartDay.toLowerCase();
       data.end_day = selectedEndDay.toLowerCase();
     } else {
       data.event_type = 'date_range';
-      const startDate = startCalendarDay.split('-');
-      const endDate = endCalendarDay.split('-');
-      data.start_date = startDate[1] + '/' + startDate[2] + '/' + startDate[0];
-      data.end_date = endDate[1] + '/' + endDate[2] + '/' + endDate[0];
+      data.start_date = startCalendarDay;
+      data.end_date = endCalendarDay;
+      console.log(data.start_date);
+      console.log(data.end_date);
+
+      if (startCalendarDay > endCalendarDay) {
+        handleError('event date');
+        errorMessage = true;
+      }
     }
 
+    console.log(data);
     console.log('works');
 
-    try {
-      const response = await fetch(
-        'http://tomeeto.cs.rpi.edu:8000/create_event',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
+    if (!errorMessage) {
+      try {
+        const response = await fetch(
+          'http://tomeeto.cs.rpi.edu:8000/create_event',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          }
+        );
+
+        if (response.ok) {
+          const responseData = await response.json();
+          console.log('Response Data:', responseData);
+          console.log(responseData);
+
+          if (response.message != 'Event created') {
+            handleError();
+          }
+
+          navigate('/confirmCreated', {
+            state: {
+              eventCode: responseData.event_code,
+              eventName: data.title,
+            },
+          });
+        } else {
+          console.error('Failed to create event:', response.statusText);
         }
-      );
-
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log('Response Data:', responseData);
-
-        navigate('/confirmCreated', {
-          state: { eventCode: responseData.event_code, eventName: data.title },
-        });
-      } else {
-        console.error('Failed to create event:', response.statusText);
+      } catch (error) {
+        console.error('Error:', error);
       }
-    } catch (error) {
-      console.error('Error:', error);
     }
   };
 
@@ -208,13 +303,13 @@ export default function CreateEvent() {
 
       <div className="flex flex-col lg:flex-row mt-[5vh]">
         {/* Event Information */}
-        <div className="pl-[25px] flex-shrink-0 lg:w-[60%]">
+        <div className="p-4 flex-shrink-0 lg:w-[60%]">
           {/* Input for event name */}
           <div className="flex flex-col lg:flex-row mb-5 lg:w-[80vw]">
             <input
               type="text"
               placeholder="Add Event Name"
-              className={`flex-grow bg-transparent w-[80vw] lg:w-[55vw] rounded-none
+              className={`flex-grow bg-transparent w-full lg:w-[55vw] rounded-none
                 border-b-2 focus:outline-none ${textColor} 
                 ${borderColor} ${placeholderColor}`}
               style={{ fontSize: `max(3vw, 35px)` }}
@@ -252,7 +347,7 @@ export default function CreateEvent() {
                   focus:outline-none"
                     >
                       <button
-                        onClick={toggleStartDayDropdown}
+                        onClick={() => handleToggle('startDay')}
                         className="h-full w-full lg:p-3 lg:text-center text-left"
                       >
                         {selectedStartDay}
@@ -260,12 +355,13 @@ export default function CreateEvent() {
                     </div>
                     <TimeSelector
                       defaultTime={startTime}
-                      onTimeSelect={setStartTime}
-                      onChange={handleStartTimeChange}
-                      className="h-full w-[30%]"
+                      dropdownId="start"
+                      isOpen={openDropdown === 'start'}
+                      onToggle={handleToggle}
+                      onTimeSelect={handleStartTimeChange}
                     />
                   </div>
-                  {startDayDropdownVisible && (
+                  {openDropdown === 'startDay' && (
                     <div
                       className={`lg:absolute lg:w-[25%] self-bottom lg:mt-[62px] lg:z-10 rounded-md lg:shadow-md ${bgColor} max-h-[120px] overflow-y-auto`}
                       style={{
@@ -279,9 +375,10 @@ export default function CreateEvent() {
                             key={day}
                             onClick={() => {
                               setSelectedStartDay(day);
-                              setStartDayDropdownVisible(false);
+                              handleToggle(null);
                             }}
-                            className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
+                            className={`p-1 cursor-pointer rounded-md text-center ${textColor}`}
+                            style={{ fontSize: `max(1vw, 20px)` }}
                           >
                             {day}
                           </li>
@@ -310,7 +407,7 @@ export default function CreateEvent() {
                   focus:outline-none"
                     >
                       <button
-                        onClick={toggleEndDayDropdown}
+                        onClick={() => handleToggle('endDay')}
                         className="h-full w-full lg:p-3 lg:text-center text-left"
                       >
                         {selectedEndDay}
@@ -318,12 +415,13 @@ export default function CreateEvent() {
                     </div>
                     <TimeSelector
                       defaultTime={endTime}
-                      onTimeSelect={setEndTime}
-                      onChange={handleEndTimeChange}
-                      className="h-full w-[30%]"
+                      dropdownId="end"
+                      isOpen={openDropdown === 'end'}
+                      onToggle={handleToggle}
+                      onTimeSelect={handleEndTimeChange}
                     />
                   </div>
-                  {endDayDropdownVisible && (
+                  {openDropdown === 'endDay' && (
                     <div
                       className={`lg:absolute lg:w-[25%] self-bottom lg:mt-[62px] lg:z-10 rounded-md lg:shadow-md ${bgColor} max-h-[120px] overflow-y-auto`}
                       style={{
@@ -337,9 +435,10 @@ export default function CreateEvent() {
                             key={day}
                             onClick={() => {
                               setSelectedEndDay(day);
-                              setEndDayDropdownVisible(false);
+                              handleToggle(null);
                             }}
-                            className={`p-2 cursor-pointer rounded-md text-center ${textColor}`}
+                            className={`p-1 cursor-pointer rounded-md text-center ${textColor}`}
+                            style={{ fontSize: `max(1vw, 20px)` }}
                           >
                             {day}
                           </li>
@@ -348,13 +447,6 @@ export default function CreateEvent() {
                     </div>
                   )}
                 </div>
-                <input
-                  type="time"
-                  defaultValue={endTime}
-                  className="p-3 text-lg rounded-lg bg-red-500 text-white
-                    text-center focus:outline-none"
-                  onChange={handleEndTimeChange}
-                />
               </>
             ) : (
               <>
@@ -369,7 +461,7 @@ export default function CreateEvent() {
                   focus:outline-none"
                     >
                       <button
-                        onClick={toggleStartCalendar}
+                        onClick={() => handleToggle('startCal')}
                         onChange={handleCalendarStartChange}
                         className="h-full w-full lg:p-3 lg:text-center text-left"
                       >
@@ -378,14 +470,18 @@ export default function CreateEvent() {
                     </div>
                     <TimeSelector
                       defaultTime={startTime}
-                      onTimeSelect={setStartTime}
-                      onChange={handleStartTimeChange}
-                      className="h-full w-[30%]"
+                      dropdownId="start"
+                      isOpen={openDropdown === 'start'}
+                      onToggle={handleToggle}
+                      onTimeSelect={handleStartTimeChange}
                     />
                   </div>
-                  {showStartCalendar && (
+                  {openDropdown === 'startCal' && (
                     <div className="lg:absolute self-bottom lg:mt-[62px] lg:z-10 rounded-md shadow-md">
-                      <Calendar onDateSelect={handleStartDateSelect} />
+                      <Calendar
+                        onDateSelect={handleStartDateSelect}
+                        onClose={() => handleToggle(null)}
+                      />
                     </div>
                   )}
                 </div>
@@ -408,7 +504,7 @@ export default function CreateEvent() {
                   focus:outline-none"
                     >
                       <button
-                        onClick={toggleEndCalendar}
+                        onClick={() => handleToggle('endCal')}
                         onChange={handleCalendarEndChange}
                         className="h-full w-full lg:p-3 lg:text-center text-left"
                       >
@@ -417,14 +513,18 @@ export default function CreateEvent() {
                     </div>
                     <TimeSelector
                       defaultTime={endTime}
-                      onTimeSelect={setEndTime}
-                      onChange={handleEndTimeChange}
-                      className="h-full w-[30%]"
+                      dropdownId="end"
+                      isOpen={openDropdown === 'end'}
+                      onToggle={handleToggle}
+                      onTimeSelect={handleEndTimeChange}
                     />
                   </div>
-                  {showEndCalendar && (
+                  {openDropdown === 'endCal' && (
                     <div className="lg:absolute self-bottom lg:mt-[62px] lg:z-10 rounded-md shadow-md">
-                      <Calendar onDateSelect={handleEndDateSelect} />
+                      <Calendar
+                        onDateSelect={handleEndDateSelect}
+                        onClose={() => handleToggle(null)}
+                      />
                     </div>
                   )}
                 </div>
@@ -512,7 +612,7 @@ export default function CreateEvent() {
         <div
           className={`hidden lg:block pl-8 fixed bottom-[10vw] right-4 flex-shrink-0 lg:w-[40%] flex lg:flex-col items-start`}
         >
-          {/* Invite URL input */}
+          {/* Invite URL input
           <div className="w-full">
             <label
               className={`block font-semibold ${textColor}`}
@@ -526,7 +626,29 @@ export default function CreateEvent() {
                 ${textColor} ${borderColor} ${placeholderColor}`}
               style={{ fontSize: `max(1vw, 20px)` }}
             />
-          </div>
+          </div> */}
+
+          {errorEventMessage && (
+            <div
+              className={`w-full h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
+            >
+              Please create a title for the event.
+            </div>
+          )}
+          {(errorDateMessage || errorTimeMessage) && (
+            <div
+              className={`w-full h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
+            >
+              Please enter a valid date range and time range for the event.
+            </div>
+          )}
+          {errorMessage && (
+            <div
+              className={`w-full h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
+            >
+              Too many other errors :p
+            </div>
+          )}
 
           {/* Create Event button */}
           <button
@@ -543,7 +665,7 @@ export default function CreateEvent() {
           className={`lg:hidden fixed bottom-0 left-0 flex-shrink-0 flex flex-col ${bgColor}`}
         >
           {/* Invite URL input */}
-          <div className="flex flex-row w-full m-4 gap-4">
+          {/* <div className="flex flex-row w-full m-4 gap-4">
             <label className={`font-semibold ${textColor} text-[20px]`}>
               Invite Code:
             </label>
@@ -552,14 +674,39 @@ export default function CreateEvent() {
               className={`w-[55vw] text-lg bg-transparent text-left border-b-2 focus:outline-none rounded-none
                 ${textColor} ${borderColor} ${placeholderColor} text-[20px]`}
             />
-          </div>
+          </div> */}
+          {errorEventMessage && (
+            <div
+              className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center ${
+                textColor
+              }`}
+            >
+              Please create a title for the event.
+            </div>
+          )}
+          {(errorDateMessage || errorTimeMessage) && (
+            <div
+              className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center ${
+                textColor
+              }`}
+            >
+              Please enter a valid date and time range for the event.
+            </div>
+          )}
+          {errorMessage && (
+            <div
+              className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center ${
+                textColor
+              }`}
+            >
+              Too many other errors :p
+            </div>
+          )}
 
           {/* Create Event button */}
           <button
             onClick={get_event_data}
-            className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center ${
-              textColor
-            }`}
+            className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
             style={{ fontSize: `max(1vw, 20px)` }}
           >
             Create Event

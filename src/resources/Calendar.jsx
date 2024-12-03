@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTheme } from './ThemeContext';
 
-export default function Calendar({ onDateSelect }) {
+export default function Calendar({ onDateSelect, onClose }) {
   const { isDarkMode } = useTheme();
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -33,6 +33,7 @@ export default function Calendar({ onDateSelect }) {
   const handleDateClick = (day) => {
     const selectedDate = new Date(year, month, day);
     onDateSelect(selectedDate);
+    onClose();
   };
 
   const isCurrentMonth =

@@ -4,6 +4,53 @@ import { useTheme } from '../resources/ThemeContext';
 
 import Header from '../resources/Header';
 
+const check_user = async (dataToUse) => {
+  const cookies = document.cookie; // Get all cookies as a single string
+  const cookieObj = {};
+
+  cookies.split(';').forEach((cookie) => {
+    const [key, value] = cookie.split('=').map((part) => part.trim());
+    if (key && value) {
+      try {
+        // Parse JSON if it's valid JSON, otherwise use as-is
+        const parsedValue = JSON.parse(decodeURIComponent(value));
+        cookieObj[key] = String(parsedValue);
+      } catch {
+        cookieObj[key] = String(decodeURIComponent(value)); // Handle plain strings
+      }
+    }
+  });
+
+  if (cookieObj['login_email'] && cookieObj['login_password']) {
+    dataToUse['email'] = cookieObj['login_email'];
+    dataToUse['password'] = cookieObj['login_password'];
+  } else {
+    if (cookieObj['guest_email'] && cookieObj['guest_password']) {
+      dataToUse['guest_id'] = parseInt(cookieObj['guest_email']);
+      dataToUse['guest_password'] = cookieObj['guest_password'];
+    } else {
+      try {
+        const response = await fetch(
+          'http://tomeeto.cs.rpi.edu:8000/create_guest'
+        );
+        if (response.ok) {
+          const responseData = await response.json();
+          dataToUse['guest_id'] = parseInt(responseData.guest_id);
+          dataToUse['guest_password'] = responseData.guest_password;
+        } else {
+          console.error(
+            'Failed to make guest:',
+            response.status,
+            response.statusText
+          );
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  }
+};
+
 export default function Result() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -11,6 +58,7 @@ export default function Result() {
 
   console.log('Event Code:', eventCode);
   console.log('Event Name:', eventName);
+  console.log(document.cookie);
 
   const { isDarkMode, toggleTheme } = useTheme();
   const [hoveredCell, setHoveredCell] = useState({ row: null, column: null });
@@ -19,6 +67,8 @@ export default function Result() {
   const daysPerPage = 7; // Number of days per page
 
   const [eventDetails, setEventDetails] = useState(null);
+  const [eventDates, setEventDates] = useState(null);
+  const [isGenericWeek, setIsGenericWeek] = useState(false);
   const [allDays, setAllDays] = useState([]);
   const [weekdays, setWeekdays] = useState([]);
   const [scheduleData, setResults] = useState([]);
@@ -66,15 +116,17 @@ export default function Result() {
     (currentPage + 1) * daysPerPage
   );
 
-  var receivedData = {};
-
   useEffect(() => {
     if (eventCode) {
       const credentials = {
-        email: 'testing@gmail.com',
-        password: '123',
+        // email: 'testing@gmail.com',
+        // password: '123',
         event_code: eventCode,
       };
+
+      check_user(credentials);
+      console.log(credentials);
+      console.log('RANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN');
 
       // First, fetch event details
       fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
@@ -89,7 +141,7 @@ export default function Result() {
           console.log('Event details:', eventDetailsData);
 
           // Update the state based on event details
-          setEventDetails(eventDetailsData);
+          // setEventDetails(eventDetailsData);
           updateEventData(eventDetailsData);
 
           // Next, fetch results using the same credentials
@@ -123,32 +175,90 @@ export default function Result() {
   }, [eventCode]);
 
   const updateEventData = async (data) => {
-    const { start_date, start_time, end_date, end_time, duration, event_type } =
-      data;
+    const {
+      all_dates,
+      start_date,
+      start_time,
+      start_day,
+      end_day,
+      end_date,
+      end_time,
+      duration,
+      event_type,
+      title,
+    } = data;
 
-    // Parse start and end dates
-    const startDate = new Date(`${start_date} ${start_time}`);
-    const endDate = new Date(`${end_date} ${end_time}`);
-    console.log('Start Date:', startDate);
-    console.log('End Date:', endDate);
-
-    // Generate days and weekdays arrays
-    const daysArray = [];
+    var daysArray = [];
     const weekdaysArray = [];
-    let currentDate = new Date(startDate); // Use a new instance to avoid mutating startDate
+    if (event_type == 'date_range') {
+      // Parse start and end dates
+      const startDate = new Date(`${start_date} ${start_time}`);
+      const endDate = new Date(`${end_date} ${end_time}`);
+      console.log('Start Date:', startDate);
+      console.log('End Date:', endDate);
 
-    while (currentDate <= endDate) {
-      daysArray.push(currentDate.getDate().toString()); // Day of the month
-      weekdaysArray.push(
-        currentDate
-          .toLocaleDateString('en-US', { weekday: 'short' })
-          .toUpperCase()
-      );
-      currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+      const formattedStartDate = startDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+
+      const formattedEndDate = endDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+
+      setEventDates(`${formattedStartDate} - ${formattedEndDate}`);
+
+      // Generate days and weekdays arrays
+      let currentDate = new Date(startDate); // Use a new instance to avoid mutating startDate
+
+      while (currentDate <= endDate) {
+        daysArray.push(currentDate.getDate().toString()); // Day of the month
+        weekdaysArray.push(
+          currentDate
+            .toLocaleDateString('en-US', { weekday: 'short' })
+            .toUpperCase()
+        );
+        currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+      }
+
+      console.log('Days Array:', daysArray);
+      console.log('Weekdays Array:', weekdaysArray);
+
+      setAllDays(daysArray);
+      setTotalDays(daysArray.length);
+      setWeekdays(weekdaysArray);
+    } else {
+      setIsGenericWeek(true);
+      setEventDates(`${start_day} - ${end_day}`);
+      console.log('here');
+
+      const abbreviations = all_dates[0].weekdayName.map((day) => {
+        switch (day) {
+          case 'Saturday':
+            return 'SAT';
+          case 'Monday':
+            return 'MON';
+          case 'Tuesday':
+            return 'TUE';
+          case 'Wednesday':
+            return 'WED';
+          case 'Thursday':
+            return 'THU';
+          case 'Friday':
+            return 'FRI';
+          case 'Sunday':
+            return 'SUN';
+          default:
+            return day;
+        }
+      });
+
+      daysArray = abbreviations;
+      setAllDays(daysArray);
     }
-
-    console.log('Days Array:', daysArray);
-    console.log('Weekdays Array:', weekdaysArray);
 
     // Generate hours array
     const startHour = parseInt(start_time.split(':')[0], 10);
@@ -167,17 +277,18 @@ export default function Result() {
     console.log('Initial Availability Array:', availabilityArray);
 
     // Update states
-    setAllDays(daysArray); // e.g., ['6', '7', '8', '9', ...]
-    setWeekdays(weekdaysArray); // e.g., ['SUN', 'MON', 'TUE', ...]
     setHours(generatedHours);
     setAvailability(availabilityArray);
 
     // Fetch results data
     const credentials = {
-      email: 'testing@gmail.com',
-      password: '123',
+      // email: 'testing@gmail.com',
+      // password: '123',
       event_code: eventCode,
     };
+
+    check_user(credentials);
+    console.log(credentials);
 
     try {
       const response = await fetch(
@@ -198,7 +309,7 @@ export default function Result() {
 
       // Process and update results
       if (resultsData) {
-        var scheduleData = [];
+        var scheduleDataTemp = [];
         for (const [key, value] of Object.entries(resultsData)) {
           console.log(key, value);
           const myDictionary = {};
@@ -207,11 +318,13 @@ export default function Result() {
           // Transform value to an array of single-element arrays
           myDictionary.availability = value.map((v) => [v]);
 
-          scheduleData.push(myDictionary);
+          scheduleDataTemp.push(myDictionary);
         }
+        console.log('HERE IS THE SCHEDuLE DATA:');
+        console.log(scheduleDataTemp);
 
-        console.log('Processed Schedule Data:', scheduleData);
-        setResults(scheduleData);
+        console.log('Processed Schedule Data:', scheduleDataTemp);
+        setResults(scheduleDataTemp);
       } else {
         console.warn('No availabilities found in results data');
       }
@@ -220,7 +333,7 @@ export default function Result() {
     }
   };
 
-  console.log('resultssss', scheduleData);
+  console.log('SCHEDULEDATA', scheduleData);
 
   // const fetch_data = async () => {
   //   console.log('Ran');
@@ -303,22 +416,40 @@ export default function Result() {
   //     ],
   //   },
   // ];
+  console.log('SCHEDULE', scheduleData);
+  console.log('HOURS', hours);
+  console.log('DISPLAYEDDAYS', displayedDays);
+  console.log('SCHEDULEDATA', scheduleData);
+  // console.log("attendee Avail: ", scheduleData[0].availability);
 
   const availabilityCounts = hours.map((_, row) =>
     displayedDays.map((_, column) => {
-      const count = scheduleData.filter(
-        (attendee) => attendee.availability[0][column][row] == 1
-      ).length;
+      const count = scheduleData.filter((attendee) => {
+        // Check if the availability for the specific day and time slot is 1
+        return (
+          attendee.availability[currentPage * daysPerPage + column] &&
+          attendee.availability[currentPage * daysPerPage + column][0][row] ===
+            1
+        );
+      }).length;
+
       return count / scheduleData.length;
     })
   );
 
   const attendeesAvailable =
     hoveredCell.row !== null && hoveredCell.column !== null
-      ? scheduleData.filter(
-          (attendee) =>
-            attendee.availability[0][hoveredCell.column][hoveredCell.row] == 1
-        ).length
+      ? scheduleData.filter((attendee) => {
+          return (
+            attendee.availability[
+              currentPage * daysPerPage + hoveredCell.column
+            ] &&
+            attendee.availability[
+              currentPage * daysPerPage + hoveredCell.column
+            ][0][hoveredCell.row] === 1
+          );
+          // attendee.availability[0][currentPage * daysPerPage + hoveredCell.column][hoveredCell.row] == 1
+        }).length
       : 0;
 
   const attendeesFraction = `${attendeesAvailable}/${scheduleData.length}`;
@@ -337,40 +468,54 @@ export default function Result() {
 
   return (
     <div
-      className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
+      className={`relative flex flex-col h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div
-        className={`flex flex-col mt-[5vh] items-center ${isDarkMode ? 'text-white' : 'text-black'}`}
+        className={`flex flex-col mt-[4vh] p-4 ${isDarkMode ? 'text-white' : 'text-black'}`}
       >
         <div
           id="eventName"
-          className="w-[80vw] lg:w-[93vw]"
+          className="flex flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between"
           style={{ fontSize: `max(3vw, 35px)` }}
         >
           {eventName}
+
+          <div
+            className="lg:mr-[30px]"
+            style={{
+              fontSize: `max(1vw, 15px)`,
+              marginTop: 'auto',
+              marginBottom: '10px',
+            }}
+          >
+            {eventDates}
+          </div>
         </div>
 
         <div
-          className={`w-[80vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
+          className={`justify-center lg:ml-4 w-[85vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
         ></div>
 
         <div
           id="results"
-          className="w-full lg:w-[80vw] h-[100vh] lg:h-[70vh] lg:ml-[5%] items-center mr-auto mt-[3vh] flex flex-col lg:flex-row overflow-hidden"
+          className="flex flex-col lg:flex-row w-full lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] lg:mt-[4vh] overflow-hidden"
         >
-          <div className="block lg:hidden w-[80vw] flex flex-col mb-[3vh]">
+          <div className="block lg:hidden w-[80vw] flex flex-col mb-[3vh] ml-4">
             <div className="text-[20px] font-[500]">
               Attendees ({attendeesFraction})
             </div>
-            <div className="grid grid-flow-row auto-rows-max grid-cols-[repeat(auto-fill,minmax(50px,1fr))] gap-[10px] justify-center w-full">
+            <div className="grid grid-flow-row auto-rows-max grid-cols-[repeat(auto-fill,minmax(50px,1fr))] gap-[10px] w-full">
               {scheduleData.map((attendee, index) => {
                 const isAvailable =
                   hoveredCell.row !== null &&
                   hoveredCell.column !== null &&
-                  attendee.availability[0][hoveredCell.column][
-                    hoveredCell.row
-                  ] == 1;
+                  attendee.availability[
+                    currentPage * daysPerPage + hoveredCell.column
+                  ] &&
+                  attendee.availability[
+                    currentPage * daysPerPage + hoveredCell.column
+                  ][0][hoveredCell.row] === 1;
                 const opacityStyle = isAvailable
                   ? 'opacity-100'
                   : 'opacity-50 line-through';
@@ -388,27 +533,19 @@ export default function Result() {
           </div>
 
           <div className="flex flex-row">
-            <div className="flex justify-between mt-4">
-              {currentPage > 0 && (
-                <button
-                  onClick={goToPrevPage}
-                  className="lg:px-4 py-2 font-bold opacity-25 hover:opacity-100"
-                  style={{ fontSize: '2rem' }}
-                >
-                  &#65308;
-                </button>
-              )}
-              {(currentPage + 1) * daysPerPage < totalDays && (
-                <button
-                  onClick={goToNextPage}
-                  className="h-full flex items-center justify-center lg:px-4 py-2 opacity-0"
-                  style={{ fontSize: '2rem' }}
-                  disabled={isDisabled}
-                >
-                  &#65310;
-                </button>
-              )}
-            </div>
+            {!isGenericWeek && (
+              <div className="flex justify-between mt-4 w-[50px]">
+                {currentPage > 0 && (
+                  <button
+                    onClick={goToPrevPage}
+                    className="font-bold opacity-25 hover:opacity-100"
+                    style={{ fontSize: '2rem' }}
+                  >
+                    &#65308;
+                  </button>
+                )}
+              </div>
+            )}
 
             <div className="flex flex-col mr-[10px] h-[70vh]">
               <div
@@ -449,7 +586,7 @@ export default function Result() {
               ))}
             </div>
 
-            <table className="w-[80%] table-fixed h-[70vh]">
+            <table className="w-[90%] table-fixed h-[70vh]">
               <thead>
                 <tr>
                   <th style={{ width: `0.5vw` }}></th>
@@ -505,12 +642,12 @@ export default function Result() {
                       return (
                         <td
                           key={column}
-                          className={`p-2 relative cursor-pointer overflow-visible ${
+                          className={`p-2 relative cursor-pointer overflow-visible border ${isDarkMode ? 'border-white' : 'border-black'} ${
                             isSelected ? 'ring-2 ring-[#FF5C5C]' : ''
                           }`}
                           style={{
                             backgroundColor: `rgba(72, 187, 120, ${opacity})`,
-                            border: '1px solid #b9b9b9',
+                            // border: '1px solid #b9b9b9',
                           }}
                           onMouseEnter={() => setHoveredCell({ row, column })}
                           onMouseLeave={() =>
@@ -524,27 +661,19 @@ export default function Result() {
               </tbody>
             </table>
 
-            <div className="flex justify-between mt-4">
-              {currentPage > 0 && (
-                <button
-                  onClick={goToPrevPage}
-                  className="lg:px-4 py-2 opacity-0"
-                  style={{ fontSize: '2rem' }}
-                  disabled={isDisabled}
-                >
-                  &#65308;
-                </button>
-              )}
-              {(currentPage + 1) * daysPerPage < totalDays && (
-                <button
-                  onClick={goToNextPage}
-                  className="h-full flex items-center justify-center lg:px-4 py-2 font-bold opacity-25 hover:opacity-100"
-                  style={{ fontSize: '2rem' }}
-                >
-                  &#65310;
-                </button>
-              )}
-            </div>
+            {!isGenericWeek && (
+              <div className="flex justify-between mt-4 w-[60px]">
+                {(currentPage + 1) * daysPerPage < totalDays && (
+                  <button
+                    onClick={goToNextPage}
+                    className="font-bold opacity-25 hover:opacity-100 ml-2"
+                    style={{ fontSize: '2rem' }}
+                  >
+                    &#65310;
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="hidden lg:block w-full flex flex-col text-center h-[70vh]">
@@ -555,8 +684,12 @@ export default function Result() {
               const isAvailable =
                 hoveredCell.row !== null &&
                 hoveredCell.column !== null &&
-                attendee.availability[0][hoveredCell.column][hoveredCell.row] ==
-                  1;
+                attendee.availability[
+                  currentPage * daysPerPage + hoveredCell.column
+                ] &&
+                attendee.availability[
+                  currentPage * daysPerPage + hoveredCell.column
+                ][0][hoveredCell.row] === 1;
               const opacityStyle = isAvailable
                 ? 'opacity-100'
                 : 'opacity-50 line-through';

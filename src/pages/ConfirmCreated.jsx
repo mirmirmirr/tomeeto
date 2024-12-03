@@ -10,6 +10,7 @@ export default function ConfirmCreated() {
   console.log('here');
   console.log(eventName);
   document.cookie = 'code=' + eventCode;
+  console.log(document.cookie);
 
   const { isDarkMode, toggleTheme } = useTheme();
 

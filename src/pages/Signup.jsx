@@ -9,26 +9,25 @@ import lightEye from '../assets/eye_light.png';
 import darkHidden from '../assets/hidden_dark.png';
 import lightHidden from '../assets/hidden_light.png';
 
+function deleteAllCookies() {
+  document.cookie.split(';').forEach((cookie) => {
+    const eqPos = cookie.indexOf('=');
+    const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  });
+}
+
+function setCookie(email, password) {
+  const emailCookie = `login_email=${encodeURIComponent(JSON.stringify(email))}; path=/;`;
+  const passwordCookie = `login_password=${encodeURIComponent(JSON.stringify(password))}; path=/;`;
+  document.cookie = emailCookie;
+  document.cookie = passwordCookie;
+  console.log('Cookies have been set.');
+}
+
 export default function Signup() {
-  function deleteAllCookies() {
-    document.cookie.split(';').forEach((cookie) => {
-      const eqPos = cookie.indexOf('=');
-      const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
-      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    });
-  }
-
-  function setCookie(email, password) {
-    const emailCookie = `email=${encodeURIComponent(email)}; path=/;`;
-    const passwordCookie = `password=${encodeURIComponent(password)}; path=/;`;
-    document.cookie = emailCookie;
-    document.cookie = passwordCookie;
-    console.log('Cookies have been set.');
-  }
-
   const navigate = useNavigate();
   // document.cookie = "username=John Doe";
-  deleteAllCookies();
   console.log(document.cookie);
 
   const { isDarkMode, toggleTheme } = useTheme();
@@ -45,6 +44,24 @@ export default function Signup() {
     email: '',
     showEmail: false,
   });
+
+  const [error, setError] = useState({
+    error: false,
+    message: '',
+  });
+
+  const handleError = (errormessage) => {
+    setError({
+      error: true,
+      message: errormessage,
+    });
+    setTimeout(() => {
+      setError({
+        error: false,
+        message: '',
+      });
+    }, 2000);
+  };
 
   const handleTogglePasswordVisibility = (field) => {
     setPasswordValues((prevValues) => ({
@@ -85,11 +102,17 @@ export default function Signup() {
       });
 
       if (response.ok) {
+        deleteAllCookies();
         const result = await response.json();
-        console.log('Login successful:', result);
-        setCookie(email.email, passwordValues.password);
-        // this shpould be dashboard whenever gavin finishes
-        navigate('/dashboard');
+        if (result.message.localeCompare('User created' === 0)) {
+          deleteAllCookies();
+          console.log('Login successful:', result);
+          setCookie(email.email, passwordValues.password);
+          navigate('/dashboard');
+        } else {
+          handleError(result.message);
+          return;
+        }
       } else {
         console.error('Failed to log in:', response.statusText);
       }
@@ -100,7 +123,7 @@ export default function Signup() {
 
   return (
     <div
-      className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
+      className={`relative flex flex-col min-h-screen p-4 overflow-hidden ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
@@ -138,6 +161,13 @@ export default function Signup() {
         </div>
 
         <div className="w-full lg:w-1/2 flex flex-col items-center space-y-4 p-6">
+          {error.error && (
+            <div
+              className={`hidden lg;block absolute w-[30vw] h-8 mb-4 -mt-8 bg-[#FF5C5C] flex items-center justify-center ${isDarkMode ? 'text-white' : 'text-black'}`}
+            >
+              {error.message}
+            </div>
+          )}
           <div id="email" className="w-full">
             <label
               className={`block font-bold text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}
@@ -257,24 +287,35 @@ export default function Signup() {
 
         {isSmallScreen && (
           <div
-            className={`fixed bottom-0 left-0 w-full h-[10vh] bg-[#FF5C5C] flex items-center justify-center ${
+            className={`fixed bottom-0 left-0 flex flex-col items-center justify-center ${
               isDarkMode ? 'text-white' : 'text-[#3E505B]'
             }`}
           >
-            <button
-              onClick={() => navigate('/login')}
-              className="mr-[30px] bg-[#FF5C5C] text-white rounded-md"
+            {error.error && (
+              <div
+                className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center`}
+              >
+                {error.message}
+              </div>
+            )}
+            <div
+              className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
             >
-              Have an account? <span className="underline">Login!</span>
-            </button>
-            <button
-              onClick={signupClick}
-              className={`w-[150px] p-[10px] rounded-md ${
-                isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'
-              }`}
-            >
-              Create Account
-            </button>
+              <button
+                onClick={() => navigate('/login')}
+                className="mr-[40px] bg-[#FF5C5C] text-white rounded-md"
+              >
+                Have an account? <span className="underline">Login!</span>
+              </button>
+              <button
+                onClick={signupClick}
+                className={`w-[125px] p-[10px] rounded-md ${
+                  isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'
+                }`}
+              >
+                SIGNUP
+              </button>
+            </div>
           </div>
         )}
       </div>

@@ -6,25 +6,38 @@ import Header from '../resources/Header';
 export default function Availability() {
   const navigate = useNavigate();
   const location = useLocation();
-  // const { eventCode } = location.state || {};
+  const { eventName2, isUpdating } = location.state || {};
+
+  console.log(eventName2);
+  console.log(isUpdating);
+
+  console.log('RAN');
 
   function getCookieValue(cookieName) {
     const cookies = document.cookie.split('; ');
     for (const cookie of cookies) {
       const [name, value] = cookie.split('=');
       if (name === cookieName) {
-        return value;
+        try {
+          return JSON.parse(decodeURIComponent(value));
+        } catch {
+          return decodeURIComponent(value);
+        }
       }
     }
     return null;
   }
 
-  // Example usage:
   let x = document.cookie;
   console.log(x);
 
   const eventCode = getCookieValue('code');
+  var userEmail = getCookieValue('login_email');
+  var userPW = getCookieValue('login_password');
+  var guestEmail = getCookieValue('guest_email');
+  var guestPW = getCookieValue('guest_password');
   console.log('Code cookie:', eventCode);
+  console.log('email', userEmail);
 
   const { isDarkMode, toggleTheme } = useTheme();
 
@@ -38,46 +51,114 @@ export default function Availability() {
   const daysPerPage = 7;
 
   const [eventDetails, setEventDetails] = useState(null);
+  const [eventDates, setEventDates] = useState(null);
+  const [isGenericWeek, setIsGenericWeek] = useState(false);
   const [allDays, setAllDays] = useState([]);
+  const [weekdays, setWeekdays] = useState([]);
   const [totalDays, setTotalDays] = useState(0);
   const [hours, setHours] = useState([]);
   const [availability, setAvailability] = useState([]);
   const [eventName, setEventName] = useState([]);
 
+  const [isError, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleError = (errormessage) => {
+    setErrorMessage(errormessage);
+    setIsError(true);
+    setTimeout(() => setIsError(false), 2000);
+  };
+
+  const check_user = async (dataToUse) => {
+    if (userEmail !== null && userPW !== null) {
+      dataToUse['email'] = userEmail;
+      dataToUse['password'] = userPW;
+    } else {
+      if (guestEmail !== null && guestPW !== null) {
+        dataToUse['guest_id'] = parseInt(guestEmail);
+        dataToUse['guest_password'] = guestPW;
+      } else {
+        try {
+          const response = await fetch(
+            'http://tomeeto.cs.rpi.edu:8000/create_guest'
+          );
+          if (response.ok) {
+            const responseData = await response.json();
+            dataToUse['guest_id'] = parseInt(responseData.guest_id);
+            dataToUse['guest_password'] = responseData.guest_password;
+            const guestEmailCookie = `guest_email=${encodeURIComponent(JSON.stringify(responseData.guest_id))}; path=/;`;
+            const guestPasswordCookie = `guest_password=${encodeURIComponent(JSON.stringify(responseData.guest_password))}; path=/;`;
+            document.cookie = guestEmailCookie;
+            document.cookie = guestPasswordCookie;
+          } else {
+            console.error(
+              'Failed to make guest:',
+              response.status,
+              response.statusText
+            );
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
+    async function handleEventDetails() {
+      try {
+        const data = {
+          // email: 'testing@gmail.com',
+          // password: '123',
+          event_code: eventCode,
+        };
+
+        console.log('Before user check:', data);
+
+        // Wait for check_user to complete
+        await check_user(data);
+
+        console.log('After user check:', data);
+
+        // Proceed with fetch after check_user completes
+        const response = await fetch(
+          'http://tomeeto.cs.rpi.edu:8000/event_details',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch event details');
+        }
+
+        const eventData = await response.json();
+        console.log('Event details:', eventData);
+
+        // Update state based on the event details
+        setEventDetails(eventData);
+        updateEventData(eventData);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
     if (eventCode) {
-      const data = {
-        email: 'testing@gmail.com',
-        password: '123',
-        event_code: eventCode,
-      };
-
-      fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // Assuming the data from /event_details contains 'days' and 'start_time'
-          console.log('Event details:', data);
-
-          // Update the state based on the event details
-          setEventDetails(data);
-          updateEventData(data); // Call function to update days and hours
-        })
-        .catch((error) => {
-          console.error('Error fetching event details:', error);
-        });
+      handleEventDetails(); // Call the async function
     }
   }, [eventCode]);
 
   const updateEventData = (data) => {
     const {
+      all_dates,
       start_date,
       start_time,
+      start_day,
+      end_day,
       end_date,
       end_time,
       duration,
@@ -86,28 +167,74 @@ export default function Availability() {
     } = data;
     setEventName(title);
 
-    const startDate = new Date(start_date + ' ' + start_time);
-    const endDate = new Date(end_date + ' ' + end_time);
-    console.log(startDate);
-    console.log(endDate);
+    console.log(event_type);
+    console.log(all_dates[0].weekdayName);
 
-    const daysArray = [];
-    let currentDate = startDate;
-    while (currentDate <= endDate) {
+    var daysArray = [];
+    const weekdaysArray = [];
+    if (event_type == 'date_range') {
+      const startDate = new Date(start_date + ' ' + start_time);
+      const endDate = new Date(end_date + ' ' + end_time);
+      console.log(startDate);
+      console.log(endDate);
+
+      // Format the dates to the desired format
+      const formattedStartDate = startDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+
+      const formattedEndDate = endDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+
+      setEventDates(`${formattedStartDate} - ${formattedEndDate}`);
+
+      let currentDate = new Date(startDate);
+
+      while (currentDate <= endDate) {
+        daysArray.push(currentDate.getDate().toString()); // Day of the month
+        weekdaysArray.push(
+          currentDate
+            .toLocaleDateString('en-US', { weekday: 'short' })
+            .toUpperCase()
+        );
+        currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+      }
+      setAllDays(daysArray);
+      setWeekdays(weekdaysArray);
+    } else {
+      setIsGenericWeek(true);
+      setEventDates(`${start_day} - ${end_day}`);
       console.log('here');
-      daysArray.push(
-        currentDate.toLocaleDateString('en-US', {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric',
-        })
-      );
-      console.log(daysArray);
-      currentDate.setDate(currentDate.getDate() + 1);
-      console.log(currentDate);
-    }
 
-    setAllDays(daysArray);
+      const abbreviations = all_dates[0].weekdayName.map((day) => {
+        switch (day) {
+          case 'Saturday':
+            return 'SAT';
+          case 'Monday':
+            return 'MON';
+          case 'Tuesday':
+            return 'TUE';
+          case 'Wednesday':
+            return 'WED';
+          case 'Thursday':
+            return 'THU';
+          case 'Friday':
+            return 'FRI';
+          case 'Sunday':
+            return 'SUN';
+          default:
+            return day;
+        }
+      });
+
+      daysArray = abbreviations;
+      setAllDays(daysArray);
+    }
 
     const startHour = parseInt(start_time.split(':')[0]);
     const endHour = parseInt(end_time.split(':')[0]);
@@ -116,18 +243,28 @@ export default function Availability() {
       (_, i) => startHour + i
     );
     setHours(generatedHours);
-    console.log(generatedHours);
 
-    const availabilityArray = Array(daysArray.length).fill(
-      Array(generatedHours.length).fill(0)
+    const availabilityArray = Array(generatedHours.length).fill(
+      Array(daysArray.length).fill(0)
     );
+
     setAvailability(availabilityArray);
+    setTotalDays(daysArray.length);
   };
 
+  console.log('ALLDAYS', allDays);
   const displayedDays = allDays.slice(
     currentPage * daysPerPage,
     (currentPage + 1) * daysPerPage
   );
+
+  const displayedWeekDays = weekdays.slice(
+    currentPage * daysPerPage,
+    (currentPage + 1) * daysPerPage
+  );
+
+  console.log('CurrentPage: ', currentPage);
+  console.log('TOTAL DAYS: ', totalDays);
 
   useEffect(() => {
     console.log('Availability updated:', availability);
@@ -201,49 +338,128 @@ export default function Availability() {
     );
   };
 
+  const transpose = (matrix) => {
+    return matrix[0].map((_, colIndex) => matrix.map((row) => row[colIndex]));
+  };
+
   const submit_button = async () => {
-    console.log('Ran');
-    console.log(name);
-    console.log(availability);
-    const data = {
-      email: 'testing@gmail.com',
-      password: '123',
+    if (name == '') {
+      handleError('Please enter a name for the event');
+      return;
+    }
+    const transposedAvailability = transpose(availability);
+    console.log(transposedAvailability);
+
+    var credentials = {
       event_code: eventCode,
       nickname: name,
-      availability: availability,
+      availability: transposedAvailability,
     };
 
-    try {
-      const response = await fetch(
-        'http://tomeeto.cs.rpi.edu:8000/add_availability',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
+    if (isUpdating === true) {
+      console.log('UPDATINGGGGGGGGGGGGGGGGGGGG');
+      console.log(availability);
+
+      check_user(credentials);
+
+      console.log(credentials);
+
+      try {
+        const response = await fetch(
+          'http://tomeeto.cs.rpi.edu:8000/update_availability',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
+          }
+        );
+        console.log(credentials);
+        if (response.ok) {
+          const result = await response.json();
+          console.log(result.message);
+          if (result.message.localeCompare('Availability updated') === 0) {
+            navigate('/dashboard');
+          } else {
+            console.log(result);
+          }
+          // session management with dashboard
+        } else {
+          console.error('Failed to record time:', response.statusText);
         }
-      );
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Time Set Successfully', result);
-
-        // session management with dashboard
-        navigate('/results', { state: { eventCode, eventName } });
-      } else {
-        console.error('Failed to record time:', response.statusText);
+      } catch (error) {
+        console.error('Error:', error);
       }
-    } catch (error) {
-      console.error('Error:', error);
+    } else {
+      console.log('Ran this random thing');
+      // console.log(name);
+      // console.log(availability);
+
+      if (userEmail == null && userPW == null) {
+        if (guestEmail != null && guestPW != null) {
+          credentials.guest_id = parseInt(guestEmail);
+          credentials.guest_password = guestPW;
+          console.log('SET GUEST STUFF');
+        } else {
+          await fetch('http://tomeeto.cs.rpi.edu:8000/create_guest', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              credentials.guest_id = data.guest_id;
+              credentials.guest_password = data.guest_password;
+              console.log(credentials.guest_id);
+            });
+        }
+        console.log('HEREEEEFORTHEUSERAND');
+      } else {
+        credentials.email = userEmail;
+        credentials.password = userPW;
+      }
+      console.log(credentials);
+      try {
+        const response = await fetch(
+          'http://tomeeto.cs.rpi.edu:8000/add_availability',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
+          }
+        );
+        console.log(credentials);
+        if (response.ok) {
+          const result = await response.json();
+
+          if (result.message != 'Availability added') {
+            handleError(result.message);
+            return;
+          }
+          console.log('Time Set Successfully', result);
+
+          // session management with dashboard
+          navigate('/results', { state: { eventCode, eventName } });
+        } else {
+          console.error('Failed to record time:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
   };
 
+  console.log('EVENT DATES', eventDates);
+
   return (
     <div
-      className={`relative flex flex-col min-h-screen p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
+      className={`relative flex flex-col h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
       onMouseUp={handleMouseUp}
-      style={{ userSelect: 'none' }} // Disable text selection
+      style={{ userSelect: 'none' }}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
@@ -252,14 +468,25 @@ export default function Availability() {
       >
         <div
           id="eventName"
-          className="w-[80vw] lg:w-[93vw] lg:ml-4"
+          className="flex flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between"
           style={{ fontSize: `max(3vw, 35px)` }}
         >
           {eventName}
+
+          <div
+            className="lg:mr-[30px]"
+            style={{
+              fontSize: `max(1vw, 15px)`,
+              marginTop: 'auto',
+              marginBottom: '10px',
+            }}
+          >
+            {eventDates}
+          </div>
         </div>
 
         <div
-          className={`w-[93vw] border-t-2 m-auto opacity-25 ${isDarkMode ? 'border-gray-300' : 'border-gray-500'}`}
+          className={`lg:ml-4 w-[85vw] lg:w-[93vw] border-t-[1px] ${isDarkMode ? 'border-white' : 'border-gray-500'}`}
         ></div>
 
         <div className="flex w-[90vw] justify-between items-center mt-4">
@@ -275,7 +502,12 @@ export default function Availability() {
             <br />
             add your availability here
           </div>
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex flex items-end justify-end">
+            {isError && (
+              <div className="w-[400px] p-2 bg-[#FF5C5C] flex items-center justify-center mr-4 ">
+                {errorMessage}
+              </div>
+            )}
             <button
               onClick={submit_button}
               className="w-32 p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500"
@@ -287,38 +519,84 @@ export default function Availability() {
 
         <div
           id="availability"
-          className="w-[90vw] h-[64vh] mt-[1vh] flex flex-row overflow-hidden"
+          className="flex flex-row w-full lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] overflow-hidden"
         >
-          <div className="flex mt-4">
-            {currentPage > 0 && (
-              <button
-                onClick={goToPrevPage}
-                className="px-4 py-2 font-bold opacity-25 hover:opacity-100"
-                style={{ fontSize: '2rem' }}
+          {!isGenericWeek && (
+            <div className="flex justify-between mt-4 w-[50px]">
+              {currentPage > 0 && !isGenericWeek && (
+                <button
+                  onClick={goToPrevPage}
+                  className="font-bold opacity-25 hover:opacity-100"
+                  style={{ fontSize: '2rem' }}
+                >
+                  &#65308;
+                </button>
+              )}
+            </div>
+          )}
+
+          <div className="flex flex-col mr-[10px] h-[60vh]">
+            <div
+              className=" pb-1 font-[400] opacity-0"
+              style={{
+                fontSize: `min(3vw, 15px)`,
+                width: `min(10vw, 40px)`,
+              }}
+            >
+              nnn
+            </div>
+            <div
+              className="pb-2 font-[400] opacity-0"
+              style={{
+                fontSize: `min(3vw, 15px)`,
+              }}
+            >
+              nnn
+            </div>
+            {hours.map((hour, index) => (
+              <div
+                key={index}
+                className="relative text-right align-top"
+                style={{
+                  height: `calc(100% / ${hours.length})`,
+                  display: 'flex',
+                  justifyContent: 'end',
+                  fontSize: `min(3vw, 12px)`,
+                }}
               >
-                &#65308; {/* Previous page entity */}
-              </button>
-            )}
-            {(currentPage + 1) * daysPerPage < totalDays && (
-              <button
-                onClick={goToNextPage}
-                className="h-full flex items-center justify-center px-4 py-2 opacity-0"
-                style={{ fontSize: '2rem' }}
-                disabled={isDisabled}
-              >
-                &#65310;
-              </button>
-            )}
+                <span
+                  className="absolute top-0 right-0"
+                  style={{ transform: `translate(0, -50%)` }}
+                >
+                  {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
+                </span>
+              </div>
+            ))}
           </div>
 
-          <table className="w-full table-fixed">
+          <table className="w-[100%] table-fixed h-[60vh]">
             <thead>
               <tr>
-                <th className="p-2" style={{ width: `min(10vw, 55px)` }}></th>
+                <th style={{ width: `0.5vw` }}></th>
+                {displayedWeekDays.map((day, index) => (
+                  <th
+                    key={index}
+                    className="font-[400] opacity-75"
+                    style={{
+                      fontSize: `min(3vw, 15px)`,
+                      height: `calc(100% / (${hours.length}+2))`,
+                    }}
+                  >
+                    {day}
+                  </th>
+                ))}
+              </tr>
+              <tr>
+                <th style={{ width: `0.5vw` }}></th>
                 {displayedDays.map((day, index) => (
                   <th
                     key={index}
-                    className="p-2 font-[400]"
+                    className="pb-2 font-[400]"
                     style={{
                       fontSize: `min(3vw, 15px)`,
                       height: `calc(100% / (${hours.length}+2))`,
@@ -330,42 +608,43 @@ export default function Availability() {
               </tr>
             </thead>
             <tbody>
-              {hours.map((hour, row) => (
+              {hours.map((_, row) => (
                 <tr
                   key={row}
-                  className="h-full"
-                  style={{ height: `calc(100% / ${hours.length})` }}
+                  // className="h-full"
+                  style={{ height: `calc(100% / (${hours.length}+2))` }}
                 >
                   <td
-                    className="pr-2 text-right"
-                    style={{ fontSize: `min(3vw, 12px)` }}
-                  >
-                    {hour <= 12 ? hour : hour - 12} {hour < 12 ? 'AM' : 'PM'}
-                  </td>
+                    className="border-gray-400 p-2 relative"
+                    style={{
+                      borderTop: '1px solid #b9b9b9',
+                    }}
+                  ></td>
+
                   {displayedDays.map((_, column) => (
                     <td
                       key={column}
                       className={`border ${isDarkMode ? 'border-white' : 'border-black'} text-[10pt]`} // Add text size class here
                       style={{
                         backgroundColor: isInDragArea(
-                          column,
-                          currentPage * daysPerPage + row
+                          row,
+                          currentPage * daysPerPage + column
                         )
                           ? 'rgba(72, 187, 120, 0.5)' // Highlight drag area
-                          : availability[column][
-                                currentPage * daysPerPage + row
+                          : availability[row][
+                                currentPage * daysPerPage + column
                               ]
                             ? 'rgba(72, 187, 120, 1)' // Filled cell
                             : 'transparent', // Empty cell
                         userSelect: 'none', // Disable text selection
                       }}
                       onMouseDown={() =>
-                        handleMouseDown(column, currentPage * daysPerPage + row)
+                        handleMouseDown(row, currentPage * daysPerPage + column)
                       }
                       onMouseEnter={() =>
                         handleMouseEnter(
-                          column,
-                          currentPage * daysPerPage + row
+                          row,
+                          currentPage * daysPerPage + column
                         )
                       }
                     ></td>
@@ -374,34 +653,33 @@ export default function Availability() {
               ))}
             </tbody>
           </table>
-
-          <div className="flex justify-between mt-4">
-            {currentPage > 0 && (
-              <button
-                onClick={goToPrevPage}
-                className="px-4 py-2 opacity-0"
-                style={{ fontSize: '2rem' }}
-                disabled={isDisabled}
-              >
-                &#65308; {/* Previous page entity */}
-              </button>
-            )}
-            {(currentPage + 1) * daysPerPage < totalDays && (
-              <button
-                onClick={goToNextPage}
-                className="h-full flex items-center justify-center px-4 py-2 font-bold opacity-25 hover:opacity-100"
-                style={{ fontSize: '2rem' }}
-              >
-                &#65310; {/* Next page entity */}
-              </button>
-            )}
-          </div>
+          {!isGenericWeek && (
+            <div className="flex justify-between mt-4 w-[60px]">
+              {(currentPage + 1) * daysPerPage < totalDays && (
+                <button
+                  onClick={goToNextPage}
+                  className="font-bold opacity-25 hover:opacity-100 ml-2"
+                  style={{ fontSize: '2rem' }}
+                >
+                  &#65310;
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
-        <div className="lg:hidden mt-4">
+        <div
+          className={`lg:hidden fixed bottom-0 left-0 flex-shrink-0 flex flex-col`}
+        >
+          {isError && (
+            <div className="w-[100vw] p-2 bg-[#FF5C5C] flex items-center justify-center mb-4 ">
+              {errorMessage}
+            </div>
+          )}
           <button
             onClick={submit_button}
-            className="w-full p-2 bg-[#FF5C5C] text-white rounded-md shadow-md transition duration-300 hover:bg-red-500"
+            className={`w-[100vw] h-[10vh] bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
+            style={{ fontSize: `max(1vw, 20px)` }}
           >
             Submit
           </button>
