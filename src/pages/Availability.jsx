@@ -400,7 +400,7 @@ export default function Availability() {
         if (guestEmail != null && guestPW != null) {
           credentials.guest_id = parseInt(guestEmail);
           credentials.guest_password = guestPW;
-          console.log("SET GUEST STUFF");
+          console.log('SET GUEST STUFF');
         } else {
           await fetch('http://tomeeto.cs.rpi.edu:8000/create_guest', {
             method: 'GET',
