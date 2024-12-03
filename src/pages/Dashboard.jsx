@@ -74,14 +74,26 @@ export default function Dashboard() {
   const [notification, setNotification] = useState('');
 
   const handleCopyLink = async (event) => {
+    const textArea = document.createElement('textarea');
+    textArea.value = event.code;
+    document.body.appendChild(textArea);
+    textArea.select();
     try {
-      navigator.clipboard.writeText(event.code).then(() => {
-        setNotification('Link copied to clipboard');
-        setTimeout(() => setNotification(''), 3000);
-      });
-    } catch (error) {
-      console.error('Error copying link:', error);
+      document.execCommand('copy');
+      setNotification('Link copied');
+    } catch (err) {
+      console.error('Unable to copy to clipboard', err);
     }
+    document.body.removeChild(textArea);
+
+    // try {
+    //   navigator.clipboard.writeText(event.code).then(() => {
+    //     setNotification('Link copied to clipboard');
+    //     setTimeout(() => setNotification(''), 3000);
+    //   });
+    // } catch (error) {
+    //   console.error('Error copying link:', error);
+    // }
   };
 
   const handleViewBookingLink = async (event) => {
