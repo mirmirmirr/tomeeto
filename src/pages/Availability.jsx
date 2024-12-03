@@ -90,9 +90,16 @@ export default function Availability() {
     if (targetCell && targetCell.tagName === 'TD') {
       const day = targetCell.getAttribute('data-day');
       const hour = targetCell.getAttribute('data-hour');
+      console.log('hover: ', currentPage * daysPerPage + hour);
       setIsDragging(true);
-      setDragStart({ day: Number(day), hour: Number(hour) });
-      setDragEnd({ day: Number(day), hour: Number(hour) });
+      setDragStart({
+        day: Number(day),
+        hour: currentPage * daysPerPage + Number(hour),
+      });
+      setDragEnd({
+        day: Number(day),
+        hour: currentPage * daysPerPage + Number(hour),
+      });
     }
   };
 
@@ -105,7 +112,10 @@ export default function Availability() {
     if (targetCell && targetCell.tagName === 'TD') {
       const day = targetCell.getAttribute('data-day');
       const hour = targetCell.getAttribute('data-hour');
-      setDragEnd({ day: Number(day), hour: Number(hour) });
+      setDragEnd({
+        day: Number(day),
+        hour: currentPage * daysPerPage + Number(hour),
+      });
     }
   };
 
@@ -569,7 +579,7 @@ export default function Availability() {
           className="flex flex-row w-full h-[80vh] lg:h-[60vh] lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] overflow-hidden"
         >
           {!isGenericWeek && (
-            <div className="flex justify-between mt-4 w-[50px]">
+            <div className="flex justify-between mt-4 w-[50px] h-[60vh]">
               {currentPage > 0 && !isGenericWeek && (
                 <button
                   onClick={goToPrevPage}
@@ -706,7 +716,7 @@ export default function Availability() {
             </tbody>
           </table>
           {!isGenericWeek && (
-            <div className="flex justify-between mt-4 w-[60px]">
+            <div className="flex justify-between mt-4 w-[60px] h-[60vh]">
               {(currentPage + 1) * daysPerPage < totalDays && (
                 <button
                   onClick={goToNextPage}

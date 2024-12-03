@@ -534,7 +534,7 @@ export default function Result() {
 
           <div className="flex flex-row">
             {!isGenericWeek && (
-              <div className="flex justify-between mt-4 w-[50px]">
+              <div className="flex justify-between mt-4 w-[50px] h-[60vh]">
                 {currentPage > 0 && (
                   <button
                     onClick={goToPrevPage}
@@ -662,7 +662,7 @@ export default function Result() {
             </table>
 
             {!isGenericWeek && (
-              <div className="flex justify-between mt-4 w-[60px]">
+              <div className="flex justify-between mt-4 w-[60px] h-[60vh]">
                 {(currentPage + 1) * daysPerPage < totalDays && (
                   <button
                     onClick={goToNextPage}
