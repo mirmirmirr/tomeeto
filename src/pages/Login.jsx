@@ -256,7 +256,7 @@ export default function Login() {
               <button
                 className={`text-sm text-opacity-70 ${isDarkMode ? 'text-white' : 'text-black'} hover:underline hover:text-opacity-100`}
               >
-                Forgot Password?
+                {/* Forgot Password? */}
               </button>
             </div>
           </div>
@@ -278,12 +278,12 @@ export default function Login() {
             </div>
           )}
 
-          <div
+          {/* <div
             className={`w-[80vw] lg:w-[35vw] border-t-2 my-4 ${
               isDarkMode ? 'border-gray-300' : 'border-gray-500'
             }`}
-          ></div>
-          <button
+          ></div> */}
+          {/* <button
             className={`w-[80vw] lg:w-[35vw] mt-[10px] subtext-responsive py-3 rounded-md transition duration-300 hover:bg-red-500 hover:text-white hover:border-transparent ${
               isDarkMode
                 ? 'text-white bg-transparent border-2 border-white'
@@ -291,7 +291,7 @@ export default function Login() {
             }`}
           >
             Continue with Google
-          </button>
+          </button> */}
         </div>
 
         {isSmallScreen && (
