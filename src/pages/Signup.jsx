@@ -268,7 +268,7 @@ export default function Signup() {
             </div>
           )}
 
-          <div
+          {/* <div
             className={`w-full border-t-2 my-4 ${
               isDarkMode ? 'border-gray-300' : 'border-gray-500'
             }`}
@@ -282,7 +282,7 @@ export default function Signup() {
             }`}
           >
             Continue with Google
-          </button>
+          </button> */}
         </div>
 
         {isSmallScreen && (
