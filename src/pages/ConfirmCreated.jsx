@@ -17,15 +17,28 @@ export default function ConfirmCreated() {
   const [copySuccess, setCopySuccess] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard
-      .writeText(eventCode)
-      .then(() => {
-        setCopySuccess(true);
-        setTimeout(() => setCopySuccess(false), 2000);
-      })
-      .catch((err) => {
-        console.error('Failed to copy text: ', err);
-      });
+    // navigator.clipboard
+    //   .writeText(eventCode)
+    //   .then(() => {
+    //     setCopySuccess(true);
+    //     setTimeout(() => setCopySuccess(false), 2000);
+    //   })
+    //   .catch((err) => {
+    //     console.error('Failed to copy text: ', err);
+    //   });
+
+    const textArea = document.createElement('textarea');
+    textArea.value = eventCode;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Unable to copy to clipboard', err);
+    }
+    document.body.removeChild(textArea);
   };
 
   // Styling based on the current theme
