@@ -86,7 +86,9 @@ export default function Availability() {
 
   useEffect(() => {
     const checkTouchDevice = () => {
-      setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+      setIsTouchDevice(
+        'ontouchstart' in window || navigator.maxTouchPoints > 0
+      );
     };
     checkTouchDevice();
   }, []);
@@ -705,8 +707,16 @@ export default function Availability() {
                       onTouchMove={handleTouchMove}
                       onTouchEnd={handleTouchEnd}
                       {...(!isTouchDevice && {
-                        onMouseDown: (e) => handleMouseDown(row, currentPage * daysPerPage + column),
-                        onMouseEnter: (e) => handleMouseEnter(row, currentPage * daysPerPage + column),
+                        onMouseDown: (e) =>
+                          handleMouseDown(
+                            row,
+                            currentPage * daysPerPage + column
+                          ),
+                        onMouseEnter: (e) =>
+                          handleMouseEnter(
+                            row,
+                            currentPage * daysPerPage + column
+                          ),
                       })}
                     ></td>
                   ))}
