@@ -41,6 +41,7 @@ export default function Availability() {
 
   const { isDarkMode, toggleTheme } = useTheme();
 
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
   const [dragEnd, setDragEnd] = useState(null);
@@ -83,6 +84,13 @@ export default function Availability() {
     };
   }, [isDragging]);
 
+  useEffect(() => {
+    const checkTouchDevice = () => {
+      setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    };
+    checkTouchDevice();
+  }, []);
+
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
     const targetCell = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -90,7 +98,6 @@ export default function Availability() {
     if (targetCell && targetCell.tagName === 'TD') {
       const day = targetCell.getAttribute('data-day');
       const hour = targetCell.getAttribute('data-hour');
-      console.log('hover: ', currentPage * daysPerPage + hour);
       setIsDragging(true);
       setDragStart({
         day: Number(day),
@@ -120,9 +127,6 @@ export default function Availability() {
   };
 
   const handleTouchEnd = () => {
-    setIsDragging(false);
-    setDragStart(null);
-    setDragEnd(null);
     handleMouseUp();
   };
 
@@ -697,18 +701,13 @@ export default function Availability() {
                             : 'transparent',
                         userSelect: 'none',
                       }}
-                      onMouseDown={() =>
-                        handleMouseDown(row, currentPage * daysPerPage + column)
-                      }
-                      onMouseEnter={() =>
-                        handleMouseEnter(
-                          row,
-                          currentPage * daysPerPage + column
-                        )
-                      }
                       onTouchStart={handleTouchStart}
                       onTouchMove={handleTouchMove}
                       onTouchEnd={handleTouchEnd}
+                      {...(!isTouchDevice && {
+                        onMouseDown: (e) => handleMouseDown(row, currentPage * daysPerPage + column),
+                        onMouseEnter: (e) => handleMouseEnter(row, currentPage * daysPerPage + column),
+                      })}
                     ></td>
                   ))}
                 </tr>
