@@ -1,5 +1,6 @@
 from fastapi import Request, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import re
 
 from utils import (
     db_hello_world,
@@ -45,6 +46,24 @@ async def signup(request: Request):
     body: dict = await request.json()
     email: str = body["email"]
     password: str = body["password"]
+
+    # This is RFC 5322 compliant, but slimmed down so it's not perfect
+    email_regex: str = (
+        r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"
+        r'"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@'
+        r"(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\["
+        r"(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}"
+        r"(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:"
+        r"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"
+    )
+    if not re.match(email_regex, email):
+        return {"message": "Invalid email"}
+    elif len(email) > 255:
+        return {"message": "Email too long"}
+    if len(password) < 6:
+        return {"message": "Password too short"}
+    elif len(password) > 255:
+        return {"message": "Password too long"}
 
     result: str = check_user_exists(email)
     if len(result) > 0:

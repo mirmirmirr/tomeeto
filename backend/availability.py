@@ -24,6 +24,9 @@ class Availability:
             if field not in json:
                 return None
 
+        if len(json["nickname"]) == 0 or len(json["nickname"]) > 255:
+            return None
+
         return Availability(
             user,
             json["nickname"],
