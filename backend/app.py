@@ -18,6 +18,7 @@ from utils import (
     get_event_results,
     update_avail,
     fix_event,
+    check_user_in_event,
 )
 from event import Event
 from availability import Availability
@@ -238,3 +239,20 @@ async def get_results(request: Request):
         return {"message": "Invalid event code"}
 
     return get_event_results(body["event_code"])
+
+
+@app.post("/user_in_event")
+async def user_in_event(request: Request):
+    body: dict = await request.json()
+    user_id = check_login(body)
+    if user_id < 0:
+        return {"message": "Login failed"}
+    else:
+        body["account_id"] = user_id
+
+    if "event_code" not in body:
+        return {"message": "Missing field: event_code"}
+    if not check_code_event(body["event_code"]):
+        return {"message": "Invalid event code"}
+
+    return check_user_in_event(body)
