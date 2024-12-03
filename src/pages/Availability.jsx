@@ -41,7 +41,6 @@ export default function Availability() {
 
   const { isDarkMode, toggleTheme } = useTheme();
 
-  const [isInteracting, setIsInteracting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
   const [dragEnd, setDragEnd] = useState(null);
@@ -70,17 +69,29 @@ export default function Availability() {
     setTimeout(() => setIsError(false), 2000);
   };
 
+  useEffect(() => {
+    const preventTouchScroll = (e) => {
+      if (isDragging) e.preventDefault();
+    };
+  
+    window.addEventListener("touchmove", preventTouchScroll, { passive: false });
+  
+    return () => {
+      window.removeEventListener("touchmove", preventTouchScroll);
+    };
+  }, [isDragging]);
+
+  
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
     const targetCell = document.elementFromPoint(touch.clientX, touch.clientY);
   
     if (targetCell && targetCell.tagName === "TD") {
-      const day = targetCell.getAttribute("data-day"); // Assuming data attributes for cells
+      const day = targetCell.getAttribute("data-day");
       const hour = targetCell.getAttribute("data-hour");
       setIsDragging(true);
       setDragStart({ day: Number(day), hour: Number(hour) });
       setDragEnd({ day: Number(day), hour: Number(hour) });
-      document.body.style.overflow = "hidden";
     }
   };
   
@@ -95,7 +106,6 @@ export default function Availability() {
       const hour = targetCell.getAttribute("data-hour");
       setDragEnd({ day: Number(day), hour: Number(hour) });
     }
-    e.preventDefault(); // Prevent scrolling
   };
   
   const handleTouchEnd = () => {
@@ -103,7 +113,6 @@ export default function Availability() {
     setDragStart(null);
     setDragEnd(null);
     handleMouseUp();
-    document.body.style.overflow = "";
   };  
 
   const check_user = async (dataToUse) => {
