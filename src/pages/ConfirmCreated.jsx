@@ -97,7 +97,7 @@ export default function ConfirmCreated() {
 
               <button
                 onClick={handleCopy}
-                className={`hidden lg:block absolute text-[0.8vw] right-0 bottom-[55px] py-1 px-4 cursor-pointer rounded-lg opacity-0 group-hover:opacity-100 transition-opacity ${buttonText} ${buttonBG}`}
+                className={`hidden lg:block absolute text-[0.8vw] right-0 bottom-[55px] py-1 px-4 cursor-pointer rounded-lg opacity-100 ${buttonText} ${buttonBG}`}
               >
                 copy link
               </button>
@@ -105,7 +105,7 @@ export default function ConfirmCreated() {
                 onClick={() =>
                   navigate('/availability', { state: { eventCode, eventName } })
                 }
-                className={`hidden lg:block absolute text-[0.8vw] right-0 bottom-[20px] py-1 px-4 cursor-pointer rounded-lg opacity-0 group-hover:opacity-100 transition-opacity ${buttonText} ${buttonBG}`}
+                className={`hidden lg:block absolute text-[0.8vw] right-0 bottom-[20px] py-1 px-4 cursor-pointer rounded-lg opacity-100 ${buttonText} ${buttonBG}`}
               >
                 fill availability
               </button>
