@@ -494,7 +494,7 @@ export default function Availability() {
 
   return (
     <div
-      className={`relative flex flex-col h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
+      className={`relative flex flex-col min-h-screen lg:h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
       onMouseUp={handleMouseUp}
       style={{ userSelect: 'none' }}
     >
@@ -505,7 +505,7 @@ export default function Availability() {
       >
         <div
           id="eventName"
-          className="flex flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between"
+          className="flex flex-col lg:flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between"
           style={{ fontSize: `max(3vw, 35px)` }}
         >
           {eventName}
@@ -534,7 +534,7 @@ export default function Availability() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="your name"
-              className={`border-b-2 focus:outline-none ${isDarkMode ? 'bg-[#3E505B] text-white border-white' : 'bg-[#F5F5F5] text-black border-black'}`}
+              className={`border-b-2 focus:outline-none rounded-none ${isDarkMode ? 'bg-[#3E505B] text-white border-white' : 'bg-[#F5F5F5] text-black border-black'}`}
             />
             <br />
             add your availability here
@@ -556,7 +556,7 @@ export default function Availability() {
 
         <div
           id="availability"
-          className="flex flex-row w-full lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] overflow-hidden"
+          className="flex flex-row w-full h-[80vh] lg:h-[60vh] lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] overflow-hidden"
         >
           {!isGenericWeek && (
             <div className="flex justify-between mt-4 w-[50px]">
