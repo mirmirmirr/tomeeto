@@ -69,6 +69,63 @@ export default function Availability() {
     setTimeout(() => setIsError(false), 2000);
   };
 
+  useEffect(() => {
+    const preventTouchScroll = (e) => {
+      if (isDragging) e.preventDefault();
+    };
+
+    window.addEventListener('touchmove', preventTouchScroll, {
+      passive: false,
+    });
+
+    return () => {
+      window.removeEventListener('touchmove', preventTouchScroll);
+    };
+  }, [isDragging]);
+
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    const targetCell = document.elementFromPoint(touch.clientX, touch.clientY);
+
+    if (targetCell && targetCell.tagName === 'TD') {
+      const day = targetCell.getAttribute('data-day');
+      const hour = targetCell.getAttribute('data-hour');
+      console.log('hover: ', currentPage * daysPerPage + hour);
+      setIsDragging(true);
+      setDragStart({
+        day: Number(day),
+        hour: currentPage * daysPerPage + Number(hour),
+      });
+      setDragEnd({
+        day: Number(day),
+        hour: currentPage * daysPerPage + Number(hour),
+      });
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+
+    const touch = e.touches[0];
+    const targetCell = document.elementFromPoint(touch.clientX, touch.clientY);
+
+    if (targetCell && targetCell.tagName === 'TD') {
+      const day = targetCell.getAttribute('data-day');
+      const hour = targetCell.getAttribute('data-hour');
+      setDragEnd({
+        day: Number(day),
+        hour: currentPage * daysPerPage + Number(hour),
+      });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    setDragStart(null);
+    setDragEnd(null);
+    handleMouseUp();
+  };
+
   const check_user = async (dataToUse) => {
     if (userEmail !== null && userPW !== null) {
       dataToUse['email'] = userEmail;
@@ -457,7 +514,7 @@ export default function Availability() {
 
   return (
     <div
-      className={`relative flex flex-col h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
+      className={`relative flex flex-col min-h-screen lg:h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
       onMouseUp={handleMouseUp}
       style={{ userSelect: 'none' }}
     >
@@ -468,7 +525,7 @@ export default function Availability() {
       >
         <div
           id="eventName"
-          className="flex flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between"
+          className="flex flex-col lg:flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between"
           style={{ fontSize: `max(3vw, 35px)` }}
         >
           {eventName}
@@ -497,7 +554,7 @@ export default function Availability() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="your name"
-              className={`border-b-2 focus:outline-none ${isDarkMode ? 'bg-[#3E505B] text-white border-white' : 'bg-[#F5F5F5] text-black border-black'}`}
+              className={`border-b-2 focus:outline-none rounded-none ${isDarkMode ? 'bg-[#3E505B] text-white border-white' : 'bg-[#F5F5F5] text-black border-black'}`}
             />
             <br />
             add your availability here
@@ -519,10 +576,10 @@ export default function Availability() {
 
         <div
           id="availability"
-          className="flex flex-row w-full lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] overflow-hidden"
+          className="flex flex-row w-full h-[80vh] lg:h-[60vh] lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] overflow-hidden"
         >
           {!isGenericWeek && (
-            <div className="flex justify-between mt-4 w-[50px]">
+            <div className="flex justify-between mt-4 w-[50px] h-[60vh]">
               {currentPage > 0 && !isGenericWeek && (
                 <button
                   onClick={goToPrevPage}
@@ -624,19 +681,21 @@ export default function Availability() {
                   {displayedDays.map((_, column) => (
                     <td
                       key={column}
-                      className={`border ${isDarkMode ? 'border-white' : 'border-black'} text-[10pt]`} // Add text size class here
+                      data-day={row}
+                      data-hour={column}
+                      className={`border ${isDarkMode ? 'border-white' : 'border-black'} text-[10pt]`}
                       style={{
                         backgroundColor: isInDragArea(
                           row,
                           currentPage * daysPerPage + column
                         )
-                          ? 'rgba(72, 187, 120, 0.5)' // Highlight drag area
+                          ? 'rgba(72, 187, 120, 0.5)'
                           : availability[row][
                                 currentPage * daysPerPage + column
                               ]
-                            ? 'rgba(72, 187, 120, 1)' // Filled cell
-                            : 'transparent', // Empty cell
-                        userSelect: 'none', // Disable text selection
+                            ? 'rgba(72, 187, 120, 1)'
+                            : 'transparent',
+                        userSelect: 'none',
                       }}
                       onMouseDown={() =>
                         handleMouseDown(row, currentPage * daysPerPage + column)
@@ -647,6 +706,9 @@ export default function Availability() {
                           currentPage * daysPerPage + column
                         )
                       }
+                      onTouchStart={handleTouchStart}
+                      onTouchMove={handleTouchMove}
+                      onTouchEnd={handleTouchEnd}
                     ></td>
                   ))}
                 </tr>
@@ -654,7 +716,7 @@ export default function Availability() {
             </tbody>
           </table>
           {!isGenericWeek && (
-            <div className="flex justify-between mt-4 w-[60px]">
+            <div className="flex justify-between mt-4 w-[60px] h-[60vh]">
               {(currentPage + 1) * daysPerPage < totalDays && (
                 <button
                   onClick={goToNextPage}

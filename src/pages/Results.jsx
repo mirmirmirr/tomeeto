@@ -468,7 +468,7 @@ export default function Result() {
 
   return (
     <div
-      className={`relative flex flex-col h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
+      className={`relative flex flex-col min-h-screen lg:h-[100vh] p-4 ${isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]'}`}
     >
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div
@@ -476,7 +476,7 @@ export default function Result() {
       >
         <div
           id="eventName"
-          className="flex flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between"
+          className="flex flex-col lg:flex-row w-[85vw] lg:w-[93vw] lg:ml-4 justify-between"
           style={{ fontSize: `max(3vw, 35px)` }}
         >
           {eventName}
@@ -499,7 +499,7 @@ export default function Result() {
 
         <div
           id="results"
-          className="flex flex-col lg:flex-row w-full lg:w-[80vw] lg:ml-[5%] mr-auto mt-[2vh] lg:mt-[4vh] overflow-hidden"
+          className="flex flex-col lg:flex-row w-full lg:w-[80vw] h-[80vh] lg:h-[70vh] lg:ml-[5%] mr-auto mt-[2vh] lg:mt-[4vh] overflow-hidden"
         >
           <div className="block lg:hidden w-[80vw] flex flex-col mb-[3vh] ml-4">
             <div className="text-[20px] font-[500]">
@@ -534,7 +534,7 @@ export default function Result() {
 
           <div className="flex flex-row">
             {!isGenericWeek && (
-              <div className="flex justify-between mt-4 w-[50px]">
+              <div className="flex justify-between mt-4 w-[50px] h-[60vh]">
                 {currentPage > 0 && (
                   <button
                     onClick={goToPrevPage}
@@ -662,7 +662,7 @@ export default function Result() {
             </table>
 
             {!isGenericWeek && (
-              <div className="flex justify-between mt-4 w-[60px]">
+              <div className="flex justify-between mt-4 w-[60px] h-[60vh]">
                 {(currentPage + 1) * daysPerPage < totalDays && (
                   <button
                     onClick={goToNextPage}
