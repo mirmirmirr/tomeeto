@@ -38,11 +38,6 @@ export default function CreateEvent() {
   const [startCalendarDay, setCalendarStart] = useState(today);
   const [endCalendarDay, setCalendarEnd] = useState(today);
 
-  const [errorEventMessage, setErrorEventMessage] = useState(false);
-  const [errorDateMessage, setErrorDateMessage] = useState(false);
-  const [errorTimeMessage, setErrorTimeMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(false);
-
   // Styling based on the current theme
   const bgColor = isDarkMode ? 'bg-[#3E505B]' : 'bg-[#F5F5F5]';
   const textColor = isDarkMode ? 'text-[#F5F5F5]' : 'text-[#3E505B]';
@@ -51,21 +46,22 @@ export default function CreateEvent() {
     ? 'placeholder-[#F5F5F5]'
     : 'placeholder-[#3E505B]';
 
-  const handleError = (errortype) => {
-    if (errortype == 'event name') {
-      console.log('ERRRRORRR');
-      setErrorEventMessage(true);
-      setTimeout(() => setErrorEventMessage(false), 2000);
-    } else if (errortype == 'event date') {
-      setErrorDateMessage(true);
-      setTimeout(() => setErrorDateMessage(false), 2000);
-    } else if (errortype == 'event time') {
-      setErrorTimeMessage(true);
-      setTimeout(() => setErrorTimeMessage(false), 2000);
-    } else {
-      setErrorMessage(true);
-      setTimeout(() => setErrorMessage(false), 2000);
-    }
+  const [error, setError] = useState({
+    error: false,
+    message: '',
+  });
+
+  const handleError = (errormessage) => {
+    setError({
+      error: true,
+      message: errormessage,
+    });
+    setTimeout(() => {
+      setError({
+        error: false,
+        message: '',
+      });
+    }, 2000);
   };
 
   const handleToggle = (dropdownId) => {
@@ -156,15 +152,6 @@ export default function CreateEvent() {
   }, [selectDaysOfWeek]);
 
   const get_event_data = async () => {
-    var errorMessage = false;
-
-    if (eventName == '') {
-      handleError('event name');
-      errorMessage = true;
-    } else if (endTime <= startTime) {
-      handleError('event time');
-      errorMessage = true;
-    }
 
     const data = {
       // email: 'testing@gmail.com',
@@ -238,50 +225,45 @@ export default function CreateEvent() {
       data.end_date = endCalendarDay;
       console.log(data.start_date);
       console.log(data.end_date);
-
-      if (startCalendarDay > endCalendarDay) {
-        handleError('event date');
-        errorMessage = true;
-      }
     }
 
     console.log(data);
     console.log('works');
 
-    if (!errorMessage) {
-      try {
-        const response = await fetch(
-          'http://tomeeto.cs.rpi.edu:8000/create_event',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-          }
-        );
-
-        if (response.ok) {
-          const responseData = await response.json();
-          console.log('Response Data:', responseData);
-          console.log(responseData);
-
-          if (response.message != 'Event created') {
-            handleError();
-          }
-
-          navigate('/confirmCreated', {
-            state: {
-              eventCode: responseData.event_code,
-              eventName: data.title,
-            },
-          });
-        } else {
-          console.error('Failed to create event:', response.statusText);
+    try {
+      const response = await fetch(
+        'http://tomeeto.cs.rpi.edu:8000/create_event',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
         }
-      } catch (error) {
-        console.error('Error:', error);
+      );
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log('Response Data:', responseData);
+        console.log(responseData);
+
+        if (responseData.message != "Event created") {
+          console.log("ERROR");
+          handleError(responseData.message);
+          return;
+        }
+
+        navigate('/confirmCreated', {
+          state: {
+            eventCode: responseData.event_code,
+            eventName: data.title,
+          },
+        });
+      } else {
+        console.error('Failed to create event:', response.statusText);
       }
+    } catch (error) {
+      console.error('Error:', error);
     }
   };
 
@@ -628,25 +610,11 @@ export default function CreateEvent() {
             />
           </div> */}
 
-          {errorEventMessage && (
+          {error.error && (
             <div
               className={`w-full h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
             >
-              Please create a title for the event.
-            </div>
-          )}
-          {(errorDateMessage || errorTimeMessage) && (
-            <div
-              className={`w-full h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
-            >
-              Please enter a valid date range and time range for the event.
-            </div>
-          )}
-          {errorMessage && (
-            <div
-              className={`w-full h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center text-[#F5F5F5]`}
-            >
-              Too many other errors :p
+              {error.message}
             </div>
           )}
 
@@ -675,31 +643,13 @@ export default function CreateEvent() {
                 ${textColor} ${borderColor} ${placeholderColor} text-[20px]`}
             />
           </div> */}
-          {errorEventMessage && (
+          {error.error && (
             <div
               className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center ${
                 textColor
               }`}
             >
-              Please create a title for the event.
-            </div>
-          )}
-          {(errorDateMessage || errorTimeMessage) && (
-            <div
-              className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center ${
-                textColor
-              }`}
-            >
-              Please enter a valid date and time range for the event.
-            </div>
-          )}
-          {errorMessage && (
-            <div
-              className={`w-[100vw] h-8 mb-4 bg-[#FF5C5C] flex items-center justify-center ${
-                textColor
-              }`}
-            >
-              Too many other errors :p
+              {error.message}
             </div>
           )}
 
