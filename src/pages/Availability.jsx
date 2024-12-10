@@ -407,12 +407,12 @@ export default function Availability() {
             body: JSON.stringify(credentials),
           }
         );
-        
+
         if (response.ok) {
-          const result = await response.json();          
+          const result = await response.json();
           if (result.message.localeCompare('Availability updated') === 0) {
             navigate('/dashboard');
-          } 
+          }
 
           // session management with dashboard
         } else {
@@ -422,9 +422,7 @@ export default function Availability() {
         console.error('Error:', error);
       }
     } else {
-
       if (userEmail == null && userPW == null) {
-        
         if (guestEmail != null && guestPW != null) {
           credentials.guest_id = parseInt(guestEmail);
           credentials.guest_password = guestPW;
@@ -473,7 +471,6 @@ export default function Availability() {
       }
     }
   };
-
 
   return (
     <div

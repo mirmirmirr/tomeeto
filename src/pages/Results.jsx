@@ -100,11 +100,9 @@ export default function Result() {
       })
         .then((response) => response.json())
         .then((eventDetailsData) => {
-
           // Update the state based on event details
           // setEventDetails(eventDetailsData);
           updateEventData(eventDetailsData);
-
         })
         .catch((error) => {
           console.error('Error fetching data:', error);

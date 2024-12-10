@@ -16,7 +16,7 @@ export default function ConfirmCreated() {
 
   const handleCopy = () => {
     // Please uncomment this when the server does have HTTPS certifications
-    
+
     // navigator.clipboard
     //   .writeText(eventCode)
     //   .then(() => {

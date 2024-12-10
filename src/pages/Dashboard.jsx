@@ -120,8 +120,7 @@ export default function Dashboard() {
   };
 
   const get_all_events = async () => {
-    const data = {
-    };
+    const data = {};
 
     check_user(data);
 
