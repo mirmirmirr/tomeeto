@@ -16,7 +16,7 @@ function deleteAllCookies() {
 }
 
 const check_user = async (dataToUse) => {
-  const cookies = document.cookie; // Get all cookies as a single string
+  const cookies = document.cookie;
   const cookieObj = {};
 
   cookies.split(';').forEach((cookie) => {
@@ -27,7 +27,7 @@ const check_user = async (dataToUse) => {
         const parsedValue = JSON.parse(decodeURIComponent(value));
         cookieObj[key] = String(parsedValue);
       } catch {
-        cookieObj[key] = String(decodeURIComponent(value)); // Handle plain strings
+        cookieObj[key] = String(decodeURIComponent(value));
       }
     }
   });
@@ -86,6 +86,7 @@ export default function Dashboard() {
     }
     document.body.removeChild(textArea);
 
+    // Please uncomment this when the server does have HTTPS certifications
     // try {
     //   navigator.clipboard.writeText(event.code).then(() => {
     //     setNotification('Link copied to clipboard');
@@ -107,29 +108,21 @@ export default function Dashboard() {
   };
 
   const handleEditEvent = async (event) => {
-    console.log('ran');
-    console.log(event);
     try {
       const codeChange = `code=${encodeURIComponent(JSON.stringify(event.code))}; path=/;`;
       document.cookie = codeChange;
       navigate('/availability', {
         state: { eventName2: event.title, isUpdating: true },
       });
-      // console.log(event);
-      // navigate(data.editUrl);
     } catch (error) {
       console.error('Error editing availability:', error);
     }
   };
 
   const get_all_events = async () => {
-    const data = {
-      // email: 'testing@gmail.com',
-      // password: '123',
-    };
+    const data = {};
 
     check_user(data);
-    console.log(data);
 
     try {
       const response = await fetch(
@@ -145,8 +138,6 @@ export default function Dashboard() {
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Events retrieved successfully', result);
-        console.log(result);
         const createdEvents = result.my_events;
         const participatingEvents = result.other_events;
 
@@ -162,11 +153,10 @@ export default function Dashboard() {
         }
 
         setArrayTwo(alpha);
-        // console.log(mockIndividualEvents);
+
         id = 1;
         var beta = [];
         for (const [key, value] of Object.entries(participatingEvents)) {
-          console.log(key, value);
           const myDictionary = {};
           myDictionary.id = id;
           myDictionary.code = key;

@@ -22,13 +22,10 @@ function setCookie(email, password) {
   const passwordCookie = `login_password=${encodeURIComponent(JSON.stringify(password))}; path=/;`;
   document.cookie = emailCookie;
   document.cookie = passwordCookie;
-  console.log('Cookies have been set.');
 }
 
 export default function Signup() {
   const navigate = useNavigate();
-  // document.cookie = "username=John Doe";
-  console.log(document.cookie);
 
   const { isDarkMode, toggleTheme } = useTheme();
   const { isSmallScreen, isLargeScreen } = useScreenSize();
@@ -85,8 +82,6 @@ export default function Signup() {
   };
 
   const signupClick = async () => {
-    console.log(passwordValues.password);
-    console.log(email.email);
     const data = {
       email: email.email,
       password: passwordValues.password,
@@ -106,7 +101,6 @@ export default function Signup() {
         const result = await response.json();
         if (result.message == 'User created') {
           deleteAllCookies();
-          console.log('Login successful:', result);
           setCookie(email.email, passwordValues.password);
           navigate('/dashboard');
         } else {
