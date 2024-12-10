@@ -143,7 +143,7 @@ export default function Availability() {
       } else {
         try {
           const response = await fetch(
-            'http://tomeeto.cs.rpi.edu:8000/create_guest'
+            import.meta.env.VITE_API_HOST + '/create_guest'
           );
           if (response.ok) {
             const responseData = await response.json();
@@ -185,7 +185,7 @@ export default function Availability() {
 
         // Proceed with fetch after check_user completes
         const response = await fetch(
-          'http://tomeeto.cs.rpi.edu:8000/event_details',
+          import.meta.env.VITE_API_HOST + '/event_details',
           {
             method: 'POST',
             headers: {
@@ -429,7 +429,7 @@ export default function Availability() {
 
       try {
         const response = await fetch(
-          'http://tomeeto.cs.rpi.edu:8000/update_availability',
+          import.meta.env.VITE_API_HOST + '/update_availability',
           {
             method: 'POST',
             headers: {
@@ -465,7 +465,7 @@ export default function Availability() {
           credentials.guest_password = guestPW;
           console.log('SET GUEST STUFF');
         } else {
-          await fetch('http://tomeeto.cs.rpi.edu:8000/create_guest', {
+          await fetch(import.meta.env.VITE_API_HOST + '/create_guest', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -486,7 +486,7 @@ export default function Availability() {
       console.log(credentials);
       try {
         const response = await fetch(
-          'http://tomeeto.cs.rpi.edu:8000/add_availability',
+          import.meta.env.VITE_API_HOST + '/add_availability',
           {
             method: 'POST',
             headers: {

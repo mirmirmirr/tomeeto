@@ -31,7 +31,7 @@ const check_user = async (dataToUse) => {
     } else {
       try {
         const response = await fetch(
-          'http://tomeeto.cs.rpi.edu:8000/create_guest'
+          import.meta.env.VITE_API_HOST + '/create_guest'
         );
         if (response.ok) {
           const responseData = await response.json();
@@ -129,7 +129,7 @@ export default function Result() {
       console.log('RANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN');
 
       // First, fetch event details
-      fetch('http://tomeeto.cs.rpi.edu:8000/event_details', {
+      fetch(import.meta.env.VITE_API_HOST + '/event_details', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -145,7 +145,7 @@ export default function Result() {
           updateEventData(eventDetailsData);
 
           // Next, fetch results using the same credentials
-          //   return fetch('http://tomeeto.cs.rpi.edu:8000/get_results', {
+          //   return fetch(import.meta.env.VITE_API_HOST + '/get_results', {
           //     method: 'POST',
           //     headers: {
           //       'Content-Type': 'application/json',
@@ -292,7 +292,7 @@ export default function Result() {
 
     try {
       const response = await fetch(
-        'http://tomeeto.cs.rpi.edu:8000/get_results',
+        import.meta.env.VITE_API_HOST + '/get_results',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -343,7 +343,7 @@ export default function Result() {
 
   //   try {
   //     const response = await fetch(
-  //       'http://tomeeto.cs.rpi.edu:8000/get_results',
+  //       import.meta.env.VITE_API_HOST + '/get_results',
   //       {
   //         method: 'POST',
   //         headers: {
