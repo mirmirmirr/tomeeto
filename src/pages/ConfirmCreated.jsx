@@ -7,16 +7,16 @@ export default function ConfirmCreated() {
   const navigate = useNavigate();
   const location = useLocation();
   const { eventCode, eventName } = location.state || {};
-  console.log('here');
-  console.log(eventName);
+
   document.cookie = 'code=' + eventCode;
-  console.log(document.cookie);
 
   const { isDarkMode, toggleTheme } = useTheme();
 
   const [copySuccess, setCopySuccess] = useState(false);
 
   const handleCopy = () => {
+    // Please uncomment this when the server does have HTTPS certifications
+    
     // navigator.clipboard
     //   .writeText(eventCode)
     //   .then(() => {
