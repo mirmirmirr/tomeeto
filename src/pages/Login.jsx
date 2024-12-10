@@ -111,7 +111,8 @@ export default function Login() {
     document.cookie = passwordCookie;
 
     try {
-      const response = await fetch('http://tomeeto.cs.rpi.edu:8000/login', {
+      console.log(import.meta.env.VITE_API_HOST);
+      const response = await fetch(import.meta.env.VITE_API_HOST + '/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

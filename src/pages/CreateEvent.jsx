@@ -186,7 +186,7 @@ export default function CreateEvent() {
       } else {
         try {
           const response = await fetch(
-            'http://tomeeto.cs.rpi.edu:8000/create_guest'
+            import.meta.env.VITE_API_HOST + '/create_guest'
           );
           if (response.ok) {
             const responseData = await response.json();
@@ -221,7 +221,7 @@ export default function CreateEvent() {
 
     try {
       const response = await fetch(
-        'http://tomeeto.cs.rpi.edu:8000/create_event',
+        import.meta.env.VITE_API_HOST + '/create_event',
         {
           method: 'POST',
           headers: {

@@ -88,7 +88,7 @@ export default function Signup() {
     };
 
     try {
-      const response = await fetch('http://tomeeto.cs.rpi.edu:8000/signup', {
+      const response = await fetch(import.meta.env.VITE_API_HOST + '/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
