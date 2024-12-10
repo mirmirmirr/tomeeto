@@ -8,11 +8,6 @@ export default function Availability() {
   const location = useLocation();
   const { eventName2, isUpdating } = location.state || {};
 
-  console.log(eventName2);
-  console.log(isUpdating);
-
-  console.log('RAN');
-
   function getCookieValue(cookieName) {
     const cookies = document.cookie.split('; ');
     for (const cookie of cookies) {
@@ -29,15 +24,12 @@ export default function Availability() {
   }
 
   let x = document.cookie;
-  console.log(x);
 
   const eventCode = getCookieValue('code');
   var userEmail = getCookieValue('login_email');
   var userPW = getCookieValue('login_password');
   var guestEmail = getCookieValue('guest_email');
   var guestPW = getCookieValue('guest_password');
-  console.log('Code cookie:', eventCode);
-  console.log('email', userEmail);
 
   const { isDarkMode, toggleTheme } = useTheme();
 
@@ -171,17 +163,11 @@ export default function Availability() {
     async function handleEventDetails() {
       try {
         const data = {
-          // email: 'testing@gmail.com',
-          // password: '123',
           event_code: eventCode,
         };
 
-        console.log('Before user check:', data);
-
         // Wait for check_user to complete
         await check_user(data);
-
-        console.log('After user check:', data);
 
         // Proceed with fetch after check_user completes
         const response = await fetch(
@@ -200,7 +186,6 @@ export default function Availability() {
         }
 
         const eventData = await response.json();
-        console.log('Event details:', eventData);
 
         // Update state based on the event details
         setEventDetails(eventData);
@@ -211,7 +196,7 @@ export default function Availability() {
     }
 
     if (eventCode) {
-      handleEventDetails(); // Call the async function
+      handleEventDetails();
     }
   }, [eventCode]);
 
@@ -230,16 +215,11 @@ export default function Availability() {
     } = data;
     setEventName(title);
 
-    console.log(event_type);
-    console.log(all_dates[0].weekdayName);
-
     var daysArray = [];
     const weekdaysArray = [];
     if (event_type == 'date_range') {
       const startDate = new Date(start_date + ' ' + start_time);
       const endDate = new Date(end_date + ' ' + end_time);
-      console.log(startDate);
-      console.log(endDate);
 
       // Format the dates to the desired format
       const formattedStartDate = startDate.toLocaleDateString('en-US', {
@@ -272,7 +252,6 @@ export default function Availability() {
     } else {
       setIsGenericWeek(true);
       setEventDates(`${start_day} - ${end_day}`);
-      console.log('here');
 
       const abbreviations = all_dates[0].weekdayName.map((day) => {
         switch (day) {
@@ -315,7 +294,6 @@ export default function Availability() {
     setTotalDays(daysArray.length);
   };
 
-  console.log('ALLDAYS', allDays);
   const displayedDays = allDays.slice(
     currentPage * daysPerPage,
     (currentPage + 1) * daysPerPage
@@ -326,12 +304,9 @@ export default function Availability() {
     (currentPage + 1) * daysPerPage
   );
 
-  console.log('CurrentPage: ', currentPage);
-  console.log('TOTAL DAYS: ', totalDays);
-
-  useEffect(() => {
-    console.log('Availability updated:', availability);
-  }, [availability]);
+  // useEffect(() => {
+  //   console.log('Availability updated:', availability);
+  // }, [availability]);
 
   const goToPrevPage = () => {
     if (currentPage > 0) {
@@ -411,7 +386,6 @@ export default function Availability() {
       return;
     }
     const transposedAvailability = transpose(availability);
-    console.log(transposedAvailability);
 
     var credentials = {
       event_code: eventCode,
@@ -420,12 +394,7 @@ export default function Availability() {
     };
 
     if (isUpdating === true) {
-      console.log('UPDATINGGGGGGGGGGGGGGGGGGGG');
-      console.log(availability);
-
       check_user(credentials);
-
-      console.log(credentials);
 
       try {
         const response = await fetch(
@@ -438,15 +407,13 @@ export default function Availability() {
             body: JSON.stringify(credentials),
           }
         );
-        console.log(credentials);
+
         if (response.ok) {
           const result = await response.json();
-          console.log(result.message);
           if (result.message.localeCompare('Availability updated') === 0) {
             navigate('/dashboard');
-          } else {
-            console.log(result);
           }
+
           // session management with dashboard
         } else {
           console.error('Failed to record time:', response.statusText);
@@ -455,15 +422,10 @@ export default function Availability() {
         console.error('Error:', error);
       }
     } else {
-      console.log('Ran this random thing');
-      // console.log(name);
-      // console.log(availability);
-
       if (userEmail == null && userPW == null) {
         if (guestEmail != null && guestPW != null) {
           credentials.guest_id = parseInt(guestEmail);
           credentials.guest_password = guestPW;
-          console.log('SET GUEST STUFF');
         } else {
           await fetch('http://tomeeto.cs.rpi.edu:8000/create_guest', {
             method: 'GET',
@@ -475,15 +437,12 @@ export default function Availability() {
             .then((data) => {
               credentials.guest_id = data.guest_id;
               credentials.guest_password = data.guest_password;
-              console.log(credentials.guest_id);
             });
         }
-        console.log('HEREEEEFORTHEUSERAND');
       } else {
         credentials.email = userEmail;
         credentials.password = userPW;
       }
-      console.log(credentials);
       try {
         const response = await fetch(
           'http://tomeeto.cs.rpi.edu:8000/add_availability',
@@ -495,7 +454,7 @@ export default function Availability() {
             body: JSON.stringify(credentials),
           }
         );
-        console.log(credentials);
+
         if (response.ok) {
           const result = await response.json();
 
@@ -503,9 +462,6 @@ export default function Availability() {
             handleError(result.message);
             return;
           }
-          console.log('Time Set Successfully', result);
-
-          // session management with dashboard
           navigate('/results', { state: { eventCode, eventName } });
         } else {
           console.error('Failed to record time:', response.statusText);
@@ -515,8 +471,6 @@ export default function Availability() {
       }
     }
   };
-
-  console.log('EVENT DATES', eventDates);
 
   return (
     <div

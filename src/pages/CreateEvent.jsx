@@ -153,8 +153,6 @@ export default function CreateEvent() {
 
   const get_event_data = async () => {
     const data = {
-      // email: 'testing@gmail.com',
-      // password: '123',
       title: eventName,
       description: eventDescription,
       duration: parseInt(selectedInterval),
@@ -164,7 +162,6 @@ export default function CreateEvent() {
 
     const cookies = document.cookie; // Get all cookies as a single string
     const cookieObj = {};
-    console.log('Ran here 1');
 
     cookies.split(';').forEach((cookie) => {
       const [key, value] = cookie.split('=').map((part) => part.trim());
@@ -212,8 +209,6 @@ export default function CreateEvent() {
       }
     }
 
-    console.log('data sent:', data);
-
     if (selectDaysOfWeek) {
       data.event_type = 'generic_week';
       data.start_day = selectedStartDay.toLowerCase();
@@ -222,12 +217,7 @@ export default function CreateEvent() {
       data.event_type = 'date_range';
       data.start_date = startCalendarDay;
       data.end_date = endCalendarDay;
-      console.log(data.start_date);
-      console.log(data.end_date);
     }
-
-    console.log(data);
-    console.log('works');
 
     try {
       const response = await fetch(
@@ -243,11 +233,8 @@ export default function CreateEvent() {
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log('Response Data:', responseData);
-        console.log(responseData);
 
         if (responseData.message != 'Event created') {
-          console.log('ERROR');
           handleError(responseData.message);
           return;
         }

@@ -78,11 +78,7 @@ export default function Login() {
     });
   };
 
-  // const myCookie = document.cookie.split('; ').find(row => row.startsWith('email=')).split('=')[1];
-  // console.log(myCookie); // Outputs: 123
-
   // if cookies exist, login the user already
-  console.log('getting cookies');
   const cookies = document.cookie; // Get all cookies as a single string
   const cookieObj = {};
 
@@ -99,14 +95,8 @@ export default function Login() {
     }
   });
 
-  console.log(cookieObj);
-
-  // const all_existing_cookies = getCookiesAsObject();
-  // console.log(all_existing_cookies);
-
   const login_user = async () => {
     var data = {};
-    console.log(document.cookie);
 
     if (email.email == '' || passwordValues.password == '') {
       handleError("Email + Password can't be empty.");
@@ -120,9 +110,6 @@ export default function Login() {
     document.cookie = emailCookie;
     document.cookie = passwordCookie;
 
-    // console.log(data);
-    console.log('login data? ', data);
-
     try {
       const response = await fetch('http://tomeeto.cs.rpi.edu:8000/login', {
         method: 'POST',
@@ -134,9 +121,8 @@ export default function Login() {
 
       if (response.ok) {
         const result = await response.json();
-        // console.log('Login successful:', result);
-        console.log(result.message);
-        if (result.message.localeCompare('Login successful') === 0) {
+
+        if (result.message == 'Login successful') {
           navigate('/dashboard');
         } else {
           handleError(result.message);
@@ -149,11 +135,6 @@ export default function Login() {
       console.error('Error:', error);
     }
   };
-
-  // if (cookieObj['login_email'] && cookieObj['login_password']) {
-  //   console.log('We have login');
-  //   login_user();
-  // }
 
   return (
     <div
